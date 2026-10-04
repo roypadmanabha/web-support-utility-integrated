@@ -1524,23 +1524,16 @@ export default function App() {
               {/* RED BOX BUTTON: SERIAL NUMBER LOOKUP / REGISTRATION DATABASE */}
               <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'center' }}>
                 <button
+                  className="wsu-btn-primary"
                   onClick={() => {
                     setCurrentPage('registration-database');
                     showToast('Navigated to Registration Database Page');
                   }}
                   style={{
-                    backgroundColor: '#5E33BF',
-                    color: '#F0F0EB',
                     borderRadius: '10px',
                     padding: '12px 28px',
-                    fontSize: '0.95rem',
+                    fontSize: '0.89rem',
                     fontWeight: 400,
-                    border: '2px solid #000000',
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontFamily: 'inherit',
                     boxShadow: '0 4px 10px rgba(0, 0, 0, 0.25)'
                   }}
                 >

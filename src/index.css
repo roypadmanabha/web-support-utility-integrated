@@ -610,6 +610,29 @@ html, body {
   opacity: 0.9;
 }
 
+[data-theme="dark"] .wsu-btn-primary {
+  background-color: #5E33BF !important;
+  color: #F0F0EB !important;
+  border-color: #F0F0EB !important;
+}
+
+[data-theme="dark"] .wsu-btn-primary:hover {
+  background-color: #000000 !important;
+  color: #F0F0EB !important;
+  border-color: #5E33BF !important;
+}
+
+[data-theme="dark"] .wsu-action-btn {
+  background-color: #5E33BF !important;
+  color: #F0F0EB !important;
+  border-left-color: #F0F0EB !important;
+}
+
+[data-theme="dark"] .wsu-action-btn:hover {
+  background-color: #000000 !important;
+  color: #F0F0EB !important;
+}
+
 [data-theme="dark"] .wsu-btn-secondary {
   background-color: #000000 !important;
   color: #F0F0EB !important;
