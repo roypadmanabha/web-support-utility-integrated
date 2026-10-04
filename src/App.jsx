@@ -15,7 +15,16 @@ const checkSpaceInEmail = (emailStr) => {
     if (hasMiddle) positions.push("in the middle");
     if (hasTrailing) positions.push("at the end (last)");
 
-    return `Extra space detected ${positions.join(", ")}. Please remove extra space and retype.`;
+    let posText = "";
+    if (positions.length === 1) {
+      posText = positions[0];
+    } else if (positions.length === 2) {
+      posText = `${positions[0]} or ${positions[1]}`;
+    } else {
+      posText = `${positions[0]}, ${positions[1]}, or ${positions[2]}`;
+    }
+
+    return `Extra space detected ${posText}. Please remove extra space and retype.`;
   }
 
   return null;
