@@ -1,0 +1,172 @@
+export const CUSTOMER_DATABASE = [
+  {
+    first: "Padmanabha",
+    last: "Roy",
+    email: "padmanabha.roy@clarivate.com",
+    steamId: "28228584",
+    uid: "al4jWwrsCssAHYeMTG8",
+    researcherId: "10790292",
+    internalId: "10790292",
+    serialNumber: "3102299999",
+    custId: "null",
+    virtCustId: "null",
+    citeDb: "CiteDB_0208",
+    state: "EN22",
+    endnoteVersion: "EndNote 22 (EN22)",
+    registrationStatus: "Registered / Active",
+    libVer: "5.0.0",
+    fileStorage: "5120 MB",
+    lastUsn: "2653",
+    fullSyncBefore: "2026-07-28 15:58:50.0",
+    recovSyncBefore: "2009-04-26 00:00:00.0",
+    organization: "Clarivate Analytics",
+    expirationDate: "2028-12-31",
+    phoneNumber: "+1 800-336-4474",
+    regTime: "2026-10-04 11:20:15",
+    productKey: "RG647-CD9FC-4PAR8-KPSNW-LHDMH",
+    productSummary: "This is a Multi User Download of EndNote 22 for Both Mac & Windows.",
+    regDeadline: "May 31, 2028",
+    latestExpDate: "June 1, 2031",
+    webSeats: 5000,
+    winDownload: "https://download.endnote.com/downloads/2025/EN2025Inst.exe",
+    macDownload: "https://download.endnote.com/downloads/2025/EndNote2025Installer.dmg"
+  },
+  {
+    first: "Fabian",
+    last: "Marsden",
+    email: "fabian.marsden@gmail.com",
+    steamId: "39102844",
+    uid: "f8kLp9w9xZQm2V01rX",
+    researcherId: "80948102",
+    internalId: "80948102",
+    serialNumber: "3092276545",
+    custId: "CUST-3912",
+    virtCustId: "VCUST-102",
+    citeDb: "CiteDB_0314",
+    state: "EN22",
+    endnoteVersion: "EndNote 22 (EN22)",
+    registrationStatus: "Registered / Active",
+    libVer: "5.0.0",
+    fileStorage: "4096 MB",
+    lastUsn: "1920",
+    fullSyncBefore: "2025-11-24 07:42:55.0",
+    recovSyncBefore: "2011-03-12 00:00:00.0",
+    organization: "University of KwaZulu-Natal",
+    expirationDate: "2027-11-30",
+    phoneNumber: "0723661677",
+    regTime: "2025-11-24 07:42:55",
+    productKey: "FM991-KX882-9PLQ2-WSU22-QWER1",
+    productSummary: "This is a Multi User Download of EndNote 22 for Both Mac & Windows.",
+    regDeadline: "May 31, 2028",
+    latestExpDate: "June 1, 2031",
+    webSeats: 2500,
+    winDownload: "https://download.endnote.com/downloads/2025/EN2025Inst.exe",
+    macDownload: "https://download.endnote.com/downloads/2025/EndNote2025Installer.dmg"
+  },
+  {
+    first: "Elena",
+    last: "Rostova",
+    email: "elena.rostova@clarivate.com",
+    steamId: "49102834",
+    uid: "b8kLp9w9xZQm2V01rK",
+    researcherId: "20948102",
+    internalId: "20948102",
+    serialNumber: "3102288888",
+    custId: "CUST-8812",
+    virtCustId: "VCUST-002",
+    citeDb: "CiteDB_0114",
+    state: "EN21",
+    endnoteVersion: "EndNote 21 (EN21)",
+    registrationStatus: "Registered",
+    libVer: "4.8.2",
+    fileStorage: "4096 MB",
+    lastUsn: "1892",
+    fullSyncBefore: "2026-06-15 10:20:00.0",
+    recovSyncBefore: "2010-01-01 00:00:00.0",
+    organization: "Harvard Medical School",
+    expirationDate: "2027-09-30",
+    phoneNumber: "+1 617-432-1000",
+    regTime: "2026-06-15 10:20:00",
+    productKey: "ER210-HW881-99812-HARV1-MED00",
+    productSummary: "This is an Institutional Multi-Seat Download of EndNote 21.",
+    regDeadline: "Dec 31, 2027",
+    latestExpDate: "Jan 15, 2030",
+    webSeats: 1000,
+    winDownload: "https://download.endnote.com/downloads/2024/EN2024Inst.exe",
+    macDownload: "https://download.endnote.com/downloads/2024/EndNote2024Installer.dmg"
+  }
+];
+
+export const AUTH_TOKENS_LIST = [
+  {
+    authToken: "i-06fd3e0ad942:G8aLEORCTjq-7_1p7--Z-g",
+    uid: "al4jWwrsCssAHYeMTG8",
+    clientName: "Neon EndNote 1.0",
+    dateCreated: "2026-10-02 07:06:27.0",
+    userEmail: "padmanabha.roy@clarivate.com"
+  },
+  {
+    authToken: "i-053836a7d09a3d3:FMft8ENKRUet-hNF0KW7CQ",
+    uid: "al4jWwrsCssAHYeMTG8",
+    clientName: "EndNote Web",
+    dateCreated: "2026-10-02 07:06:04.0",
+    userEmail: "padmanabha.roy@clarivate.com"
+  },
+  {
+    authToken: "i-053836a7d09a3d3:1kJg84K0RCKl96Aora40DA",
+    uid: "al4jWwrsCssAHYeMTG8",
+    clientName: "EndNote Web",
+    dateCreated: "2026-10-02 07:06:04.0",
+    userEmail: "padmanabha.roy@clarivate.com"
+  },
+  {
+    authToken: "i-053836a7d09a3d3:Ky1R1_TLtOG7msXEv9qfA",
+    uid: "al4jWwrsCssAHYeMTG8",
+    clientName: "EndNote Web",
+    dateCreated: "2026-10-02 07:06:04.0",
+    userEmail: "padmanabha.roy@clarivate.com"
+  },
+  {
+    authToken: "i-06aec471d7c919f7f:AAFYJrvFqSOfLploV12Fq",
+    uid: "al4jWwrsCssAHYeMTG8",
+    clientName: "EndNote Desktop",
+    dateCreated: "2026-10-02 07:06:04.0",
+    userEmail: "padmanabha.roy@clarivate.com"
+  }
+];
+
+export const SERIAL_NUMBERS_DATABASE = [
+  {
+    serialNumber: "3102299999",
+    assignedTo: "Padmanabha Roy (padmanabha.roy@clarivate.com)",
+    version: "EndNote 22 (EN22)",
+    productType: "Single User Desktop & Web License",
+    seatsTotal: 5000,
+    seatsUsed: 1,
+    activationDate: "2024-01-15",
+    status: "Active / Registered",
+    maintenanceExpiry: "2028-12-31"
+  },
+  {
+    serialNumber: "3092276545",
+    assignedTo: "Fabian Marsden (fabian.marsden@gmail.com)",
+    version: "EndNote 22 (EN22)",
+    productType: "Multi User Academic License",
+    seatsTotal: 2500,
+    seatsUsed: 1,
+    activationDate: "2025-11-24",
+    status: "Active / Registered",
+    maintenanceExpiry: "2028-05-31"
+  },
+  {
+    serialNumber: "3102288888",
+    assignedTo: "Elena Rostova (elena.rostova@clarivate.com)",
+    version: "EndNote 21 (EN21)",
+    productType: "Institutional Multi-seat",
+    seatsTotal: 1000,
+    seatsUsed: 84,
+    activationDate: "2023-06-20",
+    status: "Active / Registered",
+    maintenanceExpiry: "2027-09-30"
+  }
+];
