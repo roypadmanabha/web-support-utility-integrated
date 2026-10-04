@@ -454,3 +454,156 @@ html, body {
   gap: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
+
+/* Sun/Moon Tiny Theme Toggle Button in top right header */
+.wsu-theme-toggle {
+  background-color: transparent;
+  border: 1.5px solid #5E33BF;
+  color: inherit;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 4px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.wsu-theme-toggle:hover {
+  background-color: #5E33BF;
+  color: #F0F0EB;
+  transform: scale(1.12);
+}
+
+/* ==========================================================================
+   DARK MODE OVERRIDES ([data-theme="dark"])
+   Background: ORIGINAL BLACK (#000000)
+   Text: Warm Off-white (#F0F0EB)
+   Brand Purple: #5E33BF
+   ========================================================================== */
+
+[data-theme="dark"],
+[data-theme="dark"] body,
+[data-theme="dark"] .wsu-layout,
+[data-theme="dark"] .wsu-header,
+[data-theme="dark"] .wsu-sidebar,
+[data-theme="dark"] .wsu-content,
+[data-theme="dark"] .wsu-card {
+  background-color: #000000 !important;
+  color: #F0F0EB !important;
+}
+
+[data-theme="dark"] .wsu-header {
+  border-bottom-color: #5E33BF !important;
+}
+
+[data-theme="dark"] .wsu-sidebar {
+  border-right-color: #5E33BF !important;
+}
+
+[data-theme="dark"] .wsu-card {
+  border-color: #5E33BF !important;
+}
+
+[data-theme="dark"] .wsu-header-title,
+[data-theme="dark"] .wsu-header-user,
+[data-theme="dark"] .wsu-sidebar-item,
+[data-theme="dark"] .wsu-label,
+[data-theme="dark"] .wsu-card-title span {
+  color: #F0F0EB !important;
+}
+
+[data-theme="dark"] .wsu-header-link {
+  color: #F0F0EB !important;
+}
+
+[data-theme="dark"] .wsu-header-link:hover {
+  color: #5E33BF !important;
+}
+
+[data-theme="dark"] .wsu-sidebar-item:hover,
+[data-theme="dark"] .wsu-sidebar-item.active {
+  background-color: #5E33BF !important;
+  color: #F0F0EB !important;
+  border-color: #F0F0EB !important;
+}
+
+[data-theme="dark"] .wsu-input-wrapper {
+  background-color: #000000 !important;
+  border-color: #F0F0EB !important;
+}
+
+[data-theme="dark"] .wsu-input {
+  background-color: #000000 !important;
+  color: #F0F0EB !important;
+}
+
+[data-theme="dark"] .wsu-btn-secondary {
+  background-color: #000000 !important;
+  color: #F0F0EB !important;
+  border-color: #F0F0EB !important;
+}
+
+[data-theme="dark"] .wsu-btn-secondary:hover {
+  background-color: #5E33BF !important;
+  color: #F0F0EB !important;
+  border-color: #5E33BF !important;
+}
+
+[data-theme="dark"] .wsu-table-container,
+[data-theme="dark"] .wsu-table,
+[data-theme="dark"] .wsu-table tr {
+  background-color: #000000 !important;
+}
+
+[data-theme="dark"] .wsu-table td {
+  color: #F0F0EB !important;
+  border-bottom-color: #5E33BF !important;
+  border-right-color: #5E33BF !important;
+}
+
+[data-theme="dark"] .wsu-table th {
+  background-color: #5E33BF !important;
+  color: #F0F0EB !important;
+  border-bottom: 2px solid #F0F0EB !important;
+  border-right: 1px solid #F0F0EB !important;
+}
+
+[data-theme="dark"] select {
+  background-color: #000000 !important;
+  color: #F0F0EB !important;
+  border-color: #F0F0EB !important;
+}
+
+[data-theme="dark"] input[type="radio"] {
+  accent-color: #5E33BF;
+}
+
+/* Force dark mode for inline background-color: #F0F0EB and lightgrey elements */
+[data-theme="dark"] [style*="background-color: #F0F0EB"],
+[data-theme="dark"] [style*="background-color:#F0F0EB"],
+[data-theme="dark"] [style*="backgroundColor: '#F0F0EB'"],
+[data-theme="dark"] [style*="backgroundColor: '#F0F0EB'"],
+[data-theme="dark"] [style*="background: '#F0F0EB'"],
+[data-theme="dark"] [style*="background: #F0F0EB"],
+[data-theme="dark"] [style*="background-color: lightgrey"] {
+  background-color: #000000 !important;
+  color: #F0F0EB !important;
+}
+
+[data-theme="dark"] [style*="color: #000000"],
+[data-theme="dark"] [style*="color: '#000000'"],
+[data-theme="dark"] [style*="color:#000000"] {
+  color: #F0F0EB !important;
+}
+
+[data-theme="dark"] [style*="border: 2px solid #000000"],
+[data-theme="dark"] [style*="border: 2px solid black"] {
+  border-color: #F0F0EB !important;
+}
+

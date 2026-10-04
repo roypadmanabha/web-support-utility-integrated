@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CUSTOMER_DATABASE, AUTH_TOKENS_LIST, SERIAL_NUMBERS_DATABASE } from './mockData';
 
 // Space validation helper for email inputs
@@ -105,7 +105,7 @@ const SmartInputField = ({
 };
 
 // Top-level Header Bar Component
-const HeaderBar = ({ titleText, backActionText, onBackClick, onShowToast }) => (
+const HeaderBar = ({ titleText, backActionText, onBackClick, onShowToast, theme, onToggleTheme }) => (
   <header className="wsu-header">
     <div className="wsu-header-left">
       <div className="wsu-header-logo-container">
@@ -132,11 +132,37 @@ const HeaderBar = ({ titleText, backActionText, onBackClick, onShowToast }) => (
       <button className="wsu-header-link" onClick={() => onShowToast && onShowToast('User logged out')}>
         Logout
       </button>
+      <span>|</span>
+      <button
+        type="button"
+        className="wsu-theme-toggle"
+        onClick={onToggleTheme}
+        title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+        aria-label="Toggle dark/light mode"
+      >
+        {theme === 'dark' ? '☀️' : '🌙'}
+      </button>
     </div>
   </header>
 );
 
 export default function App() {
+  // Theme State ('light' | 'dark')
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('clarivate_wsu_theme') || 'light';
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('clarivate_wsu_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(nextTheme);
+    showToast(`Switched to ${nextTheme === 'dark' ? 'Dark' : 'Light'} Mode`);
+  };
+
   // Page View state: 'wsu-home' | 'registration-database' | 'serial-detail'
   const [currentPage, setCurrentPage] = useState('wsu-home');
   const [activeNav, setActiveNav] = useState('Search Customers');
@@ -496,6 +522,9 @@ export default function App() {
           titleText="Registration Database"
           backActionText="Back to Web Support Utility"
           onBackClick={() => setCurrentPage('wsu-home')}
+          theme={theme}
+          onToggleTheme={toggleTheme}
+          onShowToast={showToast}
         />
 
         {/* Body Container */}
@@ -1046,6 +1075,9 @@ export default function App() {
           titleText="Serial Number & License Key Detail"
           backActionText="Back to Registration Database"
           onBackClick={() => setCurrentPage('registration-database')}
+          theme={theme}
+          onToggleTheme={toggleTheme}
+          onShowToast={showToast}
         />
 
         {/* Body Container */}
@@ -1179,7 +1211,12 @@ export default function App() {
   return (
     <div className="wsu-layout">
       {/* HEADER BAR */}
-      <HeaderBar titleText="Web Support Utility (WSU)" />
+      <HeaderBar
+        titleText="Web Support Utility (WSU)"
+        theme={theme}
+        onToggleTheme={toggleTheme}
+        onShowToast={showToast}
+      />
 
       {/* BODY CONTENT */}
       <div className="wsu-body">
