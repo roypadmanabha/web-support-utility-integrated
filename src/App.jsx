@@ -35,7 +35,6 @@ const SmartInputField = ({
   label,
   value,
   onChange,
-  placeholder,
   type = "text",
   requiredNote = false,
   fieldLabel = "",
@@ -77,7 +76,6 @@ const SmartInputField = ({
           className="wsu-input"
           value={valStr}
           onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
           autoComplete="off"
           spellCheck="false"
         />
@@ -626,7 +624,6 @@ export default function App() {
                           setSnLookupResult(null);
                         }
                       }}
-                      placeholder="Paste 10-Digit Serial Number (e.g. 3102299999)"
                       fieldLabel="Serial Number Input"
                     />
                   </form>
@@ -753,28 +750,24 @@ export default function App() {
                       label="First Name"
                       value={regFirstName}
                       onChange={setRegFirstName}
-                      placeholder="e.g. Fabian"
                       fieldLabel="First Name"
                     />
                     <SmartInputField
                       label="Last Name"
                       value={regLastName}
                       onChange={setRegLastName}
-                      placeholder="e.g. Marsden"
                       fieldLabel="Last Name"
                     />
                     <SmartInputField
                       label="Organization"
                       value={regOrganization}
                       onChange={setRegOrganization}
-                      placeholder="e.g. Clarivate Analytics"
                       fieldLabel="Organization"
                     />
                     <SmartInputField
                       label="Email Address"
                       value={regEmailAddress}
                       onChange={setRegEmailAddress}
-                      placeholder="e.g. fabian.marsden@gmail.com"
                       fieldLabel="Email Address"
                       errorMessage={checkSpaceInEmail(regEmailAddress)}
                     />
@@ -782,14 +775,12 @@ export default function App() {
                       label="Phone Number"
                       value={regPhoneNumber}
                       onChange={setRegPhoneNumber}
-                      placeholder="e.g. 555-0199"
                       fieldLabel="Phone Number"
                     />
                     <SmartInputField
                       label="Serial Number"
                       value={regSerialNumber}
                       onChange={setRegSerialNumber}
-                      placeholder="e.g. 3102299999"
                       fieldLabel="Serial Number"
                     />
 
@@ -822,7 +813,6 @@ export default function App() {
                           <SmartInputField
                             value={regSearchQuery}
                             onChange={setRegSearchQuery}
-                            placeholder="Quick filter table..."
                             fieldLabel="Quick Filter"
                           />
                         </div>
@@ -1343,7 +1333,6 @@ export default function App() {
                       label="Email*"
                       value={searchEmail}
                       onChange={setSearchEmail}
-                      placeholder="Type or paste email address..."
                       requiredNote={true}
                       fieldLabel="Email"
                       errorMessage={checkSpaceInEmail(searchEmail)}
@@ -1354,7 +1343,6 @@ export default function App() {
                       label="Steam ID:"
                       value={searchSteamId}
                       onChange={setSearchSteamId}
-                      placeholder="Type or paste Steam ID..."
                       fieldLabel="Steam ID"
                     />
 
@@ -1363,7 +1351,6 @@ export default function App() {
                       label="UID:"
                       value={searchUid}
                       onChange={setSearchUid}
-                      placeholder="Type or paste UID..."
                       fieldLabel="UID"
                     />
 
@@ -1372,7 +1359,6 @@ export default function App() {
                       label="Researcher ID:"
                       value={searchResearcherId}
                       onChange={setSearchResearcherId}
-                      placeholder="Type or paste Researcher ID..."
                       fieldLabel="Researcher ID"
                     />
 
@@ -1381,7 +1367,6 @@ export default function App() {
                       label="Internal ID:"
                       value={searchInternalId}
                       onChange={setSearchInternalId}
-                      placeholder="Type or paste Internal ID..."
                       fieldLabel="Internal ID"
                     />
 
@@ -1390,7 +1375,6 @@ export default function App() {
                       label="Serial Number:"
                       value={searchSerialNumber}
                       onChange={setSearchSerialNumber}
-                      placeholder="Type or paste 10-Digit Serial Number..."
                       fieldLabel="Serial Number"
                     />
                   </div>
@@ -1556,7 +1540,6 @@ export default function App() {
                   label="Email:"
                   value={accessSearchEmail}
                   onChange={setAccessSearchEmail}
-                  placeholder="padmanabha.roy@clarivate.com"
                   fieldLabel="Search Email"
                 />
 
@@ -1564,7 +1547,6 @@ export default function App() {
                   label="UID:"
                   value={accessSearchUid}
                   onChange={setAccessSearchUid}
-                  placeholder="al4jWwrsCssAHYeMTG8"
                   fieldLabel="Search UID"
                 />
               </div>
@@ -1595,7 +1577,6 @@ export default function App() {
                     <SmartInputField
                       value={accessFilterQuery}
                       onChange={setAccessFilterQuery}
-                      placeholder="Filter tokens..."
                       fieldLabel="Token Filter"
                     />
                   </div>
@@ -1655,7 +1636,6 @@ export default function App() {
                   label="Search Query / Reference ID:"
                   value={genericQuery}
                   onChange={setGenericQuery}
-                  placeholder="padmanabha.roy@clarivate.com"
                   fieldLabel="Query"
                 />
               </div>
