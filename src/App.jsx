@@ -610,7 +610,8 @@ export default function App() {
                       e.preventDefault();
                       handleSNLookupSubmit(e);
                     }}
-                    style={{ maxWidth: '650px', backgroundColor: '#F0F0EB', padding: '16px', border: '1px solid #5E33BF', borderRadius: '6px' }}
+                    className="wsu-form-box"
+                    style={{ maxWidth: '650px', padding: '16px', borderRadius: '6px' }}
                   >
                     <SmartInputField
                       label="Input 10-Digit Serial Number:"
@@ -633,7 +634,7 @@ export default function App() {
 
                 {/* Serial Number Lookup Result details matching Screenshot 1 */}
                 {snLookupResult && (
-                  <div style={{ border: '1px solid #5E33BF', padding: '24px', borderRadius: '6px', backgroundColor: '#F0F0EB', marginBottom: '20px' }}>
+                  <div className="wsu-result-box" style={{ padding: '24px', borderRadius: '6px', marginBottom: '20px' }}>
                     <div style={{ fontSize: '0.89rem', color: '#000000', marginBottom: '6px' }}>
                       <strong>Serial Number:</strong> <span style={{ fontWeight: 400, color: '#000000' }}>{snLookupResult.serialNumber}</span>
                     </div>
@@ -647,7 +648,7 @@ export default function App() {
                     </div>
 
                     {/* NOTES ALERT BOX */}
-                    <div style={{ backgroundColor: 'lightgrey', padding: '14px 16px', border: '2px solid #000000', borderRadius: '4px', marginBottom: '18px' }}>
+                    <div className="wsu-alert-notes" style={{ padding: '14px 16px', borderRadius: '4px', marginBottom: '18px' }}>
                       <div style={{ fontWeight: 800, fontSize: '0.89rem', color: '#000000', marginBottom: '4px' }}>NOTES:</div>
                       <div style={{ fontWeight: 800, color: '#CC0000', fontSize: '0.84rem', marginBottom: '2px' }}>
                         DO NOT SEND THIS INFORMATION TO THE CUSTOMER.
@@ -688,14 +689,14 @@ export default function App() {
                     </div>
 
                     {/* Warning Notice Box */}
-                    <div style={{ padding: '14px', border: '2px solid #000000', backgroundColor: '#F0F0EB', color: '#000000', fontWeight: 800, fontSize: '0.82rem', marginTop: '20px' }}>
+                    <div className="wsu-warning-box" style={{ padding: '14px', fontWeight: 800, fontSize: '0.82rem', marginTop: '20px' }}>
                       PLEASE NOTE: The above information is a summarization of information for internal use only. Please do NOT simply copy and paste the entire message in an email to an external customer.
                     </div>
                   </div>
                 )}
 
                 {/* System Footer Strip */}
-                <div style={{ borderTop: '2px dashed #000000', paddingTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.79rem', color: '#000000' }}>
+                <div className="wsu-footer-strip" style={{ paddingTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.79rem' }}>
                   <button
                     style={{ background: 'none', border: 'none', color: '#5E33BF', textDecoration: 'underline', cursor: 'pointer', fontFamily: 'inherit', fontWeight: 700 }}
                     onClick={() => showToast('Error report dialog opened')}
@@ -927,7 +928,7 @@ export default function App() {
 
                 {/* Dropdown Control Strip matching Screenshot */}
                 <form onSubmit={handleGenerateDummySN} style={{ marginBottom: '24px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap', backgroundColor: '#F0F0EB', padding: '16px', border: '2px solid #000000', borderRadius: '6px' }}>
+                  <div className="wsu-strip-box" style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap', padding: '16px', borderRadius: '6px' }}>
                     
                     {/* Product */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -935,7 +936,7 @@ export default function App() {
                       <select
                         value={dummyProduct}
                         onChange={(e) => setDummyProduct(e.target.value)}
-                        style={{ padding: '6px 12px', border: '2px solid #000000', background: '#F0F0EB', fontFamily: 'inherit', fontWeight: 700 }}
+                        className="wsu-select"
                       >
                         <option value="EndNote">EndNote</option>
                         <option value="Reference Manager">Reference Manager</option>
@@ -949,7 +950,7 @@ export default function App() {
                       <select
                         value={dummyVersion}
                         onChange={(e) => setDummyVersion(e.target.value)}
-                        style={{ padding: '6px 12px', border: '2px solid #000000', background: '#F0F0EB', fontFamily: 'inherit', fontWeight: 700 }}
+                        className="wsu-select"
                       >
                         <option value="22">22</option>
                         <option value="21">21</option>
@@ -965,7 +966,7 @@ export default function App() {
                       <select
                         value={dummyPlatform}
                         onChange={(e) => setDummyPlatform(e.target.value)}
-                        style={{ padding: '6px 12px', border: '2px solid #000000', background: '#F0F0EB', fontFamily: 'inherit', fontWeight: 700 }}
+                        className="wsu-select"
                       >
                         <option value="Hybrid">Hybrid</option>
                         <option value="Windows">Windows</option>
@@ -979,7 +980,7 @@ export default function App() {
                       <select
                         value={dummyType}
                         onChange={(e) => setDummyType(e.target.value)}
-                        style={{ padding: '6px 12px', border: '2px solid #000000', background: '#F0F0EB', fontFamily: 'inherit', fontWeight: 700 }}
+                        className="wsu-select"
                       >
                         <option value="Full Download">Full Download</option>
                         <option value="Upgrade">Upgrade</option>
@@ -998,7 +999,7 @@ export default function App() {
 
                 {/* Generated Dummy Serial Result Display */}
                 {generatedDummyResult && (
-                  <div style={{ border: '1px solid #5E33BF', padding: '18px', borderRadius: '6px', backgroundColor: '#F0F0EB', marginBottom: '24px' }}>
+                  <div className="wsu-result-box" style={{ padding: '18px', borderRadius: '6px', marginBottom: '24px' }}>
                     <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#5E33BF', marginBottom: '10px' }}>
                       Generated Dummy License Parameters ({generatedDummyResult.product} {generatedDummyResult.version}):
                     </h4>
@@ -1119,7 +1120,7 @@ export default function App() {
               </div>
 
               {/* License Detail Container Box */}
-              <div style={{ border: '1px solid #5E33BF', padding: '20px', borderRadius: '6px', backgroundColor: '#F0F0EB', marginBottom: '20px' }}>
+              <div className="wsu-result-box" style={{ padding: '20px', borderRadius: '6px', marginBottom: '20px' }}>
                 <div style={{ fontSize: '0.95rem', color: '#000000', marginBottom: '6px' }}>
                   <strong>Serial Number:</strong> <span style={{ fontWeight: 400, color: '#000000' }}>{selectedSerialDetail.serialNumber}</span>
                 </div>
@@ -1133,7 +1134,7 @@ export default function App() {
                 </div>
 
                 {/* NOTES ALERT BOX */}
-                <div style={{ backgroundColor: 'lightgrey', padding: '14px 16px', border: '2px solid #000000', borderRadius: '4px', marginBottom: '16px' }}>
+                <div className="wsu-alert-notes" style={{ padding: '14px 16px', borderRadius: '4px', marginBottom: '16px' }}>
                   <div style={{ fontWeight: 800, fontSize: '0.9rem', color: '#000000', marginBottom: '2px' }}>NOTES:</div>
                   <div style={{ fontWeight: 800, color: '#CC0000', fontSize: '0.85rem' }}>
                     DO NOT SEND THIS INFORMATION TO THE CUSTOMER.
@@ -1175,7 +1176,7 @@ export default function App() {
               </div>
 
               {/* Warning Notice Box */}
-              <div style={{ padding: '12px', border: '2px solid #000000', backgroundColor: '#F0F0EB', color: '#000000', fontWeight: 800, fontSize: '0.85rem', marginBottom: '20px' }}>
+              <div className="wsu-warning-box" style={{ padding: '12px', fontWeight: 800, fontSize: '0.85rem', marginBottom: '20px' }}>
                 PLEASE NOTE: The above information is a summarization of information for internal use only. Please do NOT simply copy and paste the entire message in an email to an external customer.
               </div>
 
