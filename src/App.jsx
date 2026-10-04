@@ -81,12 +81,12 @@ const SmartInputField = ({
         </button>
       </div>
       {errorMessage ? (
-        <div style={{ fontSize: '0.78rem', color: '#CC0000', fontWeight: 400, marginTop: '4px' }}>
+        <div style={{ fontSize: '0.72rem', color: '#CC0000', fontWeight: 400, marginTop: '4px' }}>
           ⚠️ {errorMessage}
         </div>
       ) : (
         requiredNote && (
-          <span style={{ fontSize: '0.75rem', color: '#5E33BF', fontStyle: 'italic' }}>
+          <span style={{ fontSize: '0.69rem', color: '#5E33BF', fontStyle: 'italic' }}>
             * Email is exact matching only
           </span>
         )
@@ -528,7 +528,7 @@ export default function App() {
                 </div>
 
                 <div style={{ marginBottom: '20px' }}>
-                  <p style={{ fontSize: '0.95rem', color: '#000000', marginBottom: '14px', fontWeight: 400 }}>
+                  <p style={{ fontSize: '0.89rem', color: '#000000', marginBottom: '14px', fontWeight: 400 }}>
                     Registration service view for <span>Serial Number Lookup</span>.
                   </p>
 
@@ -596,31 +596,31 @@ export default function App() {
                 {/* Serial Number Lookup Result details matching Screenshot 1 */}
                 {snLookupResult && (
                   <div style={{ border: '1px solid #5E33BF', padding: '24px', borderRadius: '6px', backgroundColor: '#F0F0EB', marginBottom: '20px' }}>
-                    <div style={{ fontSize: '0.95rem', color: '#000000', marginBottom: '6px' }}>
+                    <div style={{ fontSize: '0.89rem', color: '#000000', marginBottom: '6px' }}>
                       <strong>Serial Number:</strong> <span style={{ fontWeight: 400, color: '#000000' }}>{snLookupResult.serialNumber}</span>
                     </div>
 
-                    <div style={{ fontSize: '0.95rem', color: '#000000', marginBottom: '14px' }}>
+                    <div style={{ fontSize: '0.89rem', color: '#000000', marginBottom: '14px' }}>
                       <strong>Product Key:</strong> <span style={{ fontWeight: 400, color: '#000000' }}>{snLookupResult.productKey}</span>
                     </div>
 
-                    <div style={{ fontSize: '0.95rem', color: '#000000', fontWeight: 700, marginBottom: '18px' }}>
+                    <div style={{ fontSize: '0.89rem', color: '#000000', fontWeight: 700, marginBottom: '18px' }}>
                       {snLookupResult.productSummary}
                     </div>
 
                     {/* NOTES ALERT BOX */}
                     <div style={{ backgroundColor: 'lightgrey', padding: '14px 16px', border: '2px solid #000000', borderRadius: '4px', marginBottom: '18px' }}>
-                      <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#000000', marginBottom: '4px' }}>NOTES:</div>
-                      <div style={{ fontWeight: 800, color: '#CC0000', fontSize: '0.9rem', marginBottom: '2px' }}>
+                      <div style={{ fontWeight: 800, fontSize: '0.89rem', color: '#000000', marginBottom: '4px' }}>NOTES:</div>
+                      <div style={{ fontWeight: 800, color: '#CC0000', fontSize: '0.84rem', marginBottom: '2px' }}>
                         DO NOT SEND THIS INFORMATION TO THE CUSTOMER.
                       </div>
-                      <div style={{ fontWeight: 800, color: '#CC0000', fontSize: '0.9rem' }}>
+                      <div style={{ fontWeight: 800, color: '#CC0000', fontSize: '0.84rem' }}>
                         This is for Multi User Admins only.
                       </div>
                     </div>
 
                     {/* Mass Deployment Information */}
-                    <div style={{ fontSize: '0.9rem', color: '#000000', lineHeight: 1.7, marginBottom: '18px' }}>
+                    <div style={{ fontSize: '0.84rem', color: '#000000', lineHeight: 1.7, marginBottom: '18px' }}>
                       <p style={{ marginBottom: '8px' }}>
                         This version can be installed the normal way, or by following these steps for mass deployment:{' '}
                         <a href="http://www.endnote.com/multi" target="_blank" rel="noreferrer" style={{ color: '#5E33BF', fontWeight: 800, textDecoration: 'underline' }}>
@@ -633,7 +633,7 @@ export default function App() {
                     </div>
 
                     {/* Installer Download Links */}
-                    <div style={{ borderTop: '1px solid #5E33BF', paddingTop: '16px', fontSize: '0.9rem', lineHeight: 1.8 }}>
+                    <div style={{ borderTop: '1px solid #5E33BF', paddingTop: '16px', fontSize: '0.84rem', lineHeight: 1.8 }}>
                       <p style={{ fontWeight: 700, marginBottom: '8px' }}>This product key will allow for installs of both Windows and Macintosh versions.</p>
                       
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
@@ -650,14 +650,14 @@ export default function App() {
                     </div>
 
                     {/* Warning Notice Box */}
-                    <div style={{ padding: '14px', border: '2px solid #000000', backgroundColor: '#F0F0EB', color: '#000000', fontWeight: 800, fontSize: '0.88rem', marginTop: '20px' }}>
+                    <div style={{ padding: '14px', border: '2px solid #000000', backgroundColor: '#F0F0EB', color: '#000000', fontWeight: 800, fontSize: '0.82rem', marginTop: '20px' }}>
                       PLEASE NOTE: The above information is a summarization of information for internal use only. Please do NOT simply copy and paste the entire message in an email to an external customer.
                     </div>
                   </div>
                 )}
 
                 {/* System Footer Strip */}
-                <div style={{ borderTop: '2px dashed #000000', paddingTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', color: '#000000' }}>
+                <div style={{ borderTop: '2px dashed #000000', paddingTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.79rem', color: '#000000' }}>
                   <button
                     style={{ background: 'none', border: 'none', color: '#5E33BF', textDecoration: 'underline', cursor: 'pointer', fontFamily: 'inherit', fontWeight: 700 }}
                     onClick={() => showToast('Error report dialog opened')}
@@ -676,7 +676,7 @@ export default function App() {
               <div className="wsu-card">
                 {/* Search Form Section matching Screenshot */}
                 <div style={{ marginBottom: '28px', paddingBottom: '20px', borderBottom: '1px solid #5E33BF' }}>
-                  <h3 style={{ fontSize: '1.15rem', color: '#000000', fontWeight: 400, marginBottom: '16px' }}>
+                  <h3 style={{ fontSize: '1.09rem', color: '#000000', fontWeight: 400, marginBottom: '16px' }}>
                     Search the Registration Database:
                   </h3>
 
