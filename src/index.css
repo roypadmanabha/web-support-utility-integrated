@@ -167,17 +167,17 @@ html, body {
   width: 250px;
   background-color: #F0F0EB;
   border-right: 1px solid #5E33BF;
-  padding: 20px 12px;
+  padding: 16px 12px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 14px;
   flex-shrink: 0;
 }
 
 .wsu-sidebar-section {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 1px;
 }
 
 .wsu-sidebar-heading {
@@ -186,16 +186,16 @@ html, body {
   color: #5E33BF;
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  padding: 4px 8px;
+  padding: 3px 8px;
   border-bottom: 1px solid #5E33BF;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .wsu-sidebar-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 7px 10px;
+  padding: 4px 8px;
   font-size: 0.79rem;
   color: #000000;
   background-color: transparent;
