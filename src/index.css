@@ -514,8 +514,16 @@ html, body {
 [data-theme="dark"] .wsu-header-user,
 [data-theme="dark"] .wsu-sidebar-item,
 [data-theme="dark"] .wsu-label,
-[data-theme="dark"] .wsu-card-title span {
+[data-theme="dark"] .wsu-card-title span,
+[data-theme="dark"] .wsu-radio-group,
+[data-theme="dark"] .wsu-radio-label,
+[data-theme="dark"] .wsu-radio-label span,
+[data-theme="dark"] .wsu-note-text {
   color: #F0F0EB !important;
+}
+
+.wsu-note-text {
+  color: #5E33BF;
 }
 
 [data-theme="dark"] .wsu-header-link {
@@ -598,7 +606,10 @@ html, body {
 
 [data-theme="dark"] [style*="color: #000000"],
 [data-theme="dark"] [style*="color: '#000000'"],
-[data-theme="dark"] [style*="color:#000000"] {
+[data-theme="dark"] [style*="color:#000000"],
+[data-theme="dark"] [style*="color: #5E33BF"],
+[data-theme="dark"] [style*="color: '#5E33BF'"],
+[data-theme="dark"] [style*="color:#5E33BF"] {
   color: #F0F0EB !important;
 }
 
@@ -606,4 +617,5 @@ html, body {
 [data-theme="dark"] [style*="border: 2px solid black"] {
   border-color: #F0F0EB !important;
 }
+
 

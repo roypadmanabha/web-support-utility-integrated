@@ -95,7 +95,7 @@ const SmartInputField = ({
         </div>
       ) : (
         requiredNote && (
-          <span style={{ fontSize: '0.69rem', color: '#5E33BF', fontStyle: 'italic' }}>
+          <span className="wsu-note-text" style={{ fontSize: '0.69rem', fontStyle: 'italic' }}>
             * Email is exact matching only
           </span>
         )
@@ -1406,7 +1406,7 @@ export default function App() {
                           checked={matchType === 'exact'}
                           onChange={() => setMatchType('exact')}
                         />
-                        entire field is an exact match
+                        <span>entire field is an exact match</span>
                       </label>
                       <label className="wsu-radio-label">
                         <input
@@ -1416,7 +1416,7 @@ export default function App() {
                           checked={matchType === 'contains'}
                           onChange={() => setMatchType('contains')}
                         />
-                        field contains
+                        <span>field contains</span>
                       </label>
                     </div>
                   </div>
