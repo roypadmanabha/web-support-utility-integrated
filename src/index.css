@@ -260,6 +260,14 @@ html, body {
   margin-bottom: 16px;
 }
 
+.wsu-form-stacked {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 650px;
+  margin-bottom: 16px;
+}
+
 .wsu-input-group {
   display: flex;
   flex-direction: column;

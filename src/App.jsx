@@ -59,7 +59,7 @@ const SmartInputField = ({
       } else {
         navigator.clipboard.readText().then(text => {
           if (text) onChange(text);
-        }).catch(() => {});
+        }).catch(() => { });
       }
     }
   };
@@ -94,7 +94,7 @@ const SmartInputField = ({
       ) : (
         requiredNote && (
           <span className="wsu-note-text" style={{ fontSize: '0.69rem', fontStyle: 'italic' }}>
-            * Email is exact matching only
+
           </span>
         )
       )}
@@ -429,7 +429,7 @@ export default function App() {
     if (e) e.preventDefault();
     const randomSN = `3102-${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}-00${dummyVersion}`;
     const randomKey = `DUMMY-${dummyProduct.toUpperCase().slice(0, 2)}${dummyVersion}-${dummyPlatform.toUpperCase()}-${Math.floor(10000 + Math.random() * 90000)}`;
-    
+
     const result = {
       serialNumber: randomSN,
       productKey: randomKey,
@@ -484,7 +484,7 @@ export default function App() {
     const matched = AUTH_TOKENS_LIST.filter(item => {
       const matchesEmail = !accessSearchEmail || item.userEmail.toLowerCase().includes(accessSearchEmail.toLowerCase());
       const matchesUid = !accessSearchUid || item.uid.toLowerCase().includes(accessSearchUid.toLowerCase());
-      const matchesQuery = !accessFilterQuery || 
+      const matchesQuery = !accessFilterQuery ||
         item.authToken.toLowerCase().includes(accessFilterQuery.toLowerCase()) ||
         item.clientName.toLowerCase().includes(accessFilterQuery.toLowerCase());
       return matchesEmail && matchesUid && matchesQuery;
@@ -555,7 +555,7 @@ export default function App() {
 
           {/* Main Content Card Area */}
           <main className="wsu-content">
-            
+
             {/* SUB VIEW A: SERIAL NUMBER LOOKUP TAB (MATCHING SCREENSHOT 1 & 2) */}
             {activeRegSubNav === 'Serial Number Lookup' && (
               <div className="wsu-card">
@@ -671,7 +671,7 @@ export default function App() {
                     {/* Installer Download Links */}
                     <div style={{ borderTop: '1px solid #5E33BF', paddingTop: '16px', fontSize: '0.84rem', lineHeight: 1.8 }}>
                       <p style={{ fontWeight: 700, marginBottom: '8px' }}>This product key will allow for installs of both Windows and Macintosh versions.</p>
-                      
+
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
                         <span>The user can download a copy of the Windows Installer from:</span>
                         <a href={snLookupResult.winDownload} target="_blank" rel="noreferrer" style={{ color: '#5E33BF', fontWeight: 800, textDecoration: 'underline' }}>{snLookupResult.winDownload}</a>
@@ -919,7 +919,7 @@ export default function App() {
                 {/* Dropdown Control Strip matching Screenshot */}
                 <form onSubmit={handleGenerateDummySN} style={{ marginBottom: '24px' }}>
                   <div className="wsu-strip-box" style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap', padding: '16px', borderRadius: '6px' }}>
-                    
+
                     {/* Product */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                       <label className="wsu-label">Product</label>
@@ -993,7 +993,7 @@ export default function App() {
                     <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#5E33BF', marginBottom: '10px' }}>
                       Generated Dummy License Parameters ({generatedDummyResult.product} {generatedDummyResult.version}):
                     </h4>
-                    
+
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px', fontSize: '0.9rem' }}>
                       <span className="wsu-label">Dummy Serial Number:</span>
                       <strong style={{ fontSize: '1.05rem', color: '#5E33BF' }}>{generatedDummyResult.serialNumber}</strong>
@@ -1150,7 +1150,7 @@ export default function App() {
                 {/* Installer Download Links */}
                 <div style={{ borderTop: '1px solid #5E33BF', paddingTop: '14px', fontSize: '0.85rem', lineHeight: 1.7 }}>
                   <p style={{ fontWeight: 700, marginBottom: '6px' }}>This product key will allow for installs of both Windows and Macintosh versions.</p>
-                  
+
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
                     <span>The user can download a copy of the Windows Installer from:</span>
                     <a href={selectedSerialDetail.winDownload} style={{ color: '#5E33BF', fontWeight: 700 }}>{selectedSerialDetail.winDownload}</a>
@@ -1308,7 +1308,7 @@ export default function App() {
 
         {/* MAIN CONTENT VIEWS */}
         <main className="wsu-content">
-          
+
           {/* VIEW 1: SEARCH CUSTOMERS */}
           {activeNav === 'Search Customers' && (
             <div>
@@ -1326,9 +1326,9 @@ export default function App() {
                 </div>
 
                 <form onSubmit={handleCustomerSearch}>
-                  <div className="wsu-form-grid">
-                    
-                    {/* Email Input */}
+                  <div className="wsu-form-stacked">
+
+                    {/* 1. Email (mail id) */}
                     <SmartInputField
                       label="Email*"
                       value={searchEmail}
@@ -1338,7 +1338,15 @@ export default function App() {
                       errorMessage={checkSpaceInEmail(searchEmail)}
                     />
 
-                    {/* Steam ID Input */}
+                    {/* 2. Serial Number (serial no) */}
+                    <SmartInputField
+                      label="Serial Number:"
+                      value={searchSerialNumber}
+                      onChange={setSearchSerialNumber}
+                      fieldLabel="Serial Number"
+                    />
+
+                    {/* 3. Steam ID */}
                     <SmartInputField
                       label="Steam ID:"
                       value={searchSteamId}
@@ -1346,7 +1354,7 @@ export default function App() {
                       fieldLabel="Steam ID"
                     />
 
-                    {/* UID Input */}
+                    {/* 4. UID */}
                     <SmartInputField
                       label="UID:"
                       value={searchUid}
@@ -1354,7 +1362,7 @@ export default function App() {
                       fieldLabel="UID"
                     />
 
-                    {/* Researcher ID Input */}
+                    {/* 5. Researcher ID */}
                     <SmartInputField
                       label="Researcher ID:"
                       value={searchResearcherId}
@@ -1362,20 +1370,12 @@ export default function App() {
                       fieldLabel="Researcher ID"
                     />
 
-                    {/* Internal ID Input */}
+                    {/* 6. Internal ID */}
                     <SmartInputField
                       label="Internal ID:"
                       value={searchInternalId}
                       onChange={setSearchInternalId}
                       fieldLabel="Internal ID"
-                    />
-
-                    {/* Serial Number Input */}
-                    <SmartInputField
-                      label="Serial Number:"
-                      value={searchSerialNumber}
-                      onChange={setSearchSerialNumber}
-                      fieldLabel="Serial Number"
                     />
                   </div>
 
@@ -1625,26 +1625,26 @@ export default function App() {
             'Search Customers',
             'User Access Lookup'
           ].includes(activeNav) && (
-            <div className="wsu-card">
-              <div className="wsu-card-title">{activeNav}</div>
-              <p style={{ fontSize: '0.9rem', color: '#000000', marginBottom: '16px' }}>
-                Web Support Utility customer support management view for <strong>{activeNav}</strong>.
-              </p>
-              
-              <div style={{ maxWidth: '450px', marginBottom: '16px' }}>
-                <SmartInputField
-                  label="Search Query / Reference ID:"
-                  value={genericQuery}
-                  onChange={setGenericQuery}
-                  fieldLabel="Query"
-                />
-              </div>
+              <div className="wsu-card">
+                <div className="wsu-card-title">{activeNav}</div>
+                <p style={{ fontSize: '0.9rem', color: '#000000', marginBottom: '16px' }}>
+                  Web Support Utility customer support management view for <strong>{activeNav}</strong>.
+                </p>
 
-              <button className="wsu-btn-primary" onClick={() => showToast(`Executed ${activeNav} task`)}>
-                Execute {activeNav}
-              </button>
-            </div>
-          )}
+                <div style={{ maxWidth: '450px', marginBottom: '16px' }}>
+                  <SmartInputField
+                    label="Search Query / Reference ID:"
+                    value={genericQuery}
+                    onChange={setGenericQuery}
+                    fieldLabel="Query"
+                  />
+                </div>
+
+                <button className="wsu-btn-primary" onClick={() => showToast(`Executed ${activeNav} task`)}>
+                  Execute {activeNav}
+                </button>
+              </div>
+            )}
 
         </main>
       </div>
