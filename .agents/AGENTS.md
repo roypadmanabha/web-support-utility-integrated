@@ -11,3 +11,7 @@ Do NOT use any other colors anywhere in the application.
 ## TYPOGRAPHY
 Use the custom **Regular Clarivate** typeface (designed by A2-TYPE inspired by Futura, Memphis, and Karnak):
 - `font-family: 'Clarivate', 'Clarivate Regular', Futura, 'Memphis', 'Karnak', sans-serif;`
+
+## DEPLOYMENT CONSTRAINTS
+- Update and test on **localhost only**.
+- Do NOT deploy to Vercel or run any Vercel deployment commands unless explicitly instructed by the user.
