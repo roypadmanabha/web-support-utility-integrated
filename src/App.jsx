@@ -1504,26 +1504,6 @@ export default function App() {
                   )}
                 </div>
               )}
-
-              {/* RED BOX BUTTON: SERIAL NUMBER LOOKUP / REGISTRATION DATABASE */}
-              <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'center' }}>
-                <button
-                  className="wsu-btn-primary"
-                  onClick={() => {
-                    setCurrentPage('registration-database');
-                    showToast('Navigated to Registration Database Page');
-                  }}
-                  style={{
-                    borderRadius: '10px',
-                    padding: '12px 28px',
-                    fontSize: '0.89rem',
-                    fontWeight: 400,
-                    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.25)'
-                  }}
-                >
-                  Serial Number Lookup / Registration Database
-                </button>
-              </div>
             </div>
           )}
 
@@ -1645,6 +1625,26 @@ export default function App() {
                 </button>
               </div>
             )}
+
+          {/* UNIVERSAL BUTTON AT THE ENDED SECTION OF EACH TAB VIEW */}
+          <div style={{ marginTop: '28px', marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
+            <button
+              className="wsu-btn-primary"
+              onClick={() => {
+                setCurrentPage('registration-database');
+                showToast('Navigated to Registration Database Page');
+              }}
+              style={{
+                borderRadius: '10px',
+                padding: '12px 28px',
+                fontSize: '0.89rem',
+                fontWeight: 400,
+                boxShadow: '0 4px 10px rgba(0, 0, 0, 0.25)'
+              }}
+            >
+              Serial Number Lookup / Registration Database
+            </button>
+          </div>
 
         </main>
       </div>
