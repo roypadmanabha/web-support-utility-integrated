@@ -281,6 +281,10 @@ html, body {
   color: #000000;
 }
 
+.wsu-input-group .wsu-label {
+  font-weight: 700;
+}
+
 .wsu-input-wrapper {
   display: flex;
   align-items: center;

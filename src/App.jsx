@@ -67,7 +67,7 @@ const SmartInputField = ({
 
   return (
     <div className="wsu-input-group" style={style}>
-      {label && <label className="wsu-label">{label}</label>}
+      {label && <label className="wsu-label" style={{ fontWeight: 700 }}>{label}</label>}
       <div style={{ display: 'flex', alignItems: 'stretch', gap: '10px' }}>
         <div
           className="wsu-input-wrapper"
@@ -1448,7 +1448,7 @@ export default function App() {
 
                   {/* Radio Match Options */}
                   <div style={{ marginBottom: '16px' }}>
-                    <div className="wsu-label" style={{ marginBottom: '6px' }}>Matching:</div>
+                    <div className="wsu-label" style={{ marginBottom: '6px', fontWeight: 400 }}>Matching:</div>
                     <div className="wsu-radio-group">
                       <label className="wsu-radio-label">
                         <input
