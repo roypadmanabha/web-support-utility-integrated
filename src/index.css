@@ -264,7 +264,8 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  max-width: 650px;
+  width: 100%;
+  max-width: 780px;
   margin-bottom: 16px;
 }
 

@@ -41,7 +41,8 @@ const SmartInputField = ({
   style = {},
   errorMessage = null,
   onCopy,
-  onPaste
+  onPaste,
+  afterButton = null
 }) => {
   const valStr = value !== undefined && value !== null ? String(value) : '';
   const hasValue = valStr.trim().length > 0;
@@ -67,25 +68,31 @@ const SmartInputField = ({
   return (
     <div className="wsu-input-group" style={style}>
       {label && <label className="wsu-label">{label}</label>}
-      <div
-        className="wsu-input-wrapper"
-        style={errorMessage ? { borderColor: '#CC0000', boxShadow: '0 0 0 1px #CC0000' } : {}}
-      >
-        <input
-          type={type}
-          className="wsu-input"
-          value={valStr}
-          onChange={(e) => onChange(e.target.value)}
-          autoComplete="off"
-          spellCheck="false"
-        />
-        <button
-          type="button"
-          className="wsu-action-btn"
-          onClick={handleButtonClick}
+      <div style={{ display: 'flex', alignItems: 'stretch', gap: '10px' }}>
+        <div
+          className="wsu-input-wrapper"
+          style={{
+            flex: 1,
+            ...(errorMessage ? { borderColor: '#CC0000', boxShadow: '0 0 0 1px #CC0000' } : {})
+          }}
         >
-          {hasValue ? 'Copy' : 'Paste'}
-        </button>
+          <input
+            type={type}
+            className="wsu-input"
+            value={valStr}
+            onChange={(e) => onChange(e.target.value)}
+            autoComplete="off"
+            spellCheck="false"
+          />
+          <button
+            type="button"
+            className="wsu-action-btn"
+            onClick={handleButtonClick}
+          >
+            {hasValue ? 'Copy' : 'Paste'}
+          </button>
+        </div>
+        {afterButton}
       </div>
       {errorMessage ? (
         <div style={{ fontSize: '0.72rem', color: '#CC0000', fontWeight: 400, marginTop: '4px' }}>
@@ -1336,6 +1343,16 @@ export default function App() {
                       requiredNote={true}
                       fieldLabel="Email"
                       errorMessage={checkSpaceInEmail(searchEmail)}
+                      afterButton={
+                        <button
+                          type="submit"
+                          className="wsu-btn-primary"
+                          onClick={handleCustomerSearch}
+                          style={{ minWidth: '145px', flexShrink: 0 }}
+                        >
+                          Search Customers
+                        </button>
+                      }
                     />
 
                     {/* 2. Serial Number (serial no) */}
@@ -1344,6 +1361,16 @@ export default function App() {
                       value={searchSerialNumber}
                       onChange={setSearchSerialNumber}
                       fieldLabel="Serial Number"
+                      afterButton={
+                        <button
+                          type="submit"
+                          className="wsu-btn-primary"
+                          onClick={handleCustomerSearch}
+                          style={{ minWidth: '145px', flexShrink: 0 }}
+                        >
+                          Search Customers
+                        </button>
+                      }
                     />
 
                     {/* 3. Steam ID */}
@@ -1352,6 +1379,16 @@ export default function App() {
                       value={searchSteamId}
                       onChange={setSearchSteamId}
                       fieldLabel="Steam ID"
+                      afterButton={
+                        <button
+                          type="submit"
+                          className="wsu-btn-primary"
+                          onClick={handleCustomerSearch}
+                          style={{ minWidth: '145px', flexShrink: 0 }}
+                        >
+                          Search Customers
+                        </button>
+                      }
                     />
 
                     {/* 4. UID */}
@@ -1360,6 +1397,16 @@ export default function App() {
                       value={searchUid}
                       onChange={setSearchUid}
                       fieldLabel="UID"
+                      afterButton={
+                        <button
+                          type="submit"
+                          className="wsu-btn-primary"
+                          onClick={handleCustomerSearch}
+                          style={{ minWidth: '145px', flexShrink: 0 }}
+                        >
+                          Search Customers
+                        </button>
+                      }
                     />
 
                     {/* 5. Researcher ID */}
@@ -1368,6 +1415,16 @@ export default function App() {
                       value={searchResearcherId}
                       onChange={setSearchResearcherId}
                       fieldLabel="Researcher ID"
+                      afterButton={
+                        <button
+                          type="submit"
+                          className="wsu-btn-primary"
+                          onClick={handleCustomerSearch}
+                          style={{ minWidth: '145px', flexShrink: 0 }}
+                        >
+                          Search Customers
+                        </button>
+                      }
                     />
 
                     {/* 6. Internal ID */}
@@ -1376,6 +1433,16 @@ export default function App() {
                       value={searchInternalId}
                       onChange={setSearchInternalId}
                       fieldLabel="Internal ID"
+                      afterButton={
+                        <button
+                          type="submit"
+                          className="wsu-btn-primary"
+                          onClick={handleCustomerSearch}
+                          style={{ minWidth: '145px', flexShrink: 0 }}
+                        >
+                          Search Customers
+                        </button>
+                      }
                     />
                   </div>
 
@@ -1405,11 +1472,6 @@ export default function App() {
                       </label>
                     </div>
                   </div>
-
-                  {/* Submit Button */}
-                  <button type="submit" className="wsu-btn-primary">
-                    Search Customers
-                  </button>
                 </form>
               </div>
 
