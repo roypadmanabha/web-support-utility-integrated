@@ -199,8 +199,8 @@ html, body {
   font-size: 0.79rem;
   color: #000000;
   background-color: transparent;
-  border: 1px solid transparent;
-  border-radius: 3px;
+  border: 0.5px solid transparent;
+  border-radius: 2px;
   cursor: pointer;
   text-align: left;
   font-family: inherit;
@@ -284,15 +284,15 @@ html, body {
 .wsu-input-wrapper {
   display: flex;
   align-items: center;
-  border: 2px solid #000000;
+  border: 0.5px solid #000000;
   background-color: #F0F0EB;
-  border-radius: 4px;
+  border-radius: 2px;
   overflow: hidden;
 }
 
 .wsu-input-wrapper:focus-within {
   border-color: #5E33BF;
-  box-shadow: 0 0 0 2px #5E33BF;
+  box-shadow: 0 0 0 0.5px #5E33BF;
 }
 
 .wsu-input {
@@ -319,7 +319,7 @@ html, body {
   display: flex;
   align-items: center;
   gap: 4px;
-  border-left: 1px solid #000000;
+  border-left: 0.5px solid #000000;
   white-space: nowrap;
   transition: background-color 0.15s;
 }
@@ -333,8 +333,8 @@ html, body {
   padding: 8px 18px;
   background-color: #5E33BF;
   color: #F0F0EB;
-  border: 2px solid #000000;
-  border-radius: 6px;
+  border: 0.5px solid #000000;
+  border-radius: 2px;
   font-family: inherit;
   font-size: 0.79rem;
   font-weight: 400;
@@ -355,8 +355,8 @@ html, body {
   padding: 8px 16px;
   background-color: #F0F0EB;
   color: #000000;
-  border: 2px solid #000000;
-  border-radius: 6px;
+  border: 0.5px solid #000000;
+  border-radius: 2px;
   font-family: inherit;
   font-size: 0.79rem;
   font-weight: 400;
@@ -497,12 +497,12 @@ html, body {
 
 .wsu-select {
   padding: 6px 12px;
-  border: 2px solid #000000;
+  border: 0.5px solid #000000;
   background-color: #F0F0EB;
   color: #000000;
   font-family: inherit;
   font-weight: 700;
-  border-radius: 4px;
+  border-radius: 2px;
 }
 
 .wsu-input::placeholder {
@@ -606,7 +606,7 @@ html, body {
 
 [data-theme="dark"] .wsu-input-wrapper {
   background-color: #000000 !important;
-  border-color: #F0F0EB !important;
+  border: 0.5px solid #F0F0EB !important;
 }
 
 [data-theme="dark"] .wsu-input {
@@ -622,19 +622,19 @@ html, body {
 [data-theme="dark"] .wsu-btn-primary {
   background-color: #5E33BF !important;
   color: #F0F0EB !important;
-  border-color: #F0F0EB !important;
+  border: 0.5px solid #F0F0EB !important;
 }
 
 [data-theme="dark"] .wsu-btn-primary:hover {
   background-color: #000000 !important;
   color: #F0F0EB !important;
-  border-color: #5E33BF !important;
+  border: 0.5px solid #5E33BF !important;
 }
 
 [data-theme="dark"] .wsu-action-btn {
   background-color: #5E33BF !important;
   color: #F0F0EB !important;
-  border-left-color: #F0F0EB !important;
+  border-left: 0.5px solid #F0F0EB !important;
 }
 
 [data-theme="dark"] .wsu-action-btn:hover {
@@ -645,13 +645,13 @@ html, body {
 [data-theme="dark"] .wsu-btn-secondary {
   background-color: #000000 !important;
   color: #F0F0EB !important;
-  border-color: #F0F0EB !important;
+  border: 0.5px solid #F0F0EB !important;
 }
 
 [data-theme="dark"] .wsu-btn-secondary:hover {
   background-color: #5E33BF !important;
   color: #F0F0EB !important;
-  border-color: #5E33BF !important;
+  border: 0.5px solid #5E33BF !important;
 }
 
 [data-theme="dark"] .wsu-form-box,
@@ -692,7 +692,7 @@ html, body {
 [data-theme="dark"] .wsu-select {
   background-color: #000000 !important;
   color: #F0F0EB !important;
-  border-color: #F0F0EB !important;
+  border: 0.5px solid #F0F0EB !important;
 }
 
 [data-theme="dark"] select option {
@@ -725,10 +725,23 @@ html, body {
   color: #F0F0EB !important;
 }
 
+[data-theme="dark"] [style*="border: 0.5px solid #000000"],
+[data-theme="dark"] [style*="border: 0.5px solid black"],
 [data-theme="dark"] [style*="border: 2px solid #000000"],
 [data-theme="dark"] [style*="border: 2px solid black"],
 [data-theme="dark"] [style*="border-top: 2px dashed #000000"] {
   border-color: #F0F0EB !important;
+}
+
+/* Universal constraint: All buttons and inputs must have border size <= 0.5px and refined low-density radius (2px) */
+.wsu-input-wrapper,
+.wsu-btn-primary,
+.wsu-btn-secondary,
+.wsu-select,
+button.wsu-btn-primary,
+button.wsu-btn-secondary {
+  border-width: 0.5px !important;
+  border-radius: 2px !important;
 }
 
 

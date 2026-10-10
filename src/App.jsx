@@ -1603,7 +1603,7 @@ export default function App() {
                   <select
                     value={showEntriesCount}
                     onChange={(e) => setShowEntriesCount(e.target.value)}
-                    style={{ padding: '4px 8px', border: '2px solid #000000', background: '#F0F0EB', fontFamily: 'inherit', fontWeight: 700 }}
+                    style={{ padding: '4px 8px', border: '0.5px solid #000000', borderRadius: '2px', background: '#F0F0EB', fontFamily: 'inherit', fontWeight: 700 }}
                   >
                     <option value={10}>10</option>
                     <option value={25}>25</option>
@@ -1697,7 +1697,7 @@ export default function App() {
                 showToast('Navigated to Registration Database Page');
               }}
               style={{
-                borderRadius: '10px',
+                borderRadius: '2px',
                 padding: '12px 28px',
                 fontSize: '0.89rem',
                 fontWeight: 400,
