@@ -110,7 +110,7 @@ const SmartInputField = ({
 };
 
 // Top-level Header Bar Component
-const HeaderBar = ({ titleText, backActionText, onBackClick, onShowToast, theme, onToggleTheme }) => (
+const HeaderBar = ({ titleText, backActionText, onBackClick, onShowToast, theme, onToggleTheme, centerAction }) => (
   <header className="wsu-header">
     <div className="wsu-header-left">
       <div className="wsu-header-logo-container">
@@ -120,6 +120,12 @@ const HeaderBar = ({ titleText, backActionText, onBackClick, onShowToast, theme,
         <span>{titleText || 'Web Support Utility (WSU)'}</span>
       </div>
     </div>
+
+    {centerAction && (
+      <div className="wsu-header-center">
+        {centerAction}
+      </div>
+    )}
 
     <div className="wsu-header-right">
       {backActionText && onBackClick && (
@@ -1214,6 +1220,24 @@ export default function App() {
         theme={theme}
         onToggleTheme={toggleTheme}
         onShowToast={showToast}
+        centerAction={
+          <button
+            type="button"
+            className="wsu-btn-primary"
+            onClick={() => {
+              setCurrentPage('registration-database');
+              showToast('Navigated to Registration Database Page');
+            }}
+            style={{
+              padding: '6px 18px',
+              fontSize: '0.82rem',
+              fontWeight: 600,
+              letterSpacing: '0.2px'
+            }}
+          >
+            SLN Lookup / Reg. Database
+          </button>
+        }
       />
 
       {/* BODY CONTENT */}
@@ -1687,26 +1711,6 @@ export default function App() {
                 </button>
               </div>
             )}
-
-          {/* UNIVERSAL BUTTON AT THE ENDED SECTION OF EACH TAB VIEW */}
-          <div style={{ marginTop: '28px', marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
-            <button
-              className="wsu-btn-primary"
-              onClick={() => {
-                setCurrentPage('registration-database');
-                showToast('Navigated to Registration Database Page');
-              }}
-              style={{
-                borderRadius: '2px',
-                padding: '12px 28px',
-                fontSize: '0.89rem',
-                fontWeight: 400,
-                boxShadow: '0 4px 10px rgba(0, 0, 0, 0.25)'
-              }}
-            >
-              Serial Number Lookup / Registration Database
-            </button>
-          </div>
 
         </main>
       </div>

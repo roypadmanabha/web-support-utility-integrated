@@ -68,6 +68,9 @@ html, body {
 
 /* Header Navbar (#F0F0EB background, clean vertical alignment) */
 .wsu-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
   min-height: 64px;
   background-color: #F0F0EB;
   color: #000000;
@@ -77,6 +80,13 @@ html, body {
   padding: 12px 24px;
   border-bottom: 1px solid #5E33BF;
   gap: 20px;
+}
+
+.wsu-header-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
 }
 
 .wsu-header-left {
