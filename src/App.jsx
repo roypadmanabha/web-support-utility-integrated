@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { CUSTOMER_DATABASE, AUTH_TOKENS_LIST, SERIAL_NUMBERS_DATABASE } from './mockData';
+import { CUSTOMER_DATABASE, AUTH_TOKENS_LIST, SERIAL_NUMBERS_DATABASE, CUSTOMER_ASSOCIATIONS, UNIVERSITY_LIST } from './mockData';
+import SiteLicensesView from './SiteLicensesView';
+import CustomerPasswordView from './CustomerPasswordView';
+import GroupsSharingView from './GroupsSharingView';
+import AlterReferenceDataView from './AlterReferenceDataView';
+import SerialNumberHistoryLookupView from './SerialNumberHistoryLookupView';
 
 // Space validation helper for email inputs
 const checkSpaceInEmail = (emailStr) => {
@@ -42,10 +47,35 @@ const SmartInputField = ({
   errorMessage = null,
   onCopy,
   onPaste,
-  afterButton = null
+  afterButton = null,
+  historyKey = null
 }) => {
   const valStr = value !== undefined && value !== null ? String(value) : '';
   const hasValue = valStr.trim().length > 0;
+  const [showHistory, setShowHistory] = React.useState(false);
+  const [history, setHistory] = React.useState([]);
+
+  const loadHistory = () => {
+    if (!historyKey) return [];
+    try { return JSON.parse(localStorage.getItem(`wsu_history_${historyKey}`) || '[]'); }
+    catch { return []; }
+  };
+
+  const handleFocus = () => {
+    if (!historyKey) return;
+    const h = loadHistory();
+    setHistory(h);
+    if (h.length > 0) setShowHistory(true);
+  };
+
+  const handleBlur = () => {
+    setTimeout(() => setShowHistory(false), 180);
+  };
+
+  const handleSelectHistory = (val) => {
+    onChange(val);
+    setShowHistory(false);
+  };
 
   const handleButtonClick = () => {
     if (hasValue) {
@@ -66,31 +96,97 @@ const SmartInputField = ({
   };
 
   return (
-    <div className="wsu-input-group" style={style}>
+    <div className="wsu-input-group" style={{ ...style, position: 'relative' }}>
       {label && <label className="wsu-label" style={{ fontWeight: 700 }}>{label}</label>}
       <div style={{ display: 'flex', alignItems: 'stretch', gap: '10px' }}>
-        <div
-          className="wsu-input-wrapper"
-          style={{
-            flex: 1,
-            ...(errorMessage ? { borderColor: '#CC0000', boxShadow: '0 0 0 1px #CC0000' } : {})
-          }}
-        >
-          <input
-            type={type}
-            className="wsu-input"
-            value={valStr}
-            onChange={(e) => onChange(e.target.value)}
-            autoComplete="off"
-            spellCheck="false"
-          />
-          <button
-            type="button"
-            className="wsu-action-btn"
-            onClick={handleButtonClick}
+        <div style={{ position: 'relative', flex: 1 }}>
+          <div
+            className="wsu-input-wrapper"
+            style={errorMessage ? { borderColor: '#CC0000', boxShadow: '0 0 0 1px #CC0000' } : {}}
           >
-            {hasValue ? 'Copy' : 'Paste'}
-          </button>
+            <input
+              type={type}
+              className="wsu-input"
+              value={valStr}
+              onChange={(e) => onChange(e.target.value)}
+              autoComplete="off"
+              spellCheck="false"
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+            />
+            <button
+              type="button"
+              className="wsu-action-btn"
+              onClick={handleButtonClick}
+            >
+              {hasValue ? 'Copy' : 'Paste'}
+            </button>
+          </div>
+
+          {/* Recent Search History Dropdown */}
+          {showHistory && history.length > 0 && (
+            <div style={{
+              position: 'absolute',
+              top: '100%',
+              left: 0,
+              right: 0,
+              zIndex: 300,
+              backgroundColor: '#F0F0EB',
+              border: '1px solid #5E33BF',
+              borderTop: 'none',
+              borderRadius: '0 0 4px 4px',
+              boxShadow: '0 6px 20px rgba(0,0,0,0.18)',
+              overflow: 'hidden'
+            }}>
+              <div style={{
+                padding: '5px 12px',
+                fontSize: '0.63rem',
+                color: '#5E33BF',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '0.7px',
+                borderBottom: '0.5px solid #5E33BF',
+                backgroundColor: '#F0F0EB'
+              }}>
+                Recent Searches
+              </div>
+              {history.map((item, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onMouseDown={() => handleSelectHistory(item)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '9px',
+                    width: '100%',
+                    padding: '7px 12px',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    borderBottom: i < history.length - 1 ? '0.5px solid rgba(94,51,191,0.18)' : 'none',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                    fontSize: '0.81rem',
+                    color: '#000000'
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.backgroundColor = '#5E33BF';
+                    e.currentTarget.querySelector('span.hist-label').style.color = '#F0F0EB';
+                    e.currentTarget.querySelector('span.hist-icon').style.color = '#F0F0EB';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.querySelector('span.hist-label').style.color = '#000000';
+                    e.currentTarget.querySelector('span.hist-icon').style.color = '#5E33BF';
+                  }}
+                >
+                  <span className="hist-icon" style={{ fontSize: '0.78rem', flexShrink: 0, color: '#5E33BF' }}>🕐</span>
+                  <span className="hist-label" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1, color: '#000000' }}>{item}</span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         {afterButton}
       </div>
@@ -223,6 +319,23 @@ export default function App() {
 
   // Generic Nav Input State
   const [genericQuery, setGenericQuery] = useState('');
+
+  // Expiration Dates State
+  const [expirationCustomer, setExpirationCustomer] = useState(null);
+  const [expirationEmail, setExpirationEmail] = useState('');
+  const [newDesktopMonth, setNewDesktopMonth] = useState('July');
+  const [newDesktopDay, setNewDesktopDay] = useState('28');
+  const [newDesktopYear, setNewDesktopYear] = useState('2028');
+  const [newIpMonth, setNewIpMonth] = useState('October');
+  const [newIpDay, setNewIpDay] = useState('21');
+  const [newIpYear, setNewIpYear] = useState('2027');
+
+  // Customer Associations State
+  const [associationsEmail, setAssociationsEmail] = useState('');
+  const [associationsRows, setAssociationsRows] = useState(null);
+  const [assocChecked, setAssocChecked] = useState({});
+  const [assocAllChecked, setAssocAllChecked] = useState(false);
+  const [assocAddUniversity, setAssocAddUniversity] = useState(UNIVERSITY_LIST[0]);
 
   // Toast notification trigger
   const showToast = (msg) => {
@@ -390,6 +503,23 @@ export default function App() {
 
     setSearchResults(results);
     showToast(`Found ${results.length} matching customer record(s)`);
+
+    // Save non-empty field values to per-field search history
+    const saveHist = (key, val) => {
+      if (!key || !String(val).trim()) return;
+      try {
+        const stored = JSON.parse(localStorage.getItem(`wsu_history_${key}`) || '[]');
+        const v = String(val).trim();
+        const updated = [v, ...stored.filter(s => s !== v)].slice(0, 5);
+        localStorage.setItem(`wsu_history_${key}`, JSON.stringify(updated));
+      } catch {}
+    };
+    saveHist('email', searchEmail);
+    saveHist('serialNumber', searchSerialNumber);
+    saveHist('steamId', searchSteamId);
+    saveHist('uid', searchUid);
+    saveHist('researcherId', searchResearcherId);
+    saveHist('internalId', searchInternalId);
   };
 
   // Reset Search Form
@@ -422,6 +552,14 @@ export default function App() {
     setSelectedSerialDetail(cust);
     setCurrentPage('serial-detail');
     showToast(`Viewing license details for Serial #${cust.serialNumber}`);
+  };
+
+  // Open Expiration Dates view for a customer (triggered by clicking Serial Number in Search Results)
+  const handleOpenExpirationDates = (cust) => {
+    setExpirationCustomer(cust);
+    setExpirationEmail(cust.email || '');
+    setActiveNav('Expiration Dates');
+    showToast(`Viewing expiration dates for ${cust.email}`);
   };
 
   // Handle SN Lookup Form Submission
@@ -1040,8 +1178,42 @@ export default function App() {
               </div>
             )}
 
+            {/* SUB VIEW: SITE LICENSES (MATCHING SCREENSHOTS 1 & 2 EXACTLY) */}
+            {activeRegSubNav === 'Site Licenses' && (
+              <div
+                className="wsu-card"
+                style={{
+                  padding: '24px 20px',
+                  border: '1px solid #5E33BF',
+                  borderRadius: '6px'
+                }}
+              >
+                <SiteLicensesView
+                  theme={theme}
+                  onSelectSerial={(sn) => {
+                    const found = CUSTOMER_DATABASE.find((c) => c.serialNumber === sn) || {
+                      serialNumber: sn,
+                      productKey: 'PK-' + sn.substring(0, 6),
+                      productSummary: 'EndNote Multi-User / Site License Product',
+                      regDeadline: '2028-12-31',
+                      latestExpDate: '2029-01-01',
+                      webSeats: 'Unlimited',
+                      winDownload: `https://download.endnote.com/site/${sn}/EndNoteWinInstaller.zip`,
+                      macDownload: `https://download.endnote.com/site/${sn}/EndNoteMacInstaller.dmg`,
+                      customerName: 'Site License Customer',
+                      email: 'admin@customer.org'
+                    };
+                    setSelectedSerialDetail(found);
+                    setCurrentPage('serial-detail');
+                    showToast(`Redirected to license expiration details for ${sn}`);
+                  }}
+                  onShowToast={showToast}
+                />
+              </div>
+            )}
+
             {/* OTHER SUB VIEWS */}
-            {!['Serial Number Lookup', 'Registration Database', 'Dummy Serial Number'].includes(activeRegSubNav) && (
+            {!['Serial Number Lookup', 'Registration Database', 'Dummy Serial Number', 'Site Licenses'].includes(activeRegSubNav) && (
               <div className="wsu-card">
                 <div className="wsu-card-title">
                   <span>{activeRegSubNav}</span>
@@ -1366,6 +1538,7 @@ export default function App() {
                       onChange={setSearchEmail}
                       requiredNote={true}
                       fieldLabel="Email"
+                      historyKey="email"
                       errorMessage={checkSpaceInEmail(searchEmail)}
                       afterButton={
                         <button
@@ -1385,6 +1558,7 @@ export default function App() {
                       value={searchSerialNumber}
                       onChange={setSearchSerialNumber}
                       fieldLabel="Serial Number"
+                      historyKey="serialNumber"
                       afterButton={
                         <button
                           type="submit"
@@ -1403,6 +1577,7 @@ export default function App() {
                       value={searchSteamId}
                       onChange={setSearchSteamId}
                       fieldLabel="Steam ID"
+                      historyKey="steamId"
                       afterButton={
                         <button
                           type="submit"
@@ -1421,6 +1596,7 @@ export default function App() {
                       value={searchUid}
                       onChange={setSearchUid}
                       fieldLabel="UID"
+                      historyKey="uid"
                       afterButton={
                         <button
                           type="submit"
@@ -1439,6 +1615,7 @@ export default function App() {
                       value={searchResearcherId}
                       onChange={setSearchResearcherId}
                       fieldLabel="Researcher ID"
+                      historyKey="researcherId"
                       afterButton={
                         <button
                           type="submit"
@@ -1457,6 +1634,7 @@ export default function App() {
                       value={searchInternalId}
                       onChange={setSearchInternalId}
                       fieldLabel="Internal ID"
+                      historyKey="internalId"
                       afterButton={
                         <button
                           type="submit"
@@ -1529,61 +1707,77 @@ export default function App() {
                             <th>Cust ID</th>
                             <th>Virt Cust ID</th>
                             <th>Cite DB</th>
+                            <th>State</th>
+                            <th>Lib Ver</th>
+                            <th>File Storage</th>
+                            <th>Last USN</th>
+                            <th>Full Sync Before</th>
+                            <th>Recov Sync Before</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {searchResults.map((row, idx) => (
-                            <tr key={idx}>
-                              <td>
-                                {row.first}
-                                <button className="wsu-copy-cell-btn" onClick={() => handleCopy(row.first, 'First Name')}>Copy</button>
-                              </td>
-                              <td>
-                                {row.last}
-                                <button className="wsu-copy-cell-btn" onClick={() => handleCopy(row.last, 'Last Name')}>Copy</button>
-                              </td>
-                              <td>
-                                <strong>{row.email}</strong>
-                                <button className="wsu-copy-cell-btn" onClick={() => handleCopy(row.email, 'Email')}>Copy</button>
-                              </td>
-                              <td>
-                                {row.steamId}
-                                <button className="wsu-copy-cell-btn" onClick={() => handleCopy(row.steamId, 'Steam ID')}>Copy</button>
-                              </td>
-                              <td>
-                                <code>{row.uid}</code>
-                                <button className="wsu-copy-cell-btn" onClick={() => handleCopy(row.uid, 'UID')}>Copy</button>
-                              </td>
-                              <td>
-                                {row.researcherId}
-                                <button className="wsu-copy-cell-btn" onClick={() => handleCopy(row.researcherId, 'Researcher ID')}>Copy</button>
-                              </td>
-                              <td>
-                                {row.internalId}
-                                <button className="wsu-copy-cell-btn" onClick={() => handleCopy(row.internalId, 'Internal ID')}>Copy</button>
-                              </td>
-                              <td>
-                                <button
-                                  style={{
-                                    background: 'none',
-                                    border: 'none',
-                                    color: '#5E33BF',
-                                    fontWeight: 'bold',
-                                    textDecoration: 'underline',
-                                    cursor: 'pointer',
-                                    fontFamily: 'inherit'
-                                  }}
-                                  onClick={() => handleOpenSerialDetail(row)}
-                                >
-                                  {row.serialNumber}
-                                </button>
-                                <button className="wsu-copy-cell-btn" onClick={() => handleCopy(row.serialNumber, 'Serial Number')}>Copy</button>
-                              </td>
-                              <td>{row.custId}</td>
-                              <td>{row.virtCustId}</td>
-                              <td>{row.citeDb}</td>
-                            </tr>
-                          ))}
+                          {searchResults.map((row, idx) => {
+                            // Helper: display 'null' string for empty/null/undefined values
+                            const d = (val) => (val === null || val === undefined || val === '' ? 'null' : val);
+                            return (
+                              <tr key={idx}>
+                                <td>
+                                  {d(row.first)}
+                                  <button className="wsu-copy-cell-btn" onClick={() => handleCopy(d(row.first), 'First Name')}>Copy</button>
+                                </td>
+                                <td>
+                                  {d(row.last)}
+                                  <button className="wsu-copy-cell-btn" onClick={() => handleCopy(d(row.last), 'Last Name')}>Copy</button>
+                                </td>
+                                <td>
+                                  <strong>{d(row.email)}</strong>
+                                  <button className="wsu-copy-cell-btn" onClick={() => handleCopy(d(row.email), 'Email')}>Copy</button>
+                                </td>
+                                <td>
+                                  {d(row.steamId)}
+                                  <button className="wsu-copy-cell-btn" onClick={() => handleCopy(d(row.steamId), 'Steam ID')}>Copy</button>
+                                </td>
+                                <td>
+                                  <code>{d(row.uid)}</code>
+                                  <button className="wsu-copy-cell-btn" onClick={() => handleCopy(d(row.uid), 'UID')}>Copy</button>
+                                </td>
+                                <td>
+                                  {d(row.researcherId)}
+                                  <button className="wsu-copy-cell-btn" onClick={() => handleCopy(d(row.researcherId), 'Researcher ID')}>Copy</button>
+                                </td>
+                                <td>
+                                  {d(row.internalId)}
+                                  <button className="wsu-copy-cell-btn" onClick={() => handleCopy(d(row.internalId), 'Internal ID')}>Copy</button>
+                                </td>
+                                <td>
+                                  <button
+                                    style={{
+                                      background: 'none',
+                                      border: 'none',
+                                      color: '#5E33BF',
+                                      fontWeight: 'bold',
+                                      textDecoration: 'underline',
+                                      cursor: 'pointer',
+                                      fontFamily: 'inherit'
+                                    }}
+                                    onClick={() => handleOpenExpirationDates(row)}
+                                  >
+                                    {d(row.serialNumber)}
+                                  </button>
+                                  <button className="wsu-copy-cell-btn" onClick={() => handleCopy(d(row.serialNumber), 'Serial Number')}>Copy</button>
+                                </td>
+                                <td>{d(row.custId)}</td>
+                                <td>{d(row.virtCustId)}</td>
+                                <td>{d(row.citeDb)}</td>
+                                <td>{d(row.state)}</td>
+                                <td>{d(row.libVer)}</td>
+                                <td>{d(row.fileStorage)}</td>
+                                <td>{d(row.lastUsn)}</td>
+                                <td>{d(row.fullSyncBefore)}</td>
+                                <td>{d(row.recovSyncBefore)}</td>
+                              </tr>
+                            );
+                          })}
                         </tbody>
                       </table>
                     </div>
@@ -1686,10 +1880,412 @@ export default function App() {
             </div>
           )}
 
-          {/* VIEW 3: OTHER NAV VIEWS */}
+          {/* VIEW 3: EXPIRATION DATES */}
+          {activeNav === 'Expiration Dates' && (() => {
+            const cust = expirationCustomer;
+            const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+            const days = Array.from({length:31},(_,i)=>String(i+1));
+            const years = ['2025','2026','2027','2028','2029','2030'];
+
+            // Generate a realistic activation date log for the customer
+            const generateActivationDates = (baseDate) => {
+              const dates = [];
+              const start = new Date('2025-04-22T05:14:04');
+              for (let i = 0; i < 80; i++) {
+                const d = new Date(start.getTime() + i * 3.6e5 * (Math.random() * 12 + 2));
+                const pad = n => String(n).padStart(2,'0');
+                dates.push(`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}.0`);
+              }
+              return dates.sort().join(', ');
+            };
+
+            const activationLog = cust ? generateActivationDates() : '';
+            const currentDesktopExp = cust ? (cust.fullSyncBefore || '07/28/2028 23:59:59').replace(/\./,'').replace(/(\d{4})-(\d{2})-(\d{2}) (.*)/,'$2/$3/$1 $4') : '07/28/2028 23:59:59';
+            const currentIpExp = cust ? (cust.recovSyncBefore || '10/21/2027 23:59:59').replace(/\./,'').replace(/(\d{4})-(\d{2})-(\d{2}) (.*)/,'$2/$3/$1 $4') : '10/21/2027 23:59:59';
+
+            return (
+              <div className="wsu-card">
+                <h2 style={{ fontSize: '1.18rem', fontWeight: 400, color: '#000000', marginBottom: '20px', paddingBottom: '10px', borderBottom: '1px solid #5E33BF' }}>
+                  Desktop and IP Roaming Expiration Dates
+                </h2>
+
+                {/* Email lookup row */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '28px' }}>
+                  <label className="wsu-label" style={{ whiteSpace: 'nowrap' }}>Customer email:</label>
+                  <div className="wsu-input-wrapper" style={{ width: '280px' }}>
+                    <input
+                      type="text"
+                      className="wsu-input"
+                      value={expirationEmail}
+                      onChange={e => setExpirationEmail(e.target.value)}
+                      autoComplete="off"
+                    />
+                  </div>
+                  <button
+                    className="wsu-btn-primary"
+                    style={{ fontSize: '0.79rem', padding: '6px 14px' }}
+                    onClick={() => {
+                      const found = CUSTOMER_DATABASE.find(c => c.email.toLowerCase() === expirationEmail.trim().toLowerCase());
+                      if (found) {
+                        setExpirationCustomer(found);
+                        showToast(`Loaded expiration dates for ${found.email}`);
+                      } else {
+                        showToast('No exact match found — showing demo data');
+                      }
+                    }}
+                  >
+                    Get Expiration Dates
+                  </button>
+                </div>
+
+                {/* Desktop Expiration Section */}
+                <div style={{ marginBottom: '32px' }}>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 400, color: '#000000', marginBottom: '16px', borderBottom: '1px solid #5E33BF', paddingBottom: '6px' }}>
+                    Desktop Expiration:
+                  </h3>
+
+                  <table style={{ borderCollapse: 'collapse', width: '100%', fontSize: '0.82rem' }}>
+                    <tbody>
+                      <tr style={{ verticalAlign: 'top' }}>
+                        <td style={{ fontWeight: 700, color: '#000000', padding: '4px 16px 4px 0', whiteSpace: 'nowrap', width: '200px' }}>Desktop Serial Number:</td>
+                        <td style={{ color: '#000000', padding: '4px 0' }}>{cust ? cust.serialNumber : 'null'}</td>
+                      </tr>
+                      <tr style={{ verticalAlign: 'top' }}>
+                        <td style={{ fontWeight: 700, color: '#000000', padding: '4px 16px 4px 0', whiteSpace: 'nowrap' }}>Desktop Version:</td>
+                        <td style={{ color: '#000000', padding: '4px 0' }}>EndNote 22 Hybrid Platform Multi-User</td>
+                      </tr>
+                      <tr style={{ verticalAlign: 'top' }}>
+                        <td style={{ fontWeight: 700, color: '#000000', padding: '4px 16px 4px 0', whiteSpace: 'nowrap' }}>Desktop Activation Date:</td>
+                        <td style={{ color: '#000000', padding: '4px 0', wordBreak: 'break-all', lineHeight: 1.6 }}>
+                          {activationLog}
+                        </td>
+                      </tr>
+                      <tr style={{ verticalAlign: 'top' }}>
+                        <td style={{ fontWeight: 700, color: '#000000', padding: '8px 16px 4px 0', whiteSpace: 'nowrap' }}>Current Desktop Expiration:</td>
+                        <td style={{ color: '#000000', padding: '8px 0 4px 0', fontWeight: 400 }}>{currentDesktopExp}</td>
+                      </tr>
+                      <tr style={{ verticalAlign: 'top' }}>
+                        <td style={{ fontWeight: 700, color: '#000000', padding: '8px 16px 4px 0', whiteSpace: 'nowrap' }}>New Desktop Expiration:</td>
+                        <td style={{ padding: '8px 0 4px 0' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                            <select className="wsu-select" value={newDesktopMonth} onChange={e => setNewDesktopMonth(e.target.value)} style={{ fontSize: '0.79rem' }}>
+                              {months.map(m => <option key={m} value={m}>{m}</option>)}
+                            </select>
+                            <select className="wsu-select" value={newDesktopDay} onChange={e => setNewDesktopDay(e.target.value)} style={{ fontSize: '0.79rem', width: '60px' }}>
+                              {days.map(d => <option key={d} value={d}>{d}</option>)}
+                            </select>
+                            <select className="wsu-select" value={newDesktopYear} onChange={e => setNewDesktopYear(e.target.value)} style={{ fontSize: '0.79rem', width: '72px' }}>
+                              {years.map(y => <option key={y} value={y}>{y}</option>)}
+                            </select>
+                            <button
+                              className="wsu-btn-primary"
+                              style={{ fontSize: '0.79rem', padding: '5px 12px' }}
+                              onClick={() => showToast(`Desktop expiration set to ${newDesktopMonth} ${newDesktopDay}, ${newDesktopYear}`)}
+                            >
+                              Set Desktop Expiration
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* IP Roaming Expiration Section */}
+                <div>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 400, color: '#000000', marginBottom: '16px', borderBottom: '1px solid #5E33BF', paddingBottom: '6px' }}>
+                    IP Roaming Expiration:
+                  </h3>
+
+                  <table style={{ borderCollapse: 'collapse', width: '100%', fontSize: '0.82rem' }}>
+                    <tbody>
+                      <tr style={{ verticalAlign: 'top' }}>
+                        <td style={{ fontWeight: 700, color: '#000000', padding: '4px 16px 4px 0', whiteSpace: 'nowrap', width: '220px' }}>Current IP Roaming Expiration:</td>
+                        <td style={{ color: '#000000', padding: '4px 0' }}>{currentIpExp}</td>
+                      </tr>
+                      <tr style={{ verticalAlign: 'top' }}>
+                        <td style={{ fontWeight: 700, color: '#000000', padding: '8px 16px 4px 0', whiteSpace: 'nowrap' }}>Next IP Roaming Expiration:</td>
+                        <td style={{ padding: '8px 0 4px 0' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                            <select className="wsu-select" value={newIpMonth} onChange={e => setNewIpMonth(e.target.value)} style={{ fontSize: '0.79rem' }}>
+                              {months.map(m => <option key={m} value={m}>{m}</option>)}
+                            </select>
+                            <select className="wsu-select" value={newIpDay} onChange={e => setNewIpDay(e.target.value)} style={{ fontSize: '0.79rem', width: '60px' }}>
+                              {days.map(d => <option key={d} value={d}>{d}</option>)}
+                            </select>
+                            <select className="wsu-select" value={newIpYear} onChange={e => setNewIpYear(e.target.value)} style={{ fontSize: '0.79rem', width: '72px' }}>
+                              {years.map(y => <option key={y} value={y}>{y}</option>)}
+                            </select>
+                            <button
+                              className="wsu-btn-primary"
+                              style={{ fontSize: '0.79rem', padding: '5px 12px' }}
+                              onClick={() => showToast(`IP Roaming expiration set to ${newIpMonth} ${newIpDay}, ${newIpYear}`)}
+                            >
+                              Set IP Roaming Expiration
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Footer */}
+                <div style={{ borderTop: '1px solid #5E33BF', paddingTop: '12px', marginTop: '28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.79rem' }}>
+                  <button style={{ background: 'none', border: 'none', color: '#5E33BF', textDecoration: 'underline', cursor: 'pointer', fontFamily: 'inherit', fontWeight: 700 }} onClick={() => showToast('Error report dialog opened')}>Report an Error</button>
+                  <div style={{ fontStyle: 'italic', fontWeight: 600 }}>lookup.pl version 2.3.0. Page generated in 0.2200 seconds</div>
+                </div>
+              </div>
+            );
+          })()}
+
+          {/* VIEW 3.5: CUSTOMER ASSOCIATIONS */}
+          {activeNav === 'Customer Associations' && (
+            <div className="wsu-card">
+              <h2 style={{ fontSize: '1.18rem', fontWeight: 400, color: '#000000', marginBottom: '20px', paddingBottom: '10px', borderBottom: '1px solid #5E33BF' }}>
+                Customer Associations
+              </h2>
+
+              {/* Email lookup row */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '22px' }}>
+                <label className="wsu-label" style={{ whiteSpace: 'nowrap' }}>Customer email:</label>
+                <div className="wsu-input-wrapper" style={{ width: '300px' }}>
+                  <input
+                    type="text"
+                    className="wsu-input"
+                    value={associationsEmail}
+                    onChange={e => setAssociationsEmail(e.target.value)}
+                    autoComplete="off"
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') {
+                        const key = associationsEmail.trim().toLowerCase();
+                        const rows = CUSTOMER_ASSOCIATIONS[key] || [];
+                        setAssociationsRows(rows);
+                        setAssocChecked({});
+                        setAssocAllChecked(false);
+                        showToast(rows.length > 0 ? `Found ${rows.length} associations` : 'No associations found');
+                      }
+                    }}
+                  />
+                </div>
+                <button
+                  className="wsu-btn-primary"
+                  style={{ fontSize: '0.79rem', padding: '6px 14px' }}
+                  onClick={() => {
+                    const key = associationsEmail.trim().toLowerCase();
+                    const rows = CUSTOMER_ASSOCIATIONS[key] || [];
+                    setAssociationsRows(rows);
+                    setAssocChecked({});
+                    setAssocAllChecked(false);
+                    showToast(rows.length > 0 ? `Found ${rows.length} associations` : 'No associations found for this email');
+                  }}
+                >
+                  Get Customer Associations
+                </button>
+              </div>
+
+              {/* Results section */}
+              {associationsRows !== null && (
+                <>
+                  {associationsRows.length > 0 ? (
+                    <>
+                      <p style={{ fontSize: '1rem', fontWeight: 700, color: '#000000', marginBottom: '14px' }}>
+                        {associationsEmail.trim()} is a member of the following groups:
+                      </p>
+
+                      {/* Associations Table */}
+                      <div className="wsu-table-container" style={{ marginBottom: '14px' }}>
+                        <table className="wsu-table">
+                          <thead>
+                            <tr>
+                              <th>Name</th>
+                              <th>External CID</th>
+                              <th>Group ID</th>
+                              <th>App ID</th>
+                              <th>Market Test</th>
+                              <th style={{ width: '36px', textAlign: 'center' }}>
+                                <input
+                                  type="checkbox"
+                                  checked={assocAllChecked}
+                                  onChange={e => {
+                                    const checked = e.target.checked;
+                                    setAssocAllChecked(checked);
+                                    const newChecked = {};
+                                    associationsRows.forEach((_, i) => { newChecked[i] = checked; });
+                                    setAssocChecked(newChecked);
+                                  }}
+                                  style={{ accentColor: '#5E33BF', cursor: 'pointer' }}
+                                />
+                              </th>
+                              <th style={{ width: '36px', textAlign: 'center', fontSize: '0.7rem' }}>All</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {associationsRows.map((row, i) => (
+                              <tr key={i}>
+                                <td style={{ fontWeight: 400 }}>{row.name}</td>
+                                <td style={{ fontFamily: 'monospace', fontSize: '0.74rem' }}>{row.externalCid}</td>
+                                <td>{row.groupId}</td>
+                                <td>{row.appId}</td>
+                                <td>{row.marketTest || ''}</td>
+                                <td style={{ textAlign: 'center' }}>
+                                  <input
+                                    type="checkbox"
+                                    checked={!!assocChecked[i]}
+                                    onChange={e => {
+                                      const next = { ...assocChecked, [i]: e.target.checked };
+                                      setAssocChecked(next);
+                                      setAssocAllChecked(associationsRows.every((_, idx) => next[idx]));
+                                    }}
+                                    style={{ accentColor: '#5E33BF', cursor: 'pointer' }}
+                                  />
+                                </td>
+                                <td></td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+
+                      {/* Remove WOK groups button */}
+                      <div style={{ marginBottom: '20px' }}>
+                        <button
+                          className="wsu-btn-secondary"
+                          style={{ fontSize: '0.79rem', padding: '5px 12px', opacity: Object.values(assocChecked).some(v => v) ? 1 : 0.55 }}
+                          onClick={() => {
+                            const selectedWokRows = associationsRows.filter((r, i) => assocChecked[i] && r.appId === 'WOK');
+                            if (selectedWokRows.length === 0) {
+                              showToast('No WOK groups selected');
+                              return;
+                            }
+                            showToast(`Removed ${selectedWokRows.length} WOK group(s)`);
+                          }}
+                        >
+                          Remove the selected WOK groups
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <p style={{ fontSize: '0.9rem', color: '#5E33BF', fontStyle: 'italic', marginBottom: '20px' }}>
+                      No group associations found for <strong>{associationsEmail.trim()}</strong>.
+                    </p>
+                  )}
+
+                  {/* Add Association row */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                    <select
+                      className="wsu-select"
+                      value={assocAddUniversity}
+                      onChange={e => setAssocAddUniversity(e.target.value)}
+                      style={{ fontSize: '0.79rem', minWidth: '320px' }}
+                    >
+                      {UNIVERSITY_LIST.map(u => <option key={u} value={u}>{u}</option>)}
+                    </select>
+                    <button
+                      className="wsu-btn-primary"
+                      style={{ fontSize: '0.79rem', padding: '5px 12px' }}
+                      onClick={() => showToast(`Added association: ${assocAddUniversity}`)}
+                    >
+                      Add Association
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {/* Footer */}
+              <div style={{ borderTop: '1px solid #5E33BF', paddingTop: '12px', marginTop: '28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.79rem' }}>
+                <button style={{ background: 'none', border: 'none', color: '#5E33BF', textDecoration: 'underline', cursor: 'pointer', fontFamily: 'inherit', fontWeight: 700 }} onClick={() => showToast('Error report dialog opened')}>Report an Error</button>
+                <div style={{ fontStyle: 'italic', fontWeight: 600 }}>lookup.pl version 2.3.0. Page generated in 0.1800 seconds</div>
+              </div>
+            </div>
+          )}
+
+          {/* VIEW: CUSTOMER PASSWORD (MATCHING SCREENSHOT EXACTLY) */}
+          {activeNav === 'Customer Password' && (
+            <div
+              className="wsu-card"
+              style={{
+                padding: '24px 28px',
+                border: '1px solid #5E33BF',
+                borderRadius: '6px'
+              }}
+            >
+              <CustomerPasswordView theme={theme} onShowToast={showToast} />
+            </div>
+          )}
+
+          {/* VIEW: GROUPS SHARING (MATCHING SCREENSHOT 1) */}
+          {activeNav === 'Groups Sharing' && (
+            <div
+              className="wsu-card"
+              style={{
+                padding: '24px 28px',
+                border: '1px solid #5E33BF',
+                borderRadius: '6px'
+              }}
+            >
+              <GroupsSharingView theme={theme} onShowToast={showToast} />
+            </div>
+          )}
+
+          {/* VIEW: ALTER REFERENCE DATA (MATCHING SCREENSHOT 2) */}
+          {activeNav === 'Alter Reference Data' && (
+            <div
+              className="wsu-card"
+              style={{
+                padding: '24px 28px',
+                border: '1px solid #5E33BF',
+                borderRadius: '6px'
+              }}
+            >
+              <AlterReferenceDataView theme={theme} onShowToast={showToast} />
+            </div>
+          )}
+
+          {/* VIEW: SERIAL NUMBER LOOKUP UNDER CUSTOMERS (MATCHING SCREENSHOT 3) */}
+          {activeNav === 'Serial Number Lookup' && (
+            <div
+              className="wsu-card"
+              style={{
+                padding: '24px 28px',
+                border: '1px solid #5E33BF',
+                borderRadius: '6px'
+              }}
+            >
+              <SerialNumberHistoryLookupView
+                theme={theme}
+                onSelectSerial={(sn) => {
+                  const found = CUSTOMER_DATABASE.find((c) => c.serialNumber === sn) || {
+                    serialNumber: sn,
+                    productKey: 'PK-' + sn.substring(0, 6),
+                    productSummary: 'EndNote Multi-User / Site License Product',
+                    regDeadline: '2028-12-31',
+                    latestExpDate: '2029-01-01',
+                    webSeats: 'Unlimited',
+                    winDownload: `https://download.endnote.com/site/${sn}/EndNoteWinInstaller.zip`,
+                    macDownload: `https://download.endnote.com/site/${sn}/EndNoteMacInstaller.dmg`,
+                    customerName: 'Customer Associated with ' + sn,
+                    email: 'customer@organization.com'
+                  };
+                  setSelectedSerialDetail(found);
+                  setCurrentPage('serial-detail');
+                  showToast(`Redirected to license expiration details for ${sn}`);
+                }}
+                onShowToast={showToast}
+              />
+            </div>
+          )}
+
+          {/* VIEW 4: OTHER NAV VIEWS */}
           {![
             'Search Customers',
-            'User Access Lookup'
+            'User Access Lookup',
+            'Expiration Dates',
+            'Customer Associations',
+            'Customer Password',
+            'Groups Sharing',
+            'Alter Reference Data',
+            'Serial Number Lookup'
           ].includes(activeNav) && (
               <div className="wsu-card">
                 <div className="wsu-card-title">{activeNav}</div>

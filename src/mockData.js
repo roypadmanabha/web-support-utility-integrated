@@ -170,3 +170,37 @@ export const SERIAL_NUMBERS_DATABASE = [
     maintenanceExpiry: "2027-09-30"
   }
 ];
+
+export const CUSTOMER_ASSOCIATIONS = {
+  'padmanabha.roy@clarivate.com': [
+    { name: 'Clarivate', externalCid: 'dc101777b18a39292144c84235537a284', groupId: '465', appId: 'WOK', marketTest: '' },
+    { name: 'ENW - IPRoaming Access', externalCid: 'EN_Internal_Contract1307464650078', groupId: '95128', appId: 'ENW', marketTest: '' },
+    { name: 'ENW - ENDesktop Access', externalCid: 'ENDesktop_1212047846668', groupId: '42282', appId: 'ENW', marketTest: '' }
+  ],
+  'fabian.marsden@gmail.com': [
+    { name: 'University of KwaZulu-Natal', externalCid: 'ukzn_main_contract_883741290011', groupId: '71042', appId: 'ENW', marketTest: '' },
+    { name: 'ENW - ENDesktop Access', externalCid: 'ENDesktop_9920371846200', groupId: '42291', appId: 'ENW', marketTest: '' }
+  ],
+  'elena.rostova@clarivate.com': [
+    { name: 'Harvard Medical School', externalCid: 'dc988abc12f34567890abcde12345678', groupId: '812', appId: 'WOK', marketTest: '' },
+    { name: 'ENW - IPRoaming Access', externalCid: 'EN_Internal_Contract9988776650001', groupId: '95200', appId: 'ENW', marketTest: '' }
+  ]
+};
+
+export const UNIVERSITY_LIST = [
+  'FH Vorarlberg University of Applied Sciences',
+  'Harvard Medical School',
+  'University of KwaZulu-Natal',
+  'MIT - Massachusetts Institute of Technology',
+  'Stanford University Libraries',
+  'Oxford University Press',
+  'Cambridge University Library',
+  'ETH Zürich',
+  'University of Toronto',
+  'National University of Singapore',
+  'Australian National University',
+  'University of Cape Town',
+  'Peking University',
+  'Indian Institute of Technology Bombay',
+  'University of São Paulo'
+];

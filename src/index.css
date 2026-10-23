@@ -762,4 +762,34 @@ button.wsu-btn-secondary {
   border-radius: 4px !important;
 }
 
+/* Site Admin Copy Buttons: Purple bg, White text, 50% opacity on hover in both light & dark modes */
+.wsu-copy-btn,
+[data-theme="dark"] .wsu-copy-btn {
+  background-color: #5E33BF !important;
+  color: #FFFFFF !important;
+  border: 1px solid #5E33BF !important;
+  border-radius: 2px !important;
+  height: 22px;
+  padding: 0 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.15s ease;
+}
+
+.wsu-copy-btn:hover,
+[data-theme="dark"] .wsu-copy-btn:hover {
+  opacity: 0.5 !important;
+}
+
+.wsu-copy-btn span,
+[data-theme="dark"] .wsu-copy-btn span {
+  color: #FFFFFF !important;
+}
+
 
