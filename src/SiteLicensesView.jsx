@@ -588,6 +588,19 @@ export default function SiteLicensesView({ theme = 'light', onSelectSerial, onSh
             }}
           >
             {/* Total height spacer for the native scrollbar */}
+            {filteredData.length === 0 && !isLoading && (
+              <div
+                style={{
+                  padding: '60px 20px',
+                  textAlign: 'center',
+                  fontSize: '0.95rem',
+                  color: isDark ? '#A0A0A0' : '#666666',
+                  fontStyle: 'italic'
+                }}
+              >
+                No site admin records loaded. Please provide the new list to populate.
+              </div>
+            )}
             <div style={{ height: `${totalHeight}px`, position: 'relative', width: '100%' }}>
               {visibleItems.map((item, idx) => {
                 const globalIndex = startIndex + idx;
