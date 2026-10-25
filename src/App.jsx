@@ -5,6 +5,12 @@ import CustomerPasswordView from './CustomerPasswordView';
 import GroupsSharingView from './GroupsSharingView';
 import AlterReferenceDataView from './AlterReferenceDataView';
 import SerialNumberHistoryLookupView from './SerialNumberHistoryLookupView';
+import UserAccessLookupView from './UserAccessLookupView';
+import AggregateAccessLookupView from './AggregateAccessLookupView';
+import UserTemporaryCredentialsView from './UserTemporaryCredentialsView';
+import EndNoteOnlineAccessView from './EndNoteOnlineAccessView';
+import EndNoteDesktopBuilderView from './EndNoteDesktopBuilderView';
+import { undoManager } from './undoManager';
 
 // Space validation helper for email inputs
 const checkSpaceInEmail = (emailStr) => {
@@ -35,6 +41,61 @@ const checkSpaceInEmail = (emailStr) => {
   return null;
 };
 
+// Downloads list extracted directly from Product Downloads tool specification
+const PRODUCT_DOWNLOADS_LIST = [
+  { product: 'EndNote 2025 Windows Single User', url: 'https://download.endnote.com/downloads/2025/EN2025Inst.exe' },
+  { product: 'EndNote 2025 Windows Volume', url: 'https://download.endnote.com/downloads/2025/EN2025Inst.msi' },
+  { product: 'EndNote 2025 Macintosh Single User', url: 'https://download.endnote.com/downloads/2025/EndNote2025Installer.dmg' },
+  { product: 'EndNote 21 Windows Single User', url: 'https://download.endnote.com/downloads/21/EN21Inst.exe' },
+  { product: 'EndNote 21 Windows Volume', url: 'https://download.endnote.com/downloads/21/EN21Inst.msi' },
+  { product: 'EndNote 21 Macintosh Single User', url: 'https://download.endnote.com/downloads/21/EndNote21Installer.dmg' },
+  { product: 'EndNote 20 Windows Single User', url: 'https://download.endnote.com/downloads/20/EN20Inst.exe' },
+  { product: 'EndNote 20 Windows Volume', url: 'https://download.endnote.com/downloads/20/EN20Inst.msi' },
+  { product: 'EndNote 20 Macintosh Single User', url: 'https://download.endnote.com/downloads/20/EndNote20Installer.dmg' },
+  { product: 'EndNote 19 Windows Single User', url: 'https://download.endnote.com/downloads/X9/ENX9Inst.exe' },
+  { product: 'EndNote 19 Windows Volume', url: 'https://download.endnote.com/downloads/X9/ENX9Inst.msi' },
+  { product: 'EndNote 19 Macintosh Single User', url: 'https://download.endnote.com/downloads/X9/EndNoteX9Installer.dmg' },
+  { product: 'EndNote 18 Windows Single User', url: 'https://download.endnote.com/downloads/X8/ENX8Inst.exe' },
+  { product: 'EndNote 18 Windows Volume', url: 'https://download.endnote.com/downloads/X8/ENX8Inst.msi' },
+  { product: 'EndNote 18 Macintosh Single User', url: 'https://download.endnote.com/downloads/X8/EndNoteX8Installer.dmg' },
+  { product: 'EndNote 17 Windows Single User', url: 'https://download.endnote.com/downloads/X7/ENX7Inst.exe' },
+  { product: 'EndNote 17 Windows Volume', url: 'https://download.endnote.com/downloads/X7/ENX7Inst.msi' },
+  { product: 'EndNote 17 Macintosh Single User', url: 'https://download.endnote.com/downloads/X7/EndNoteX7Installer.dmg' },
+  { product: 'EndNote 17 Macintosh Volume', url: 'https://download.endnote.com/downloads/X7/EndNoteX7Installer.dmg' },
+  { product: 'EndNote 16 Windows Single User', url: 'https://download.endnote.com/downloads/X6/ENX6Inst.exe' },
+  { product: 'EndNote 16 Windows Volume', url: 'https://download.endnote.com/downloads/X6/ENX6Inst.msi' },
+  { product: 'EndNote 16 Macintosh Single User', url: 'https://download.endnote.com/downloads/X6/EndNoteX6Installer.dmg' },
+  { product: 'EndNote 16 Macintosh Volume', url: 'https://download.endnote.com/downloads/X6/EndNoteX6Installer.dmg' },
+  { product: 'EndNote 15 Windows Single User', url: 'https://download.endnote.com/downloads/X5/ENX5Inst.exe' },
+  { product: 'EndNote 15 Windows Volume', url: 'https://download.endnote.com/downloads/X5/ENX5Inst.msi' },
+  { product: 'EndNote 15 Macintosh Single User', url: 'https://download.endnote.com/downloads/X5/EndNoteX5Installer.dmg' },
+  { product: 'EndNote 15 Macintosh Volume', url: 'https://download.endnote.com/downloads/X5/EndNoteX5Installer.dmg' },
+  { product: 'EndNote 14 Windows Single User', url: 'https://download.endnote.com/downloads/X4/ENX4Inst.exe' },
+  { product: 'EndNote 14 Windows Volume', url: 'https://download.endnote.com/downloads/X4/ENX4Inst.msi' },
+  { product: 'EndNote 14 Macintosh Single User', url: 'https://download.endnote.com/downloads/X4/EndNoteX4Installer.dmg' },
+  { product: 'EndNote 14 Macintosh Volume', url: 'https://download.endnote.com/downloads/X4/EndNoteX4Installer.dmg' },
+  { product: 'EndNote 13 Windows Single User', url: 'https://download.endnote.com/downloads/X3/ENX3Inst.exe' },
+  { product: 'EndNote 13 Windows Volume', url: 'https://download.endnote.com/downloads/X3/ENX3Inst.msi' },
+  { product: 'EndNote 13 Macintosh Single User', url: 'https://download.endnote.com/downloads/X3/EndNoteX3Installer.dmg' },
+  { product: 'EndNote 13 Macintosh Volume', url: 'https://download.endnote.com/downloads/X3/EndNoteX3Installer.dmg' },
+  { product: 'EndNote 12 Windows Single User', url: 'https://download.endnote.com/downloads/X2/ENX2Inst.exe' },
+  { product: 'EndNote 12 Windows Volume', url: 'https://download.endnote.com/downloads/X2/ENX2Inst.msi' },
+  { product: 'EndNote 12 Macintosh Single User', url: 'http://download.endnote.com/downloads/X2/EndNoteX2Installer.dmg' },
+  { product: 'EndNote 12 Macintosh Volume', url: 'https://download.endnote.com/downloads/X2/EndNoteX2Installer.dmg' },
+  { product: 'EndNote 11 Windows Single User', url: 'https://download.endnote.com/downloads/X1/ENX1Inst.exe' },
+  { product: 'EndNote 11 Windows Volume', url: 'https://download.endnote.com/downloads/X1/ENX1Inst.msi' },
+  { product: 'EndNote 11 Macintosh Single User', url: 'https://download.endnote.com/downloads/X1/EndNoteX1Installer.dmg' },
+  { product: 'EndNote 11 Macintosh Volume', url: 'https://download.endnote.com/downloads/X1/EndNoteX1Installer.dmg' },
+  { product: 'EndNote 10 Windows Single User (2011040704)', url: 'https://download.endnote.com/downloads/X/ENXInst.exe' },
+  { product: 'EndNote 10 Windows Volume', url: 'https://download.endnote.com/downloads/X/ENXSiteInst.msi' },
+  { product: 'EndNote 10 Macintosh Single User (2011040704)', url: 'https://download.endnote.com/downloads/X/EndNoteXFullInstaller.dmg' },
+  { product: 'EndNote 10 Macintosh Volume', url: 'https://download.endnote.com/downloads/X/EndNoteXVolumeInstaller.dmg' },
+  { product: 'Reference Manager 12 Single User', url: 'https://download.refman.com/downloads/refman/12.0/Refman1203.exe' },
+  { product: 'Reference Manager 12 Single User MSI', url: 'https://download.refman.com/downloads/refman/12.0/Refman1203.msi' },
+  { product: 'Reference Manager 12 Network', url: 'https://download.refman.com/downloads/refman/12.0/Refman1203Net.exe' },
+  { product: 'Reference Manager 12 Network MSI', url: 'https://download.refman.com/downloads/refman/12.0/Refman1203Net.msi' }
+];
+
 // Top-level Smart Input Component: Defined outside App to preserve DOM node identity and input focus on keypress!
 const SmartInputField = ({
   label,
@@ -48,12 +109,27 @@ const SmartInputField = ({
   onCopy,
   onPaste,
   afterButton = null,
-  historyKey = null
+  historyKey = null,
+  inlineLabel = false,
+  labelWidth = '130px'
 }) => {
   const valStr = value !== undefined && value !== null ? String(value) : '';
   const hasValue = valStr.trim().length > 0;
+  const inputElRef = React.useRef(null);
   const [showHistory, setShowHistory] = React.useState(false);
   const [history, setHistory] = React.useState([]);
+  const [wasCopied, setWasCopied] = React.useState(false);
+
+  React.useEffect(() => {
+    setWasCopied(false);
+  }, [valStr]);
+
+  const isCopyMode = Boolean(hasValue && !wasCopied);
+
+  const fieldId = React.useMemo(
+    () => historyKey || fieldLabel || label || 'field_' + Math.random().toString(36).slice(2, 7),
+    [historyKey, fieldLabel, label]
+  );
 
   const loadHistory = () => {
     if (!historyKey) return [];
@@ -77,51 +153,137 @@ const SmartInputField = ({
     setShowHistory(false);
   };
 
-  const handleButtonClick = () => {
-    if (hasValue) {
+  const handleCopyOrPaste = async () => {
+    if (isCopyMode) {
       if (onCopy) {
         onCopy(valStr, fieldLabel || label || 'field content');
       } else {
-        navigator.clipboard.writeText(valStr);
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          try {
+            await navigator.clipboard.writeText(valStr);
+          } catch {}
+        }
+        undoManager.showToast(`Copied ${fieldLabel || label || 'content'}: ${valStr}`);
       }
+      setWasCopied(true);
     } else {
+      const applyPaste = (text) => {
+        if (text) {
+          onChange(text);
+          undoManager.showToast(`Pasted into ${fieldLabel || label || 'field'}`);
+          setWasCopied(false);
+        }
+      };
+
       if (onPaste) {
-        onPaste(onChange, fieldLabel || label || 'field');
+        onPaste(applyPaste, fieldLabel || label || 'field');
       } else {
-        navigator.clipboard.readText().then(text => {
-          if (text) onChange(text);
-        }).catch(() => { });
+        if (navigator.clipboard && navigator.clipboard.readText) {
+          try {
+            const text = await navigator.clipboard.readText();
+            applyPaste(text);
+          } catch {
+            undoManager.showToast('Clipboard paste permission required');
+          }
+        }
       }
     }
   };
 
+  const handleClearClick = () => {
+    if (!hasValue) return;
+    undoManager.pushCleared(
+      fieldId,
+      valStr,
+      onChange,
+      inputElRef.current,
+      fieldLabel || label || 'field'
+    );
+    onChange('');
+    setWasCopied(false);
+  };
+
   return (
-    <div className="wsu-input-group" style={{ ...style, position: 'relative' }}>
-      {label && <label className="wsu-label" style={{ fontWeight: 700 }}>{label}</label>}
-      <div style={{ display: 'flex', alignItems: 'stretch', gap: '10px' }}>
-        <div style={{ position: 'relative', flex: 1 }}>
+    <div
+      className="wsu-input-group"
+      style={{
+        ...style,
+        position: 'relative',
+        display: inlineLabel ? 'flex' : 'block',
+        alignItems: inlineLabel ? 'center' : 'stretch',
+        gap: inlineLabel ? '12px' : '0'
+      }}
+    >
+      {label && (
+        <label
+          className="wsu-label"
+          style={{
+            fontWeight: 700,
+            width: inlineLabel ? labelWidth : 'auto',
+            minWidth: inlineLabel ? labelWidth : 'auto',
+            marginBottom: inlineLabel ? '0' : '6px',
+            color: '#000000',
+            textAlign: 'left',
+            display: 'block'
+          }}
+        >
+          {label}
+        </label>
+      )}
+      <div style={{ display: 'flex', alignItems: 'stretch', gap: '8px', flex: 1 }}>
+        <div style={{ position: 'relative', flex: 1, maxWidth: inlineLabel ? '460px' : 'none' }}>
           <div
             className="wsu-input-wrapper"
-            style={errorMessage ? { borderColor: '#CC0000', boxShadow: '0 0 0 1px #CC0000' } : {}}
+            style={errorMessage ? { borderColor: '#000000', boxShadow: '0 0 0 1px #000000' } : {}}
           >
             <input
+              ref={inputElRef}
+              data-field={fieldId}
               type={type}
               className="wsu-input"
               value={valStr}
               onChange={(e) => onChange(e.target.value)}
+              onKeyDown={(e) => {
+                const isCtrlOrMeta = e.ctrlKey || e.metaKey;
+                const k = e.key ? e.key.toLowerCase() : '';
+                const isShift = e.shiftKey;
+                if ((isCtrlOrMeta && isShift && (k === 'z' || k === 'u')) || (isCtrlOrMeta && k === 'y')) {
+                  e.preventDefault();
+                  undoManager.redoField(fieldId);
+                } else if (isCtrlOrMeta && (k === 'z' || k === 'u')) {
+                  e.preventDefault();
+                  undoManager.undoField(fieldId);
+                }
+              }}
               autoComplete="off"
               spellCheck="false"
               onFocus={handleFocus}
               onBlur={handleBlur}
             />
-            <button
-              type="button"
-              className="wsu-action-btn"
-              onClick={handleButtonClick}
-            >
-              {hasValue ? 'Copy' : 'Paste'}
-            </button>
+            <div className="wsu-action-btn-group">
+              <button
+                type="button"
+                className="wsu-action-btn"
+                onClick={handleCopyOrPaste}
+                title={isCopyMode ? 'Copy to clipboard' : 'Paste from clipboard'}
+                onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.6')}
+                onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+              >
+                {isCopyMode ? 'Copy' : 'Paste'}
+              </button>
+              <button
+                type="button"
+                className="wsu-action-btn wsu-action-btn-clear"
+                onClick={handleClearClick}
+                title="Clear field (Ctrl+Z or U to return back)"
+                onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.6')}
+                onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+              >
+                Clear
+              </button>
+            </div>
           </div>
+
 
           {/* Recent Search History Dropdown */}
           {showHistory && history.length > 0 && (
@@ -191,7 +353,7 @@ const SmartInputField = ({
         {afterButton}
       </div>
       {errorMessage ? (
-        <div style={{ fontSize: '0.72rem', color: '#CC0000', fontWeight: 400, marginTop: '4px' }}>
+        <div style={{ fontSize: '0.72rem', color: '#000000', fontWeight: 600, marginTop: '4px' }}>
           ⚠️ {errorMessage}
         </div>
       ) : (
@@ -204,6 +366,7 @@ const SmartInputField = ({
     </div>
   );
 };
+
 
 // Top-level Header Bar Component
 const HeaderBar = ({ titleText, backActionText, onBackClick, onShowToast, theme, onToggleTheme, centerAction }) => (
@@ -317,6 +480,10 @@ export default function App() {
   const [dummyType, setDummyType] = useState('Full Download');
   const [generatedDummyResult, setGeneratedDummyResult] = useState(null);
 
+  // Bld Number Lookup State
+  const [bldNumberInput, setBldNumberInput] = useState('');
+  const [bldLookupResult, setBldLookupResult] = useState(null);
+
   // Generic Nav Input State
   const [genericQuery, setGenericQuery] = useState('');
 
@@ -344,6 +511,10 @@ export default function App() {
       setToastMessage(null);
     }, 2800);
   };
+
+  useEffect(() => {
+    undoManager.setToastHandler(showToast);
+  }, []);
 
   // Clipboard Copy helper
   const handleCopy = (text, label) => {
@@ -719,64 +890,81 @@ export default function App() {
                     Registration service view for <span>Serial Number Lookup</span>.
                   </p>
 
-                  <div style={{ marginBottom: '20px', display: 'flex', gap: '12px', alignItems: 'center' }}>
-                    <button
-                      type="button"
-                      className="wsu-btn-primary"
-                      onClick={() => {
-                        const target = snLookupInput.trim();
-                        if (!target) {
-                          setSnLookupResult(null);
-                          showToast('Please enter a 10-digit Serial Number before searching');
-                          return;
-                        }
-                        const found = CUSTOMER_DATABASE.find(c => c.serialNumber === target) || {
-                          ...CUSTOMER_DATABASE[0],
-                          serialNumber: target
-                        };
-                        setSnLookupResult(found);
-                        showToast(`Executing Serial Number Lookup for ${target}`);
-                      }}
-                    >
-                      Execute Serial Number Lookup
-                    </button>
-                    <button
-                      type="button"
-                      className="wsu-btn-secondary"
-                      onClick={() => {
-                        setSnLookupInput('');
-                        setSnLookupResult(null);
-                        showToast('Cleared input field. Ready for pasting.');
-                      }}
-                    >
-                      Clear / Reset Input
-                    </button>
-                  </div>
-
-                  {/* Input Field with Paste / Copy button */}
+                  {/* Input Field with inline Lookup and Clear / Reset Input buttons */}
                   <form
                     onSubmit={(e) => {
                       e.preventDefault();
                       handleSNLookupSubmit(e);
                     }}
                     className="wsu-form-box"
-                    style={{ maxWidth: '650px', padding: '16px', borderRadius: '6px' }}
+                    style={{ maxWidth: '820px', padding: '16px', borderRadius: '6px' }}
                   >
-                    <SmartInputField
-                      label="Input 10-Digit Serial Number:"
-                      value={snLookupInput}
-                      onChange={(val) => {
-                        setSnLookupInput(val);
-                        const cleanVal = val.trim();
-                        if (cleanVal.length >= 8) {
-                          const found = CUSTOMER_DATABASE.find(c => c.serialNumber === cleanVal) || generateRandomCustomer('user@clarivate.com', { serialNumber: cleanVal });
-                          setSnLookupResult(found);
-                        } else if (cleanVal.length === 0) {
-                          setSnLookupResult(null);
-                        }
+                    <label
+                      className="wsu-label"
+                      style={{
+                        display: 'block',
+                        fontWeight: 700,
+                        fontSize: '0.84rem',
+                        color: '#000000',
+                        marginBottom: '8px'
                       }}
-                      fieldLabel="Serial Number Input"
-                    />
+                    >
+                      Input 10-Digit Serial Number:
+                    </label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                      <div style={{ width: '400px', maxWidth: '100%', flexShrink: 0 }}>
+                        <SmartInputField
+                          value={snLookupInput}
+                          onChange={(val) => {
+                            setSnLookupInput(val);
+                            const cleanVal = val.trim();
+                            if (cleanVal.length >= 8) {
+                              const found = CUSTOMER_DATABASE.find(c => c.serialNumber === cleanVal) || generateRandomCustomer('user@clarivate.com', { serialNumber: cleanVal });
+                              setSnLookupResult(found);
+                            } else if (cleanVal.length === 0) {
+                              setSnLookupResult(null);
+                            }
+                          }}
+                          fieldLabel="Serial Number Input"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        className="wsu-btn-primary"
+                        onClick={handleSNLookupSubmit}
+                        style={{
+                          padding: '5px 16px',
+                          height: '30px',
+                          fontSize: '0.82rem',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          whiteSpace: 'nowrap',
+                          flexShrink: 0
+                        }}
+                      >
+                        Lookup
+                      </button>
+                      <button
+                        type="button"
+                        className="wsu-btn-secondary"
+                        onClick={() => {
+                          setSnLookupInput('');
+                          setSnLookupResult(null);
+                          showToast('Cleared input field. Ready for pasting.');
+                        }}
+                        style={{
+                          padding: '5px 14px',
+                          height: '30px',
+                          fontSize: '0.82rem',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          whiteSpace: 'nowrap',
+                          flexShrink: 0
+                        }}
+                      >
+                        Clear / Reset Input
+                      </button>
+                    </div>
                   </form>
                 </div>
 
@@ -860,12 +1048,49 @@ export default function App() {
 
             {/* SUB VIEW B: REGISTRATION DATABASE TABLE & SEARCH FORM */}
             {activeRegSubNav === 'Registration Database' && (
-              <div className="wsu-card">
-                {/* Search Form Section matching Screenshot */}
-                <div style={{ marginBottom: '28px', paddingBottom: '20px', borderBottom: '1px solid #5E33BF' }}>
-                  <h3 style={{ fontSize: '1.09rem', color: '#000000', fontWeight: 400, marginBottom: '16px' }}>
-                    Search the Registration Database:
-                  </h3>
+              <div className="wsu-card" style={{ width: '100%' }}>
+                {/* Search Form Section matching the exact requested pattern: Search Registration on each row, Clear All on top right */}
+                <div style={{ marginBottom: '24px' }}>
+                  <div className="wsu-card-title">
+                    <span>Search the Registration Database:</span>
+                    <button
+                      type="button"
+                      className="wsu-btn-secondary"
+                      onClick={() => {
+                        if (regFirstName) undoManager.pushCleared('First Name', regFirstName, setRegFirstName, null, 'First Name');
+                        if (regLastName) undoManager.pushCleared('Last Name', regLastName, setRegLastName, null, 'Last Name');
+                        if (regOrganization) undoManager.pushCleared('Organization', regOrganization, setRegOrganization, null, 'Organization');
+                        if (regEmailAddress) undoManager.pushCleared('Email Address', regEmailAddress, setRegEmailAddress, null, 'Email Address');
+                        if (regPhoneNumber) undoManager.pushCleared('Phone Number', regPhoneNumber, setRegPhoneNumber, null, 'Phone Number');
+                        if (regSerialNumber) undoManager.pushCleared('Serial Number', regSerialNumber, setRegSerialNumber, null, 'Serial Number');
+                        setRegFirstName('');
+                        setRegLastName('');
+                        setRegOrganization('');
+                        setRegEmailAddress('');
+                        setRegPhoneNumber('');
+                        setRegSerialNumber('');
+                        setRegSearchQuery('');
+                        setHasExecutedRegSearch(false);
+                        showToast('Cleared all registration fields. Press Ctrl+Z or U to return them back.');
+                      }}
+                      style={{
+                        padding: '4px 14px',
+                        fontSize: '0.82rem',
+                        backgroundColor: '#F0F0EB',
+                        color: '#000000',
+                        border: '1px solid #000000',
+                        borderRadius: '3px',
+                        cursor: 'pointer',
+                        fontFamily: 'inherit',
+                        fontWeight: 600,
+                        transition: 'opacity 0.15s ease'
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.6')}
+                      onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+                    >
+                      Clear All
+                    </button>
+                  </div>
 
                   <form
                     onSubmit={(e) => {
@@ -882,85 +1107,331 @@ export default function App() {
                         regOrganization,
                         regEmailAddress,
                         regPhoneNumber,
-                        regSerialNumber,
-                        regSearchQuery
+                        regSerialNumber
                       ].some(val => val.trim().length > 0);
 
                       if (!hasAnyInput) {
+                        showToast('Please enter a value to search the Registration Database');
                         setHasExecutedRegSearch(false);
-                        showToast('Please enter at least one search field before searching');
                         return;
                       }
 
                       setHasExecutedRegSearch(true);
                       showToast(`Search Registration executed for ${regEmailAddress || regFirstName || regLastName || regSerialNumber || 'query'}`);
                     }}
-                    style={{ maxWidth: '600px', display: 'flex', flexDirection: 'column', gap: '12px' }}
+                    style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '16px' }}
                   >
-                    <SmartInputField
-                      label="First Name"
-                      value={regFirstName}
-                      onChange={setRegFirstName}
-                      fieldLabel="First Name"
-                    />
-                    <SmartInputField
-                      label="Last Name"
-                      value={regLastName}
-                      onChange={setRegLastName}
-                      fieldLabel="Last Name"
-                    />
-                    <SmartInputField
-                      label="Organization"
-                      value={regOrganization}
-                      onChange={setRegOrganization}
-                      fieldLabel="Organization"
-                    />
-                    <SmartInputField
-                      label="Email Address"
-                      value={regEmailAddress}
-                      onChange={setRegEmailAddress}
-                      fieldLabel="Email Address"
-                      errorMessage={checkSpaceInEmail(regEmailAddress)}
-                    />
-                    <SmartInputField
-                      label="Phone Number"
-                      value={regPhoneNumber}
-                      onChange={setRegPhoneNumber}
-                      fieldLabel="Phone Number"
-                    />
-                    <SmartInputField
-                      label="Serial Number"
-                      value={regSerialNumber}
-                      onChange={setRegSerialNumber}
-                      fieldLabel="Serial Number"
-                    />
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginTop: '8px' }}>
+                    {/* 1. First Name */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <label style={{ width: '115px', fontWeight: 700, fontSize: '0.84rem', color: '#000000', flexShrink: 0 }}>
+                        First Name
+                      </label>
+                      <div style={{ width: '260px', maxWidth: '100%', flexShrink: 0 }}>
+                        <SmartInputField
+                          value={regFirstName}
+                          onChange={setRegFirstName}
+                          fieldLabel="First Name"
+                        />
+                      </div>
                       <button
                         type="submit"
                         className="wsu-btn-secondary"
-                        style={{ padding: '6px 16px', fontSize: '0.85rem', fontWeight: 400 }}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          const hasAnyInput = [regFirstName, regLastName, regOrganization, regEmailAddress, regPhoneNumber, regSerialNumber].some(v => v.trim().length > 0);
+                          if (!hasAnyInput) {
+                            showToast('Please enter a value to search the Registration Database');
+                            setHasExecutedRegSearch(false);
+                            return;
+                          }
+                          setHasExecutedRegSearch(true);
+                          showToast(`Search Registration executed for First Name: ${regFirstName || 'any'}`);
+                        }}
+                        style={{
+                          marginLeft: '10px',
+                          flexShrink: 0,
+                          padding: '4px 12px',
+                          fontSize: '0.82rem',
+                          backgroundColor: '#F0F0EB',
+                          color: '#000000',
+                          border: '1px solid #000000',
+                          borderRadius: '3px',
+                          cursor: 'pointer',
+                          fontFamily: 'inherit',
+                          fontWeight: 600,
+                          whiteSpace: 'nowrap',
+                          transition: 'opacity 0.15s ease'
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.6')}
+                        onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
                       >
                         Search Registration
                       </button>
-                      <span style={{ fontSize: '0.85rem', color: '#000000', fontStyle: 'italic' }}>
-                        Note this may take a few minutes
-                      </span>
+                    </div>
+
+                    {/* 2. Last Name */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <label style={{ width: '115px', fontWeight: 700, fontSize: '0.84rem', color: '#000000', flexShrink: 0 }}>
+                        Last Name
+                      </label>
+                      <div style={{ width: '260px', maxWidth: '100%', flexShrink: 0 }}>
+                        <SmartInputField
+                          value={regLastName}
+                          onChange={setRegLastName}
+                          fieldLabel="Last Name"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        className="wsu-btn-secondary"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          const hasAnyInput = [regFirstName, regLastName, regOrganization, regEmailAddress, regPhoneNumber, regSerialNumber].some(v => v.trim().length > 0);
+                          if (!hasAnyInput) {
+                            showToast('Please enter a value to search the Registration Database');
+                            setHasExecutedRegSearch(false);
+                            return;
+                          }
+                          setHasExecutedRegSearch(true);
+                          showToast(`Search Registration executed for Last Name: ${regLastName || 'any'}`);
+                        }}
+                        style={{
+                          marginLeft: '10px',
+                          flexShrink: 0,
+                          padding: '4px 12px',
+                          fontSize: '0.82rem',
+                          backgroundColor: '#F0F0EB',
+                          color: '#000000',
+                          border: '1px solid #000000',
+                          borderRadius: '3px',
+                          cursor: 'pointer',
+                          fontFamily: 'inherit',
+                          fontWeight: 600,
+                          whiteSpace: 'nowrap',
+                          transition: 'opacity 0.15s ease'
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.6')}
+                        onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+                      >
+                        Search Registration
+                      </button>
+                    </div>
+
+                    {/* 3. Organization */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <label style={{ width: '115px', fontWeight: 700, fontSize: '0.84rem', color: '#000000', flexShrink: 0 }}>
+                        Organization
+                      </label>
+                      <div style={{ width: '260px', maxWidth: '100%', flexShrink: 0 }}>
+                        <SmartInputField
+                          value={regOrganization}
+                          onChange={setRegOrganization}
+                          fieldLabel="Organization"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        className="wsu-btn-secondary"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          const hasAnyInput = [regFirstName, regLastName, regOrganization, regEmailAddress, regPhoneNumber, regSerialNumber].some(v => v.trim().length > 0);
+                          if (!hasAnyInput) {
+                            showToast('Please enter a value to search the Registration Database');
+                            setHasExecutedRegSearch(false);
+                            return;
+                          }
+                          setHasExecutedRegSearch(true);
+                          showToast(`Search Registration executed for Organization: ${regOrganization || 'any'}`);
+                        }}
+                        style={{
+                          marginLeft: '10px',
+                          flexShrink: 0,
+                          padding: '4px 12px',
+                          fontSize: '0.82rem',
+                          backgroundColor: '#F0F0EB',
+                          color: '#000000',
+                          border: '1px solid #000000',
+                          borderRadius: '3px',
+                          cursor: 'pointer',
+                          fontFamily: 'inherit',
+                          fontWeight: 600,
+                          whiteSpace: 'nowrap',
+                          transition: 'opacity 0.15s ease'
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.6')}
+                        onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+                      >
+                        Search Registration
+                      </button>
+                    </div>
+
+                    {/* 4. Email Address */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <label style={{ width: '115px', fontWeight: 700, fontSize: '0.84rem', color: '#000000', flexShrink: 0 }}>
+                        Email Address
+                      </label>
+                      <div style={{ width: '260px', maxWidth: '100%', flexShrink: 0 }}>
+                        <SmartInputField
+                          value={regEmailAddress}
+                          onChange={setRegEmailAddress}
+                          fieldLabel="Email Address"
+                          errorMessage={checkSpaceInEmail(regEmailAddress)}
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        className="wsu-btn-secondary"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          const emailErr = checkSpaceInEmail(regEmailAddress);
+                          if (emailErr) {
+                            showToast(emailErr);
+                            return;
+                          }
+                          const hasAnyInput = [regFirstName, regLastName, regOrganization, regEmailAddress, regPhoneNumber, regSerialNumber].some(v => v.trim().length > 0);
+                          if (!hasAnyInput) {
+                            showToast('Please enter a value to search the Registration Database');
+                            setHasExecutedRegSearch(false);
+                            return;
+                          }
+                          setHasExecutedRegSearch(true);
+                          showToast(`Search Registration executed for Email: ${regEmailAddress || 'any'}`);
+                        }}
+                        style={{
+                          marginLeft: '10px',
+                          flexShrink: 0,
+                          padding: '4px 12px',
+                          fontSize: '0.82rem',
+                          backgroundColor: '#F0F0EB',
+                          color: '#000000',
+                          border: '1px solid #000000',
+                          borderRadius: '3px',
+                          cursor: 'pointer',
+                          fontFamily: 'inherit',
+                          fontWeight: 600,
+                          whiteSpace: 'nowrap',
+                          transition: 'opacity 0.15s ease'
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.6')}
+                        onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+                      >
+                        Search Registration
+                      </button>
+                    </div>
+
+                    {/* 5. Phone Number */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <label style={{ width: '115px', fontWeight: 700, fontSize: '0.84rem', color: '#000000', flexShrink: 0 }}>
+                        Phone Number
+                      </label>
+                      <div style={{ width: '260px', maxWidth: '100%', flexShrink: 0 }}>
+                        <SmartInputField
+                          value={regPhoneNumber}
+                          onChange={setRegPhoneNumber}
+                          fieldLabel="Phone Number"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        className="wsu-btn-secondary"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          const hasAnyInput = [regFirstName, regLastName, regOrganization, regEmailAddress, regPhoneNumber, regSerialNumber].some(v => v.trim().length > 0);
+                          if (!hasAnyInput) {
+                            showToast('Please enter a value to search the Registration Database');
+                            setHasExecutedRegSearch(false);
+                            return;
+                          }
+                          setHasExecutedRegSearch(true);
+                          showToast(`Search Registration executed for Phone Number: ${regPhoneNumber || 'any'}`);
+                        }}
+                        style={{
+                          marginLeft: '10px',
+                          flexShrink: 0,
+                          padding: '4px 12px',
+                          fontSize: '0.82rem',
+                          backgroundColor: '#F0F0EB',
+                          color: '#000000',
+                          border: '1px solid #000000',
+                          borderRadius: '3px',
+                          cursor: 'pointer',
+                          fontFamily: 'inherit',
+                          fontWeight: 600,
+                          whiteSpace: 'nowrap',
+                          transition: 'opacity 0.15s ease'
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.6')}
+                        onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+                      >
+                        Search Registration
+                      </button>
+                    </div>
+
+                    {/* 6. Serial Number */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <label style={{ width: '115px', fontWeight: 700, fontSize: '0.84rem', color: '#000000', flexShrink: 0 }}>
+                        Serial Number
+                      </label>
+                      <div style={{ width: '260px', maxWidth: '100%', flexShrink: 0 }}>
+                        <SmartInputField
+                          value={regSerialNumber}
+                          onChange={setRegSerialNumber}
+                          fieldLabel="Serial Number"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        className="wsu-btn-secondary"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          const hasAnyInput = [regFirstName, regLastName, regOrganization, regEmailAddress, regPhoneNumber, regSerialNumber].some(v => v.trim().length > 0);
+                          if (!hasAnyInput) {
+                            showToast('Please enter a value to search the Registration Database');
+                            setHasExecutedRegSearch(false);
+                            return;
+                          }
+                          setHasExecutedRegSearch(true);
+                          showToast(`Search Registration executed for Serial Number: ${regSerialNumber || 'any'}`);
+                        }}
+                        style={{
+                          marginLeft: '10px',
+                          flexShrink: 0,
+                          padding: '4px 12px',
+                          fontSize: '0.82rem',
+                          backgroundColor: '#F0F0EB',
+                          color: '#000000',
+                          border: '1px solid #000000',
+                          borderRadius: '3px',
+                          cursor: 'pointer',
+                          fontFamily: 'inherit',
+                          fontWeight: 600,
+                          whiteSpace: 'nowrap',
+                          transition: 'opacity 0.15s ease'
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.6')}
+                        onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+                      >
+                        Search Registration
+                      </button>
+                    </div>
+
+                    <div style={{ fontSize: '0.84rem', color: '#000000', marginTop: '6px' }}>
+                      Note this may take a few minutes
                     </div>
                   </form>
                 </div>
 
                 {/* Results Title & Table (Only displayed after clicking Search Registration) */}
-                {hasExecutedRegSearch ? (
-                  <>
+                {hasExecutedRegSearch && (
+                  <div style={{ marginTop: '20px', marginBottom: '20px' }}>
                     <div className="wsu-card-title">
                       <span>
                         {filteredRegDatabase.length} Search Result for {regEmailAddress || regSearchQuery || 'all records'}
                       </span>
 
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', flexShrink: 0 }}>
                         <span className="wsu-label">Filter:</span>
-                        <div style={{ width: '240px' }}>
+                        <div style={{ width: '220px', maxWidth: '100%' }}>
                           <SmartInputField
                             value={regSearchQuery}
                             onChange={setRegSearchQuery}
@@ -1022,34 +1493,48 @@ export default function App() {
                       </table>
                     </div>
 
-                    <div style={{ fontSize: '0.85rem', color: '#000000', marginBottom: '24px', fontWeight: 700 }}>
+                    <div style={{ fontSize: '0.85rem', color: '#000000', marginBottom: '16px', fontWeight: 700 }}>
                       Showing 1 to {filteredRegDatabase.length} of {filteredRegDatabase.length} entries
                     </div>
-
-                    <div style={{ borderTop: '1px solid #5E33BF', paddingTop: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.82rem', color: '#000000' }}>
-                      <button
-                        style={{ background: 'none', border: 'none', color: '#5E33BF', textDecoration: 'underline', cursor: 'pointer', fontFamily: 'inherit', fontWeight: 700 }}
-                        onClick={() => showToast('Error report dialog opened')}
-                      >
-                        Report an Error
-                      </button>
-                      <div style={{ fontStyle: 'italic', fontWeight: 600 }}>
-                        lookup.pl version 2.3.0. Page generated in 3.8782 seconds
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <div style={{ paddingTop: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.82rem', color: '#000000' }}>
-                    <button
-                      style={{ background: 'none', border: 'none', color: '#5E33BF', textDecoration: 'underline', cursor: 'pointer', fontFamily: 'inherit', fontWeight: 700 }}
-                      onClick={() => showToast('Error report dialog opened')}
-                    >
-                      Report an Error
-                    </button>
                   </div>
                 )}
+
+                {/* Dotted horizontal divider line matching Screenshot 4 */}
+                <div
+                  style={{
+                    borderTop: '1px dotted #000000',
+                    marginTop: '24px',
+                    paddingTop: '12px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    fontSize: '0.82rem',
+                    color: '#000000'
+                  }}
+                >
+                  <button
+                    type="button"
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#5E33BF',
+                      textDecoration: 'underline',
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                      fontWeight: 600,
+                      padding: 0
+                    }}
+                    onClick={() => showToast('Report an Error dialog opened')}
+                  >
+                    Report an Error
+                  </button>
+                  <div style={{ fontStyle: 'normal' }}>
+                    lookup.pl version 2.3.0. Page generated in 0.0019 seconds
+                  </div>
+                </div>
               </div>
             )}
+
 
             {/* SUB VIEW C: DUMMY SERIAL NUMBER (MATCHING SCREENSHOT 1) */}
             {activeRegSubNav === 'Dummy Serial Number' && (
@@ -1212,8 +1697,222 @@ export default function App() {
               </div>
             )}
 
+            {/* SUB VIEW: BLD NUMBER LOOKUP (MATCHING SCREENSHOT 3) */}
+            {activeRegSubNav === 'Bld Number Lookup' && (
+              <div className="wsu-card" style={{ maxWidth: '900px' }}>
+                <h3 style={{ fontSize: '1.09rem', color: '#000000', fontWeight: 700, marginBottom: '16px' }}>
+                  Bld Number:
+                </h3>
+
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const val = bldNumberInput.trim();
+                    if (!val) {
+                      showToast('Please enter a Bld Number');
+                      return;
+                    }
+                    setBldLookupResult({
+                      bld: val,
+                      product: 'EndNote 21.3.0',
+                      platform: 'Windows / Macintosh Hybrid',
+                      buildDate: '2024-03-12',
+                      status: 'Release Production Build'
+                    });
+                    showToast(`Bld Number Lookup executed for ${val}`);
+                  }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px', maxWidth: '520px' }}
+                >
+                  <div style={{ flex: 1 }}>
+                    <SmartInputField
+                      value={bldNumberInput}
+                      onChange={setBldNumberInput}
+                      fieldLabel="Bld Number"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="wsu-btn-secondary"
+                    style={{
+                      height: '32px',
+                      padding: '0 14px',
+                      backgroundColor: '#F0F0EB',
+                      color: '#000000',
+                      border: '1px solid #000000',
+                      borderRadius: '2px',
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                      fontWeight: 600,
+                      transition: 'opacity 0.15s ease'
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.5')}
+                    onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+                  >
+                    Lookup
+                  </button>
+                </form>
+
+                {bldLookupResult && (
+                  <div className="wsu-result-box" style={{ padding: '16px', borderRadius: '4px', marginBottom: '24px' }}>
+                    <div style={{ fontSize: '0.88rem', color: '#000000', marginBottom: '6px' }}>
+                      <strong>Build Number:</strong> {bldLookupResult.bld}
+                    </div>
+                    <div style={{ fontSize: '0.88rem', color: '#000000', marginBottom: '6px' }}>
+                      <strong>Mapped Product:</strong> {bldLookupResult.product}
+                    </div>
+                    <div style={{ fontSize: '0.88rem', color: '#000000', marginBottom: '6px' }}>
+                      <strong>Platform:</strong> {bldLookupResult.platform}
+                    </div>
+                    <div style={{ fontSize: '0.88rem', color: '#000000' }}>
+                      <strong>Status:</strong> {bldLookupResult.status} (Built: {bldLookupResult.buildDate})
+                    </div>
+                  </div>
+                )}
+
+                <div
+                  style={{
+                    borderTop: '1px dotted #000000',
+                    marginTop: '24px',
+                    paddingTop: '12px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    fontSize: '0.82rem',
+                    color: '#000000'
+                  }}
+                >
+                  <button
+                    type="button"
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#5E33BF',
+                      textDecoration: 'underline',
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                      fontWeight: 600,
+                      padding: 0
+                    }}
+                    onClick={() => showToast('Report an Error dialog opened')}
+                  >
+                    Report an Error
+                  </button>
+                  <div style={{ fontStyle: 'normal' }}>
+                    lookup.pl version 2.3.0. Page generated in 0.0037 seconds
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* SUB VIEW: PRODUCT DOWNLOADS (MATCHING SCREENSHOT 1) */}
+            {activeRegSubNav === 'Product Downloads' && (
+              <div className="wsu-card" style={{ maxWidth: '1100px' }}>
+                <h3 style={{ fontSize: '1.09rem', color: '#000000', fontWeight: 700, marginBottom: '14px' }}>
+                  Downloads
+                </h3>
+
+                <div
+                  style={{
+                    fontSize: '0.82rem',
+                    color: '#000000',
+                    lineHeight: 1.5,
+                    marginBottom: '20px',
+                    backgroundColor: '#F0F0EB',
+                    padding: '12px',
+                    borderRadius: '4px',
+                    border: '1px solid #5E33BF'
+                  }}
+                >
+                  <strong>PLEASE NOTE:</strong> EndNote X7 is not compatible with this new Word 2016 version 16.X release If you have EndNote X7, you can select to downgrade your version of Word/Office to the production release of version 15.xx. Make sure the option Automatically Download and Update is not enabled. You can find steps for how to downgrade Word from Microsoft:{' '}
+                  <a
+                    href="https://support.office.com/en-us/article/How-to-go-back-to-Office-2016-for-Mac-15-xx-versions-from-16-xx-e88ed6c8-6fb4-40a1-9540-529000d3d20f"
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{ color: '#5E33BF', textDecoration: 'underline', wordBreak: 'break-all' }}
+                  >
+                    https://support.office.com/en-us/article/How-to-go-back-to-Office-2016-for-Mac-15-xx-versions-from-16-xx-e88ed6c8-6fb4-40a1-9540-529000d3d20f
+                  </a>
+                </div>
+
+                <div className="wsu-table-container" style={{ marginBottom: '24px', maxHeight: '520px', overflowY: 'auto' }}>
+                  <table className="wsu-table">
+                    <thead>
+                      <tr>
+                        <th style={{ width: '38%' }}>Product</th>
+                        <th>Download</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {PRODUCT_DOWNLOADS_LIST.map((item, idx) => (
+                        <tr key={idx}>
+                          <td style={{ fontWeight: 600 }}>{item.product}</td>
+                          <td>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <a
+                                href={item.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                style={{
+                                  color: '#5E33BF',
+                                  textDecoration: 'underline',
+                                  fontSize: '0.82rem',
+                                  wordBreak: 'break-all'
+                                }}
+                              >
+                                {item.url}
+                              </a>
+                              <button
+                                type="button"
+                                className="wsu-copy-cell-btn"
+                                onClick={() => handleCopy(item.url, `${item.product} URL`)}
+                              >
+                                Copy
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div
+                  style={{
+                    borderTop: '1px dotted #000000',
+                    marginTop: '24px',
+                    paddingTop: '12px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    fontSize: '0.82rem',
+                    color: '#000000'
+                  }}
+                >
+                  <button
+                    type="button"
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#5E33BF',
+                      textDecoration: 'underline',
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                      fontWeight: 600,
+                      padding: 0
+                    }}
+                    onClick={() => showToast('Error report dialog opened')}
+                  >
+                    Report an Error
+                  </button>
+                  <div style={{ fontStyle: 'normal' }}>
+                    lookup.pl version 2.3.0. Page generated in 0.0022 seconds
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* OTHER SUB VIEWS */}
-            {!['Serial Number Lookup', 'Registration Database', 'Dummy Serial Number', 'Site Licenses'].includes(activeRegSubNav) && (
+            {!['Serial Number Lookup', 'Registration Database', 'Bld Number Lookup', 'Dummy Serial Number', 'Product Downloads', 'Site Licenses'].includes(activeRegSubNav) && (
               <div className="wsu-card">
                 <div className="wsu-card-title">
                   <span>{activeRegSubNav}</span>
@@ -1226,6 +1925,7 @@ export default function App() {
                 </button>
               </div>
             )}
+
 
           </main>
         </div>
@@ -1494,12 +2194,16 @@ export default function App() {
           {/* Help Group */}
           <div className="wsu-sidebar-section">
             <div className="wsu-sidebar-heading">Help</div>
-            <button
+            <a
+              href="https://support.myendnoteweb.com/enwservices/supportutility/EndNote%20Web%20Support%20Utility.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
               className={`wsu-sidebar-item ${activeNav === 'Download Manual' ? 'active' : ''}`}
               onClick={() => setActiveNav('Download Manual')}
+              style={{ textDecoration: 'none' }}
             >
               <span>Download Manual</span>
-            </button>
+            </a>
             <button
               className={`wsu-sidebar-item ${activeNav === 'Email for Support' ? 'active' : ''}`}
               onClick={() => setActiveNav('Email for Support')}
@@ -1787,96 +2491,73 @@ export default function App() {
             </div>
           )}
 
-          {/* VIEW 2: USER ACCESS LOOKUP */}
+          {/* CUSTOMER ACCESS: VIEW 1 - USER ACCESS LOOKUP */}
           {activeNav === 'User Access Lookup' && (
-            <div className="wsu-card">
-              <div className="wsu-card-title">User Access Lookup</div>
-              <p style={{ fontSize: '0.85rem', color: '#000000', marginBottom: '16px', fontWeight: 600 }}>
-                Displays the 100 most recent EN Services Auth Tokens
-              </p>
+            <div
+              className="wsu-card"
+              style={{
+                padding: '24px 28px',
+                border: '1px solid #5E33BF',
+                borderRadius: '6px'
+              }}
+            >
+              <UserAccessLookupView theme={theme} onShowToast={showToast} />
+            </div>
+          )}
 
-              <div className="wsu-form-grid" style={{ marginBottom: '24px' }}>
-                <SmartInputField
-                  label="Email:"
-                  value={accessSearchEmail}
-                  onChange={setAccessSearchEmail}
-                  fieldLabel="Search Email"
-                />
+          {/* CUSTOMER ACCESS: VIEW 2 - AGGREGATE ACCESS LOOKUP */}
+          {activeNav === 'Aggregate Access Lookup' && (
+            <div
+              className="wsu-card"
+              style={{
+                padding: '24px 28px',
+                border: '1px solid #5E33BF',
+                borderRadius: '6px'
+              }}
+            >
+              <AggregateAccessLookupView theme={theme} onShowToast={showToast} />
+            </div>
+          )}
 
-                <SmartInputField
-                  label="UID:"
-                  value={accessSearchUid}
-                  onChange={setAccessSearchUid}
-                  fieldLabel="Search UID"
-                />
-              </div>
+          {/* CUSTOMER ACCESS: VIEW 3 - USER TEMPORARY CREDENTIALS */}
+          {activeNav === 'User Temporary Credentials' && (
+            <div
+              className="wsu-card"
+              style={{
+                padding: '24px 28px',
+                border: '1px solid #5E33BF',
+                borderRadius: '6px'
+              }}
+            >
+              <UserTemporaryCredentialsView theme={theme} onShowToast={showToast} />
+            </div>
+          )}
 
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#5E33BF', marginBottom: '14px' }}>
-                100 Most Recent Sessions for {accessSearchEmail || 'all users'}
-              </h3>
+          {/* CUSTOMER ACCESS: VIEW 4 - ENDNOTE ONLINE */}
+          {activeNav === 'EndNote Online' && (
+            <div
+              className="wsu-card"
+              style={{
+                padding: '24px 28px',
+                border: '1px solid #5E33BF',
+                borderRadius: '6px'
+              }}
+            >
+              <EndNoteOnlineAccessView theme={theme} onShowToast={showToast} />
+            </div>
+          )}
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem' }}>
-                  <span>Show</span>
-                  <select
-                    value={showEntriesCount}
-                    onChange={(e) => setShowEntriesCount(e.target.value)}
-                    style={{ padding: '4px 8px', border: '0.5px solid #000000', borderRadius: '2px', background: '#F0F0EB', fontFamily: 'inherit', fontWeight: 700 }}
-                  >
-                    <option value={10}>10</option>
-                    <option value={25}>25</option>
-                    <option value={50}>50</option>
-                    <option value={100}>100</option>
-                  </select>
-                  <span>entries</span>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem' }}>
-                  <span className="wsu-label">Search:</span>
-                  <div style={{ width: '220px' }}>
-                    <SmartInputField
-                      value={accessFilterQuery}
-                      onChange={setAccessFilterQuery}
-                      fieldLabel="Token Filter"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="wsu-table-container">
-                <table className="wsu-table">
-                  <thead>
-                    <tr>
-                      <th>Auth Token</th>
-                      <th>UID</th>
-                      <th>Client Name</th>
-                      <th>Date Created</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredAuthTokens.map((item, idx) => (
-                      <tr key={idx}>
-                        <td>
-                          <code>{item.authToken}</code>
-                          <button className="wsu-copy-cell-btn" onClick={() => handleCopy(item.authToken, 'Auth Token')}>
-                            Copy
-                          </button>
-                        </td>
-                        <td>
-                          <code>{item.uid}</code>
-                          <button className="wsu-copy-cell-btn" onClick={() => handleCopy(item.uid, 'UID')}>
-                            Copy
-                          </button>
-                        </td>
-                        <td>
-                          <strong>{item.clientName}</strong>
-                        </td>
-                        <td>{item.dateCreated}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+          {/* CUSTOMER ACCESS: VIEW 5 - ENDNOTE DESKTOP */}
+          {activeNav === 'EndNote Desktop' && (
+            <div
+              className="wsu-card"
+              style={{
+                padding: '24px 28px',
+                border: '1px solid #5E33BF',
+                borderRadius: '6px'
+              }}
+            >
+              <EndNoteDesktopBuilderView theme={theme} onShowToast={showToast} />
             </div>
           )}
 
@@ -2276,16 +2957,131 @@ export default function App() {
             </div>
           )}
 
+          {/* VIEW: DOWNLOAD MANUAL */}
+          {activeNav === 'Download Manual' && (
+            <div
+              className="wsu-card"
+              style={{
+                padding: '24px 28px',
+                border: '1px solid #5E33BF',
+                borderRadius: '6px'
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '16px',
+                  borderBottom: '1px solid #5E33BF',
+                  paddingBottom: '12px',
+                  flexWrap: 'wrap',
+                  gap: '12px'
+                }}
+              >
+                <div>
+                  <h2
+                    style={{
+                      margin: 0,
+                      fontSize: '1.25rem',
+                      fontWeight: 700,
+                      color: theme === 'dark' ? '#FFFFFF' : '#000000'
+                    }}
+                  >
+                    EndNote Web Support Utility Manual
+                  </h2>
+                  <p
+                    style={{
+                      margin: '4px 0 0 0',
+                      fontSize: '0.85rem',
+                      color: theme === 'dark' ? '#FFFFFF' : '#000000'
+                    }}
+                  >
+                    Documentation &amp; User Reference Guide
+                  </p>
+                </div>
+                <a
+                  href="https://support.myendnoteweb.com/enwservices/supportutility/EndNote%20Web%20Support%20Utility.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="wsu-btn-primary"
+                  style={{
+                    backgroundColor: '#5E33BF',
+                    color: '#FFFFFF',
+                    textDecoration: 'none',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '8px 16px',
+                    borderRadius: '4px',
+                    fontSize: '0.85rem',
+                    fontWeight: 600
+                  }}
+                >
+                  Open / Download PDF Manual ↗
+                </a>
+              </div>
+
+              <div
+                style={{
+                  marginBottom: '16px',
+                  fontSize: '0.86rem',
+                  lineHeight: '1.5',
+                  color: theme === 'dark' ? '#FFFFFF' : '#000000'
+                }}
+              >
+                Direct Link:{' '}
+                <a
+                  href="https://support.myendnoteweb.com/enwservices/supportutility/EndNote%20Web%20Support%20Utility.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    color: '#5E33BF',
+                    fontWeight: 700,
+                    textDecoration: 'underline',
+                    wordBreak: 'break-all'
+                  }}
+                >
+                  https://support.myendnoteweb.com/enwservices/supportutility/EndNote%20Web%20Support%20Utility.pdf
+                </a>
+              </div>
+
+              <div
+                style={{
+                  border: '1px solid #5E33BF',
+                  borderRadius: '4px',
+                  overflow: 'hidden',
+                  height: 'calc(100vh - 310px)',
+                  minHeight: '520px',
+                  backgroundColor: '#FFFFFF'
+                }}
+              >
+                <iframe
+                  src="https://support.myendnoteweb.com/enwservices/supportutility/EndNote%20Web%20Support%20Utility.pdf"
+                  title="EndNote Web Support Utility Manual PDF"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 'none' }}
+                />
+              </div>
+            </div>
+          )}
+
           {/* VIEW 4: OTHER NAV VIEWS */}
           {![
             'Search Customers',
             'User Access Lookup',
+            'Aggregate Access Lookup',
+            'User Temporary Credentials',
+            'EndNote Online',
+            'EndNote Desktop',
             'Expiration Dates',
             'Customer Associations',
             'Customer Password',
             'Groups Sharing',
             'Alter Reference Data',
-            'Serial Number Lookup'
+            'Serial Number Lookup',
+            'Download Manual'
           ].includes(activeNav) && (
               <div className="wsu-card">
                 <div className="wsu-card-title">{activeNav}</div>

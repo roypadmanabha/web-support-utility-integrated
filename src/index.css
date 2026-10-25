@@ -18,6 +18,9 @@
 
   /* Exact Clarivate Typeface Matching Stack (Single-story geometric 'a' & 'g', Futura geometry) */
   --font-clarivate: 'Clarivate', 'Clarivate Regular', 'Montserrat', 'Outfit', 'League Spartan', 'Futura', 'Century Gothic', -apple-system, sans-serif;
+
+  /* Avenir LT Pro typography for menu texts */
+  --font-avenir: 'Avenir LT Pro', 'Avenir Pro LT', 'Avenir Pro', 'Avenir Next', 'Avenir', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 * {
@@ -26,7 +29,8 @@
   padding: 0;
 }
 
-html, body {
+html,
+body {
   width: 100%;
   height: 100%;
   background-color: #F0F0EB;
@@ -191,8 +195,9 @@ html, body {
 }
 
 .wsu-sidebar-heading {
+  font-family: var(--font-avenir);
   font-size: 0.82rem;
-  font-weight: 800;
+  font-weight: 700;
   color: #5E33BF;
   text-transform: uppercase;
   letter-spacing: 0.8px;
@@ -213,14 +218,19 @@ html, body {
   border-radius: 2px;
   cursor: pointer;
   text-align: left;
-  font-family: inherit;
+  font-family: var(--font-avenir);
   transition: all 0.15s ease;
+}
+
+.wsu-sidebar-item span {
+  font-family: var(--font-avenir);
 }
 
 .wsu-sidebar-item:hover {
   background-color: #5E33BF;
   color: #F0F0EB;
   border-color: #000000;
+  font-family: var(--font-avenir);
 }
 
 .wsu-sidebar-item.active {
@@ -228,9 +238,10 @@ html, body {
   color: #F0F0EB;
   font-weight: 400;
   border-color: #000000;
+  font-family: var(--font-avenir);
 }
 
-/* Main Content Area */
+/* Main Content Area - All content inside the right part of the menu across SN Lookup and WSU page */
 .wsu-content {
   flex: 1;
   padding: 24px 32px;
@@ -239,6 +250,26 @@ html, body {
   flex-direction: column;
   gap: 24px;
   overflow-x: auto;
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+
+.wsu-content *,
+.wsu-content input,
+.wsu-content button,
+.wsu-content select,
+.wsu-content textarea,
+.wsu-content table,
+.wsu-content th,
+.wsu-content td,
+.wsu-content label,
+.wsu-content p,
+.wsu-content span,
+.wsu-content h1,
+.wsu-content h2,
+.wsu-content h3,
+.wsu-content h4,
+.wsu-content strong {
+  font-family: Arial, Helvetica, sans-serif !important;
 }
 
 /* Cards & Sections */
@@ -246,7 +277,10 @@ html, body {
   background-color: #F0F0EB;
   border: 1px solid #5E33BF;
   border-radius: 6px;
-  padding: 20px;
+  padding: 18px 20px;
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .wsu-card-title {
@@ -259,6 +293,9 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  box-sizing: border-box;
 }
 
 /* Form inputs & buttons */
@@ -302,6 +339,8 @@ html, body {
   background-color: #F0F0EB;
   border-radius: 2px;
   overflow: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .wsu-input-wrapper:focus-within {
@@ -311,34 +350,55 @@ html, body {
 
 .wsu-input {
   flex: 1;
-  padding: 8px 10px;
+  min-width: 0;
+  padding: 5px 8px;
   border: none;
   background: transparent;
   color: #000000;
   font-family: inherit;
-  font-size: 0.81rem;
+  font-size: 0.80rem;
   outline: none;
 }
 
-.wsu-action-btn {
-  padding: 6px 12px;
-  height: 100%;
-  background-color: #5E33BF;
-  color: #F0F0EB;
-  border: none;
-  font-family: inherit;
-  font-size: 0.72rem;
-  font-weight: 400;
-  cursor: pointer;
+.wsu-action-btn-group {
   display: flex;
   align-items: center;
-  gap: 4px;
-  border-left: 0.5px solid #000000;
+  gap: 3px;
+  padding: 2px 3px;
+  flex-shrink: 0;
+}
+
+.wsu-action-btn {
+  padding: 2px 6px;
+  height: 20px;
+  background-color: #5E33BF;
+  color: #F0F0EB;
+  border: 0.5px solid #000000;
+  border-radius: 2px;
+  font-family: inherit;
+  font-size: 0.69rem;
+  font-weight: 400;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   white-space: nowrap;
-  transition: background-color 0.15s;
+  flex-shrink: 0;
+  transition: opacity 0.15s ease, background-color 0.15s;
 }
 
 .wsu-action-btn:hover {
+  background-color: #000000;
+  color: #F0F0EB;
+}
+
+.wsu-action-btn-clear {
+  background-color: #F0F0EB;
+  color: #000000;
+  border: 0.5px solid #000000;
+}
+
+.wsu-action-btn-clear:hover {
   background-color: #000000;
   color: #F0F0EB;
 }
@@ -648,11 +708,22 @@ html, body {
 [data-theme="dark"] .wsu-action-btn {
   background-color: #5E33BF !important;
   color: #F0F0EB !important;
-  border-left: 0.5px solid #F0F0EB !important;
+  border: 0.5px solid #F0F0EB !important;
 }
 
 [data-theme="dark"] .wsu-action-btn:hover {
   background-color: #000000 !important;
+  color: #F0F0EB !important;
+}
+
+[data-theme="dark"] .wsu-action-btn-clear {
+  background-color: #000000 !important;
+  color: #F0F0EB !important;
+  border: 0.5px solid #F0F0EB !important;
+}
+
+[data-theme="dark"] .wsu-action-btn-clear:hover {
+  background-color: #5E33BF !important;
   color: #F0F0EB !important;
 }
 
@@ -791,5 +862,3 @@ button.wsu-btn-secondary {
 [data-theme="dark"] .wsu-copy-btn span {
   color: #FFFFFF !important;
 }
-
-

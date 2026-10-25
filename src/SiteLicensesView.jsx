@@ -173,8 +173,7 @@ export default function SiteLicensesView({ theme = 'light', onSelectSerial, onSh
       style={{
         width: '100%',
         backgroundColor: isDark ? '#000000' : '#F0F0EB',
-        fontFamily:
-          "'Clarivate', 'Clarivate Regular', Futura, 'Memphis', 'Karnak', sans-serif",
+        fontFamily: 'Arial, Helvetica, sans-serif',
         color: isDark ? '#FFFFFF' : '#000000'
       }}
     >

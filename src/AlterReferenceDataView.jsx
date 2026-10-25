@@ -86,7 +86,7 @@ export default function AlterReferenceDataView({ theme = 'light', onShowToast })
     <div
       style={{
         width: '100%',
-        fontFamily: "'Clarivate', 'Clarivate Regular', Futura, 'Memphis', 'Karnak', sans-serif",
+        fontFamily: "Arial, Helvetica, sans-serif",
         color: textColor,
         backgroundColor: isDark ? '#000000' : '#F0F0EB'
       }}
