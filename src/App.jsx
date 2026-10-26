@@ -369,52 +369,65 @@ const SmartInputField = ({
 
 
 // Top-level Header Bar Component
-const HeaderBar = ({ titleText, backActionText, onBackClick, onShowToast, theme, onToggleTheme, centerAction }) => (
-  <header className="wsu-header">
-    <div className="wsu-header-left">
-      <div className="wsu-header-logo-container">
-        <img src="/clarivate-logo.svg" alt="Clarivate Logo" className="wsu-header-logo" />
-      </div>
-      <div className="wsu-header-title">
-        <span>{titleText || 'Web Support Utility (WSU)'}</span>
-      </div>
-    </div>
+const HeaderBar = ({ titleText, backActionText, onBackClick, onShowToast, theme, onToggleTheme, centerAction }) => {
+  const centerContent = centerAction || (backActionText && onBackClick ? (
+    <button
+      type="button"
+      className="wsu-btn-primary"
+      onClick={onBackClick}
+      style={{
+        padding: '6px 18px',
+        fontSize: '0.82rem',
+        fontWeight: 600,
+        letterSpacing: '0.2px'
+      }}
+    >
+      {backActionText}
+    </button>
+  ) : null);
 
-    {centerAction && (
-      <div className="wsu-header-center">
-        {centerAction}
+  return (
+    <header className="wsu-header">
+      <div className="wsu-header-left">
+        <div className="wsu-header-logo-container">
+          <img src="/clarivate-logo.svg" alt="Clarivate Logo" className="wsu-header-logo" />
+        </div>
+        <div className="wsu-header-title">
+          <span>{titleText || 'Web Support Utility (WSU)'}</span>
+        </div>
       </div>
-    )}
 
-    <div className="wsu-header-right">
-      {backActionText && onBackClick && (
-        <button className="wsu-btn-primary" onClick={onBackClick}>
-          {backActionText}
-        </button>
+      {centerContent && (
+        <div className="wsu-header-center">
+          {centerContent}
+        </div>
       )}
-      <div className="wsu-header-user">
-        Logged in: <span>padmanabha.roy@clarivate.com</span>
+
+      <div className="wsu-header-right">
+        <div className="wsu-header-user">
+          Logged in: <span>padmanabha.roy@clarivate.com</span>
+        </div>
+        <button className="wsu-header-link" onClick={() => onShowToast && onShowToast('Password change form opened')}>
+          Change Password
+        </button>
+        <span>|</span>
+        <button className="wsu-header-link" onClick={() => onShowToast && onShowToast('User logged out')}>
+          Logout
+        </button>
+        <span>|</span>
+        <button
+          type="button"
+          className="wsu-theme-toggle"
+          onClick={onToggleTheme}
+          title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          aria-label="Toggle dark/light mode"
+        >
+          {theme === 'dark' ? '☀️' : '🌙'}
+        </button>
       </div>
-      <button className="wsu-header-link" onClick={() => onShowToast && onShowToast('Password change form opened')}>
-        Change Password
-      </button>
-      <span>|</span>
-      <button className="wsu-header-link" onClick={() => onShowToast && onShowToast('User logged out')}>
-        Logout
-      </button>
-      <span>|</span>
-      <button
-        type="button"
-        className="wsu-theme-toggle"
-        onClick={onToggleTheme}
-        title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-        aria-label="Toggle dark/light mode"
-      >
-        {theme === 'dark' ? '☀️' : '🌙'}
-      </button>
-    </div>
-  </header>
-);
+    </header>
+  );
+};
 
 export default function App() {
   // Theme State ('light' | 'dark')

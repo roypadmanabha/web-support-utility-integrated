@@ -87,10 +87,15 @@ body {
 }
 
 .wsu-header-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 1;
+  pointer-events: auto;
+  z-index: 2;
 }
 
 .wsu-header-left {
