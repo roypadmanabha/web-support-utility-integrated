@@ -639,22 +639,19 @@ export default function App() {
   // Page View state: 'wsu-home' | 'registration-database' | 'serial-detail'
   const [currentPage, setCurrentPage] = useState(detectInitialPage);
 
-  // Theme State ('light' | 'dark')
+  // Theme State ('light' | 'dark') - default is strictly 'light'
   const [theme, setTheme] = useState(() => {
-    const initialPage = detectInitialPage();
-    const isReg = initialPage === 'registration-database' || initialPage === 'serial-detail';
-    const storageKey = isReg ? 'clarivate_reg_theme' : 'clarivate_wsu_theme';
-    const saved = localStorage.getItem(storageKey);
-    if (saved) return saved;
-    return isReg ? 'dark' : 'light';
+    return localStorage.getItem('clarivate_wsu_theme') || 'light';
   });
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    const isReg = currentPage === 'registration-database' || currentPage === 'serial-detail';
-    const storageKey = isReg ? 'clarivate_reg_theme' : 'clarivate_wsu_theme';
-    localStorage.setItem(storageKey, theme);
-  }, [theme, currentPage]);
+    if (!currentUser) {
+      document.documentElement.setAttribute('data-theme', 'light');
+    } else {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('clarivate_wsu_theme', theme);
+    }
+  }, [theme, currentUser]);
 
   const toggleTheme = () => {
     const nextTheme = theme === 'light' ? 'dark' : 'light';
@@ -1169,7 +1166,7 @@ export default function App() {
   // If user is not authenticated, show login page
   if (!currentUser) {
     return (
-      <div className="wsu-layout">
+      <div className="wsu-layout" data-theme="light" style={{ backgroundColor: '#F0F0EB' }}>
         <LoginView
           onLogin={handleLogin}
           sessionExpiredMessage={sessionExpiredMsg}

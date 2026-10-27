@@ -1085,45 +1085,78 @@ button.wsu-btn-secondary {
   white-space: nowrap;
 }
 
-/* Dark mode overrides */
+/* =========================================================================
+   LOGIN SCREEN: STRICTLY AND ONLY LIGHT MODE (NO DARK THEME EVER)
+   ========================================================================= */
+.wsu-layout[data-theme="light"],
+[data-theme="dark"] .wsu-layout[data-theme="light"] {
+  background-color: #F0F0EB !important;
+  color: #000000 !important;
+}
+
+.wsu-simple-login-wrapper,
 [data-theme="dark"] .wsu-simple-login-wrapper,
-[data-theme="dark"] .wsu-simple-card {
-  background-color: #000000 !important;
-  color: #F0F0EB !important;
+.wsu-layout[data-theme="light"] .wsu-simple-login-wrapper {
+  background-color: #F0F0EB !important;
+  color: #000000 !important;
 }
 
-[data-theme="dark"] .wsu-simple-card {
-  border-color: #5E33BF !important;
+.wsu-simple-card,
+[data-theme="dark"] .wsu-simple-card,
+.wsu-layout[data-theme="light"] .wsu-simple-card {
+  background-color: #F0F0EB !important;
+  color: #000000 !important;
+  border: 1.5px solid #5E33BF !important;
 }
 
+.wsu-simple-label,
 [data-theme="dark"] .wsu-simple-label,
+.wsu-simple-title,
 [data-theme="dark"] .wsu-simple-title,
+.wsu-simple-subtext,
 [data-theme="dark"] .wsu-simple-subtext {
-  color: #F0F0EB !important;
+  color: #000000 !important;
 }
 
+.wsu-simple-input,
 [data-theme="dark"] .wsu-simple-input {
-  border-bottom: 1px solid #F0F0EB !important;
-  color: #F0F0EB !important;
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid #000000 !important;
+  color: #000000 !important;
 }
 
+.wsu-simple-input:focus,
 [data-theme="dark"] .wsu-simple-input:focus {
   border-bottom: 1.5px solid #5E33BF !important;
 }
 
+.wsu-simple-submit-btn,
 [data-theme="dark"] .wsu-simple-submit-btn {
   background-color: #5E33BF !important;
   color: #F0F0EB !important;
-  border-color: #F0F0EB !important;
+  border: 1px solid #000000 !important;
 }
 
+.wsu-simple-submit-btn:hover,
 [data-theme="dark"] .wsu-simple-submit-btn:hover {
   background-color: #000000 !important;
-  border-color: #5E33BF !important;
+  color: #F0F0EB !important;
 }
 
+.wsu-simple-error,
 [data-theme="dark"] .wsu-simple-error {
-  background-color: #000000 !important;
+  background-color: #F0F0EB !important;
   border-color: #5E33BF !important;
-  color: #F0F0EB !important;
+  color: #000000 !important;
+}
+
+.wsu-password-toggle-btn,
+[data-theme="dark"] .wsu-password-toggle-btn {
+  color: #5E33BF !important;
+}
+
+.wsu-password-toggle-btn:hover,
+[data-theme="dark"] .wsu-password-toggle-btn:hover {
+  color: #000000 !important;
 }
