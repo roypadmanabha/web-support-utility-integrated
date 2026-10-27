@@ -1167,8 +1167,6 @@ export default function App() {
         <LoginView
           onLogin={handleLogin}
           sessionExpiredMessage={sessionExpiredMsg}
-          theme={theme}
-          onToggleTheme={toggleTheme}
         />
         {toastMessage && (
           <div className="wsu-toast" role="alert">

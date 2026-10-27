@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function LoginView({ onLogin, sessionExpiredMessage, theme, onToggleTheme }) {
+export default function LoginView({ onLogin, sessionExpiredMessage }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(sessionExpiredMessage || '');
@@ -21,17 +21,6 @@ export default function LoginView({ onLogin, sessionExpiredMessage, theme, onTog
 
   return (
     <div className="wsu-simple-login-wrapper">
-      {/* Subtle theme toggle in corner */}
-      <button
-        type="button"
-        className="wsu-theme-toggle wsu-simple-theme-toggle"
-        onClick={onToggleTheme}
-        title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-        aria-label="Toggle dark/light mode"
-      >
-        {theme === 'dark' ? '☀️' : '🌙'}
-      </button>
-
       {/* Main Centered Minimal Card Matching User Demo Exactly */}
       <div className="wsu-simple-card">
         {/* Clarivate Logo */}

@@ -905,16 +905,6 @@ button.wsu-btn-secondary {
   box-sizing: border-box;
 }
 
-.wsu-simple-theme-toggle {
-  position: absolute;
-  top: 20px;
-  right: 24px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 1.25rem;
-}
-
 .wsu-simple-card {
   width: 100%;
   max-width: 440px;
