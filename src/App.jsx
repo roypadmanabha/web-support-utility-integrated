@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { CUSTOMER_DATABASE, AUTH_TOKENS_LIST, SERIAL_NUMBERS_DATABASE, CUSTOMER_ASSOCIATIONS, UNIVERSITY_LIST } from './mockData';
 import SiteLicensesView from './SiteLicensesView';
 import CustomerPasswordView from './CustomerPasswordView';
@@ -429,16 +429,41 @@ const HeaderBar = ({ titleText, backActionText, onBackClick, onShowToast, theme,
   );
 };
 
+// Detect initial page view from URL query parameter or hash
+const detectInitialPage = () => {
+  if (typeof window === 'undefined') return 'wsu-home';
+  const params = new URLSearchParams(window.location.search);
+  const p = params.get('page') || params.get('view');
+  if (p === 'registration-database' || p === 'sln') {
+    return 'registration-database';
+  }
+  const hash = (window.location.hash || '').toLowerCase();
+  if (hash.includes('registration-database') || hash.includes('sln')) {
+    return 'registration-database';
+  }
+  return 'wsu-home';
+};
+
 export default function App() {
+  // Page View state: 'wsu-home' | 'registration-database' | 'serial-detail'
+  const [currentPage, setCurrentPage] = useState(detectInitialPage);
+
   // Theme State ('light' | 'dark')
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('clarivate_wsu_theme') || 'light';
+    const initialPage = detectInitialPage();
+    const isReg = initialPage === 'registration-database' || initialPage === 'serial-detail';
+    const storageKey = isReg ? 'clarivate_reg_theme' : 'clarivate_wsu_theme';
+    const saved = localStorage.getItem(storageKey);
+    if (saved) return saved;
+    return isReg ? 'dark' : 'light';
   });
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('clarivate_wsu_theme', theme);
-  }, [theme]);
+    const isReg = currentPage === 'registration-database' || currentPage === 'serial-detail';
+    const storageKey = isReg ? 'clarivate_reg_theme' : 'clarivate_wsu_theme';
+    localStorage.setItem(storageKey, theme);
+  }, [theme, currentPage]);
 
   const toggleTheme = () => {
     const nextTheme = theme === 'light' ? 'dark' : 'light';
@@ -446,8 +471,114 @@ export default function App() {
     showToast(`Switched to ${nextTheme === 'dark' ? 'Dark' : 'Light'} Mode`);
   };
 
-  // Page View state: 'wsu-home' | 'registration-database' | 'serial-detail'
-  const [currentPage, setCurrentPage] = useState('wsu-home');
+  // Cross-tab window reference for SLN
+  const slnWindowRef = useRef(null);
+
+  // Sync Window Name and Document Title based on active page
+  useEffect(() => {
+    if (currentPage === 'registration-database' || currentPage === 'serial-detail') {
+      window.name = 'clarivate_sln_window';
+      document.title = 'Clarivate - Registration Database & SLN Lookup';
+    } else {
+      window.name = 'clarivate_wsu_window';
+      document.title = 'Clarivate - Web Support Utility (WSU)';
+    }
+  }, [currentPage]);
+
+  // Inter-tab BroadcastChannel listener to bring appropriate window to front without opening duplicates
+  useEffect(() => {
+    let channel;
+    try {
+      channel = new BroadcastChannel('clarivate_wsu_nav_channel');
+      channel.onmessage = (event) => {
+        if (!event.data) return;
+        if (event.data.type === 'FOCUS_WSU' && currentPage === 'wsu-home') {
+          window.focus();
+        } else if (event.data.type === 'FOCUS_SLN' && (currentPage === 'registration-database' || currentPage === 'serial-detail')) {
+          window.focus();
+        }
+      };
+    } catch (e) {
+      // BroadcastChannel unsupported or restricted
+    }
+    return () => {
+      if (channel) channel.close();
+    };
+  }, [currentPage]);
+
+  // Handle browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentPage(detectInitialPage());
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  // 1. Open / Switch to SLN in a dedicated separate window/tab (reusing existing tab if open)
+  const openSlnPage = () => {
+    const baseUrl = `${window.location.origin}${window.location.pathname}`;
+    const slnUrl = `${baseUrl}?page=registration-database`;
+
+    window.name = 'clarivate_wsu_window';
+
+    try {
+      const channel = new BroadcastChannel('clarivate_wsu_nav_channel');
+      channel.postMessage({ type: 'FOCUS_SLN' });
+      channel.close();
+    } catch (e) {}
+
+    if (slnWindowRef.current && !slnWindowRef.current.closed) {
+      try {
+        slnWindowRef.current.focus();
+      } catch (e) {}
+      const win = window.open('', 'clarivate_sln_window');
+      if (win) {
+        try { win.focus(); } catch (e) {}
+      }
+    } else {
+      slnWindowRef.current = window.open(slnUrl, 'clarivate_sln_window');
+      if (slnWindowRef.current) {
+        try {
+          slnWindowRef.current.focus();
+        } catch (e) {}
+      }
+    }
+
+    showToast('Switched to SLN Lookup / Registration Database');
+  };
+
+  // 2. Revert back to the already opened WSU page without opening duplicate copies or reloading
+  const revertToWsuPage = () => {
+    const baseUrl = `${window.location.origin}${window.location.pathname}`;
+    const wsuUrl = `${baseUrl}`;
+
+    try {
+      const channel = new BroadcastChannel('clarivate_wsu_nav_channel');
+      channel.postMessage({ type: 'FOCUS_WSU' });
+      channel.close();
+    } catch (e) {}
+
+    let openerAlive = false;
+    if (window.opener && !window.opener.closed) {
+      try {
+        window.opener.focus();
+        openerAlive = true;
+      } catch (e) {}
+    }
+
+    // Using '' targets existing 'clarivate_wsu_window' without triggering a page reload
+    const targetUrl = openerAlive ? '' : wsuUrl;
+    const wsuWin = window.open(targetUrl, 'clarivate_wsu_window');
+    if (wsuWin) {
+      try {
+        wsuWin.focus();
+      } catch (e) {}
+    }
+
+    showToast('Reverted to Web Support Utility');
+  };
+
   const [activeNav, setActiveNav] = useState('Search Customers');
   const [activeRegSubNav, setActiveRegSubNav] = useState('Registration Database');
   const [toastMessage, setToastMessage] = useState(null);
@@ -854,7 +985,7 @@ export default function App() {
         <HeaderBar
           titleText="Registration Database"
           backActionText="Back to Web Support Utility"
-          onBackClick={() => setCurrentPage('wsu-home')}
+          onBackClick={revertToWsuPage}
           theme={theme}
           onToggleTheme={toggleTheme}
           onShowToast={showToast}
@@ -2002,7 +2133,7 @@ export default function App() {
             <div className="wsu-card">
               <div className="wsu-card-title">
                 <span>License Key Summary: {selectedSerialDetail.serialNumber}</span>
-                <button className="wsu-btn-secondary" onClick={() => setCurrentPage('wsu-home')} style={{ padding: '4px 12px', fontSize: '0.8rem' }}>
+                <button className="wsu-btn-secondary" onClick={revertToWsuPage} style={{ padding: '4px 12px', fontSize: '0.8rem' }}>
                   Back to WSU Home
                 </button>
               </div>
@@ -2109,10 +2240,7 @@ export default function App() {
           <button
             type="button"
             className="wsu-btn-primary"
-            onClick={() => {
-              setCurrentPage('registration-database');
-              showToast('Navigated to Registration Database Page');
-            }}
+            onClick={openSlnPage}
             style={{
               padding: '6px 18px',
               fontSize: '0.82rem',
