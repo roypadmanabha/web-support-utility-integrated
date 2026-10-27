@@ -896,6 +896,7 @@ button.wsu-btn-secondary {
   min-height: 100vh;
   width: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   background-color: #F0F0EB;
@@ -903,6 +904,33 @@ button.wsu-btn-secondary {
   position: relative;
   font-family: var(--font-clarivate);
   box-sizing: border-box;
+}
+
+.wsu-login-notice {
+  text-align: center;
+  margin-bottom: 28px;
+  max-width: 720px;
+  font-family: var(--font-clarivate);
+  font-size: 0.95rem;
+  color: #000000;
+  line-height: 1.5;
+}
+
+.wsu-login-notice p {
+  margin: 0;
+  color: #000000;
+}
+
+.wsu-login-mail-link {
+  color: #0066cc !important;
+  text-decoration: underline;
+  transition: opacity 0.15s ease;
+  word-break: break-all;
+}
+
+.wsu-login-mail-link:hover {
+  text-decoration: underline;
+  opacity: 0.8;
 }
 
 .wsu-simple-card {

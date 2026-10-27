@@ -62,6 +62,20 @@ export default function LoginView({ onLogin, sessionExpiredMessage }) {
 
   return (
     <div className="wsu-simple-login-wrapper">
+      {/* Informational Notice Centered Above Login Card */}
+      <div className="wsu-login-notice">
+        <p>This is the login page for accessing the EndNote Web Support Utility.</p>
+        <p>
+          If you do not have an account for the Support Utility you can contact:{' '}
+          <a
+            href="mailto:ipsci.researchsolutions-engineering@clarivate.com"
+            className="wsu-login-mail-link"
+          >
+            ipsci.researchsolutions-engineering@clarivate.com
+          </a>
+        </p>
+      </div>
+
       {/* Main Centered Minimal Card Matching User Demo */}
       <div className="wsu-simple-card">
         {/* Clarivate Logo - Dragging Disabled */}
