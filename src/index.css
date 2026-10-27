@@ -1077,11 +1077,12 @@ button.wsu-btn-secondary {
 }
 
 .wsu-simple-subtext {
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   color: #000000;
   margin: 0;
   opacity: 0.8;
   line-height: 1.4;
+  white-space: nowrap;
 }
 
 /* Dark mode overrides */
