@@ -402,7 +402,13 @@ const HeaderBar = ({
     <header className="wsu-header">
       <div className="wsu-header-left">
         <div className="wsu-header-logo-container">
-          <img src="/clarivate-logo.svg" alt="Clarivate Logo" className="wsu-header-logo" />
+          <img
+            src="/clarivate-logo.svg"
+            alt="Clarivate Logo"
+            className="wsu-header-logo"
+            draggable={false}
+            onDragStart={(e) => e.preventDefault()}
+          />
         </div>
         <div className="wsu-header-title">
           <span>{titleText || 'Web Support Utility (WSU)'}</span>
