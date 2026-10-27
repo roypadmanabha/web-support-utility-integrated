@@ -1115,12 +1115,28 @@ export default function App() {
                 {/* Serial Number Lookup Result details matching Screenshot 1 */}
                 {snLookupResult && (
                   <div className="wsu-result-box" style={{ padding: '24px', borderRadius: '6px', marginBottom: '20px' }}>
-                    <div style={{ fontSize: '0.89rem', color: '#000000', marginBottom: '6px' }}>
-                      <strong>Serial Number:</strong> <span style={{ fontWeight: 400, color: '#000000' }}>{snLookupResult.serialNumber}</span>
+                    <div style={{ fontSize: '0.89rem', color: '#000000', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span><strong>Serial Number:</strong> <span style={{ fontWeight: 400, color: '#000000' }}>{snLookupResult.serialNumber}</span></span>
+                      <button
+                        type="button"
+                        className="wsu-action-btn"
+                        onClick={() => handleCopy(snLookupResult.serialNumber, 'Serial Number')}
+                        style={{ padding: '2px 8px', fontSize: '0.72rem', height: '20px' }}
+                      >
+                        Copy
+                      </button>
                     </div>
 
-                    <div style={{ fontSize: '0.89rem', color: '#000000', marginBottom: '14px' }}>
-                      <strong>Product Key:</strong> <span style={{ fontWeight: 400, color: '#000000' }}>{snLookupResult.productKey}</span>
+                    <div style={{ fontSize: '0.89rem', color: '#000000', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span><strong>Product Key:</strong> <span style={{ fontWeight: 400, color: '#000000' }}>{snLookupResult.productKey}</span></span>
+                      <button
+                        type="button"
+                        className="wsu-action-btn"
+                        onClick={() => handleCopy(snLookupResult.productKey, 'Product Key')}
+                        style={{ padding: '2px 8px', fontSize: '0.72rem', height: '20px' }}
+                      >
+                        Copy
+                      </button>
                     </div>
 
                     <div style={{ fontSize: '0.89rem', color: '#000000', fontWeight: 700, marginBottom: '18px' }}>
@@ -2140,12 +2156,28 @@ export default function App() {
 
               {/* License Detail Container Box */}
               <div className="wsu-result-box" style={{ padding: '20px', borderRadius: '6px', marginBottom: '20px' }}>
-                <div style={{ fontSize: '0.95rem', color: '#000000', marginBottom: '6px' }}>
-                  <strong>Serial Number:</strong> <span style={{ fontWeight: 400, color: '#000000' }}>{selectedSerialDetail.serialNumber}</span>
+                <div style={{ fontSize: '0.95rem', color: '#000000', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span><strong>Serial Number:</strong> <span style={{ fontWeight: 400, color: '#000000' }}>{selectedSerialDetail.serialNumber}</span></span>
+                  <button
+                    type="button"
+                    className="wsu-action-btn"
+                    onClick={() => handleCopy(selectedSerialDetail.serialNumber, 'Serial Number')}
+                    style={{ padding: '2px 8px', fontSize: '0.72rem', height: '20px' }}
+                  >
+                    Copy
+                  </button>
                 </div>
 
-                <div style={{ fontSize: '0.95rem', color: '#000000', marginBottom: '14px' }}>
-                  <strong>Product Key:</strong> <span style={{ fontWeight: 400, color: '#000000' }}>{selectedSerialDetail.productKey}</span>
+                <div style={{ fontSize: '0.95rem', color: '#000000', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span><strong>Product Key:</strong> <span style={{ fontWeight: 400, color: '#000000' }}>{selectedSerialDetail.productKey}</span></span>
+                  <button
+                    type="button"
+                    className="wsu-action-btn"
+                    onClick={() => handleCopy(selectedSerialDetail.productKey, 'Product Key')}
+                    style={{ padding: '2px 8px', fontSize: '0.72rem', height: '20px' }}
+                  >
+                    Copy
+                  </button>
                 </div>
 
                 <div style={{ fontSize: '0.9rem', color: '#000000', fontWeight: 700, marginBottom: '16px' }}>
