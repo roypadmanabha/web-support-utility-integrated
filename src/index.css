@@ -153,10 +153,31 @@ body {
   flex-shrink: 0;
 }
 
+.wsu-header-user-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.25;
+}
+
 .wsu-header-user {
   font-weight: 400;
   color: #000000;
   white-space: nowrap;
+}
+
+.wsu-header-session-timer {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #5E33BF;
+  letter-spacing: 0.6px;
+  margin-top: 2px;
+  line-height: 1;
+}
+
+[data-theme="dark"] .wsu-header-session-timer {
+  color: #5E33BF;
 }
 
 .wsu-header-link {
@@ -866,4 +887,126 @@ button.wsu-btn-secondary {
 .wsu-copy-btn span,
 [data-theme="dark"] .wsu-copy-btn span {
   color: #FFFFFF !important;
+}
+
+/* =========================================================================
+   LOGIN SCREEN STYLING (Strict Clarivate Brand Palette)
+   ========================================================================= */
+.wsu-login-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #F0F0EB;
+  color: #000000;
+  font-family: var(--font-clarivate);
+}
+
+.wsu-login-header {
+  min-height: 60px;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #5E33BF;
+  background-color: #F0F0EB;
+}
+
+.wsu-login-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 16px;
+}
+
+.wsu-login-card {
+  width: 100%;
+  max-width: 440px;
+  background-color: #F0F0EB;
+  border: 1px solid #5E33BF;
+  border-radius: 6px;
+  padding: 32px 28px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.wsu-login-brand {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.wsu-login-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #000000;
+  margin: 0 0 6px 0;
+  letter-spacing: 0.3px;
+}
+
+.wsu-login-subtitle {
+  font-size: 0.82rem;
+  color: #5E33BF;
+  margin: 0;
+  font-weight: 600;
+}
+
+.wsu-login-error {
+  background-color: #F0F0EB;
+  border: 1px solid #5E33BF;
+  color: #000000;
+  padding: 10px 14px;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.wsu-login-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 6px;
+}
+
+.wsu-login-hint {
+  display: block;
+  font-size: 0.72rem;
+  color: #5E33BF;
+  margin-top: 4px;
+}
+
+.wsu-login-quick {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px dashed #5E33BF;
+  text-align: center;
+}
+
+.wsu-login-footer {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 0.74rem;
+  color: #000000;
+  opacity: 0.8;
+}
+
+/* Dark theme overrides for Login */
+[data-theme="dark"] .wsu-login-container,
+[data-theme="dark"] .wsu-login-header,
+[data-theme="dark"] .wsu-login-card {
+  background-color: #000000 !important;
+  color: #F0F0EB !important;
+}
+
+[data-theme="dark"] .wsu-login-title,
+[data-theme="dark"] .wsu-login-label,
+[data-theme="dark"] .wsu-login-footer {
+  color: #F0F0EB !important;
+}
+
+[data-theme="dark"] .wsu-login-error {
+  background-color: #000000 !important;
+  border-color: #5E33BF !important;
+  color: #F0F0EB !important;
 }

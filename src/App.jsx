@@ -11,6 +11,7 @@ import UserTemporaryCredentialsView from './UserTemporaryCredentialsView';
 import EndNoteOnlineAccessView from './EndNoteOnlineAccessView';
 import EndNoteDesktopBuilderView from './EndNoteDesktopBuilderView';
 import { undoManager } from './undoManager';
+import LoginView from './LoginView';
 
 // Space validation helper for email inputs
 const checkSpaceInEmail = (emailStr) => {
@@ -369,7 +370,18 @@ const SmartInputField = ({
 
 
 // Top-level Header Bar Component
-const HeaderBar = ({ titleText, backActionText, onBackClick, onShowToast, theme, onToggleTheme, centerAction }) => {
+const HeaderBar = ({
+  titleText,
+  backActionText,
+  onBackClick,
+  onShowToast,
+  theme,
+  onToggleTheme,
+  centerAction,
+  userEmail,
+  sessionTimer,
+  onLogout
+}) => {
   const centerContent = centerAction || (backActionText && onBackClick ? (
     <button
       type="button"
@@ -404,14 +416,21 @@ const HeaderBar = ({ titleText, backActionText, onBackClick, onShowToast, theme,
       )}
 
       <div className="wsu-header-right">
-        <div className="wsu-header-user">
-          Logged in: <span>padmanabha.roy@clarivate.com</span>
+        <div className="wsu-header-user-wrapper">
+          <div className="wsu-header-user">
+            Logged in: <span>{userEmail || 'padmanabha.roy@clarivate.com'}</span>
+          </div>
+          {sessionTimer && (
+            <div className="wsu-header-session-timer">
+              {sessionTimer}
+            </div>
+          )}
         </div>
         <button className="wsu-header-link" onClick={() => onShowToast && onShowToast('Password change form opened')}>
           Change Password
         </button>
         <span>|</span>
-        <button className="wsu-header-link" onClick={() => onShowToast && onShowToast('User logged out')}>
+        <button className="wsu-header-link" onClick={onLogout || (() => onShowToast && onShowToast('User logged out'))}>
           Logout
         </button>
         <span>|</span>
@@ -444,7 +463,173 @@ const detectInitialPage = () => {
   return 'wsu-home';
 };
 
+const AUTH_SESSION_KEY = 'clarivate_wsu_auth_session';
+const SESSION_DURATION_SECONDS = 30 * 60; // 30 minutes in seconds
+
+const getStoredSession = () => {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem(AUTH_SESSION_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || !parsed.expiresAt || !parsed.email) return null;
+    if (Date.now() >= parsed.expiresAt) {
+      localStorage.removeItem(AUTH_SESSION_KEY);
+      return null;
+    }
+    return parsed;
+  } catch (e) {
+    return null;
+  }
+};
+
 export default function App() {
+  // Authentication & Session State
+  const [currentUser, setCurrentUser] = useState(() => {
+    const sess = getStoredSession();
+    return sess ? sess.email : null;
+  });
+  const [sessionExpiredMsg, setSessionExpiredMsg] = useState('');
+  const [remainingSeconds, setRemainingSeconds] = useState(() => {
+    const sess = getStoredSession();
+    if (sess) {
+      return Math.max(0, Math.floor((sess.expiresAt - Date.now()) / 1000));
+    }
+    return 0;
+  });
+
+  const formatTimer = (totalSec) => {
+    if (totalSec <= 0) return '00:00:00';
+    const hrs = Math.floor(totalSec / 3600);
+    const mins = Math.floor((totalSec % 3600) / 60);
+    const secs = totalSec % 60;
+    return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  };
+
+  const handleLogin = (email) => {
+    const expiresAt = Date.now() + SESSION_DURATION_SECONDS * 1000;
+    const session = {
+      email,
+      loginTime: Date.now(),
+      expiresAt
+    };
+    localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(session));
+    setCurrentUser(email);
+    setRemainingSeconds(SESSION_DURATION_SECONDS);
+    setSessionExpiredMsg('');
+    showToast(`Logged in as ${email}. Session active for 30 minutes.`);
+
+    try {
+      const ch = new BroadcastChannel('clarivate_wsu_auth_channel');
+      ch.postMessage({ type: 'LOGIN', session });
+      ch.close();
+    } catch (e) {}
+  };
+
+  const handleLogout = (isExpired = false) => {
+    localStorage.removeItem(AUTH_SESSION_KEY);
+    setCurrentUser(null);
+    setRemainingSeconds(0);
+    if (isExpired) {
+      setSessionExpiredMsg('Session expired. Please log in again.');
+      showToast('Session expired. Please log in again.');
+    } else {
+      setSessionExpiredMsg('');
+      showToast('User logged out');
+    }
+
+    try {
+      const ch = new BroadcastChannel('clarivate_wsu_auth_channel');
+      ch.postMessage({ type: 'LOGOUT', reason: isExpired ? 'expired' : 'user' });
+      ch.close();
+    } catch (e) {}
+  };
+
+  // Timer Countdown Effect
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const checkTimer = () => {
+      const sess = getStoredSession();
+      if (!sess) {
+        setCurrentUser(null);
+        setRemainingSeconds(0);
+        setSessionExpiredMsg('Session expired. Please log in again.');
+        showToast('Session expired. Please log in again.');
+        return;
+      }
+      const diff = Math.max(0, Math.floor((sess.expiresAt - Date.now()) / 1000));
+      setRemainingSeconds(diff);
+      if (diff <= 0) {
+        localStorage.removeItem(AUTH_SESSION_KEY);
+        setCurrentUser(null);
+        setRemainingSeconds(0);
+        setSessionExpiredMsg('Session expired. Please log in again.');
+        showToast('Session expired. Please log in again.');
+        try {
+          const ch = new BroadcastChannel('clarivate_wsu_auth_channel');
+          ch.postMessage({ type: 'LOGOUT', reason: 'expired' });
+          ch.close();
+        } catch (e) {}
+      }
+    };
+
+    checkTimer();
+    const interval = setInterval(checkTimer, 1000);
+    return () => clearInterval(interval);
+  }, [currentUser]);
+
+  // Cross-tab Authentication Synchronization
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === AUTH_SESSION_KEY) {
+        if (!e.newValue) {
+          setCurrentUser(null);
+          setRemainingSeconds(0);
+          setSessionExpiredMsg('Session expired. Please log in again.');
+        } else {
+          try {
+            const parsed = JSON.parse(e.newValue);
+            if (parsed && parsed.expiresAt > Date.now()) {
+              setCurrentUser(parsed.email);
+              setRemainingSeconds(Math.max(0, Math.floor((parsed.expiresAt - Date.now()) / 1000)));
+              setSessionExpiredMsg('');
+            } else {
+              setCurrentUser(null);
+              setRemainingSeconds(0);
+            }
+          } catch (err) {}
+        }
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+
+    let authChannel;
+    try {
+      authChannel = new BroadcastChannel('clarivate_wsu_auth_channel');
+      authChannel.onmessage = (event) => {
+        if (!event.data) return;
+        if (event.data.type === 'LOGIN') {
+          const sess = event.data.session;
+          setCurrentUser(sess.email);
+          setRemainingSeconds(Math.max(0, Math.floor((sess.expiresAt - Date.now()) / 1000)));
+          setSessionExpiredMsg('');
+        } else if (event.data.type === 'LOGOUT') {
+          setCurrentUser(null);
+          setRemainingSeconds(0);
+          if (event.data.reason === 'expired') {
+            setSessionExpiredMsg('Session expired. Please log in again.');
+          }
+        }
+      };
+    } catch (e) {}
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      if (authChannel) authChannel.close();
+    };
+  }, []);
+
   // Page View state: 'wsu-home' | 'registration-database' | 'serial-detail'
   const [currentPage, setCurrentPage] = useState(detectInitialPage);
 
@@ -975,6 +1160,25 @@ export default function App() {
 
 
 
+  // If user is not authenticated, show login page
+  if (!currentUser) {
+    return (
+      <div className="wsu-layout">
+        <LoginView
+          onLogin={handleLogin}
+          sessionExpiredMessage={sessionExpiredMsg}
+          theme={theme}
+          onToggleTheme={toggleTheme}
+        />
+        {toastMessage && (
+          <div className="wsu-toast" role="alert">
+            {toastMessage}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   // =========================================================================
   // PAGE 2: REGISTRATION DATABASE SEPARATE PAGE (SCREENSHOT 2 ENHANCED)
   // =========================================================================
@@ -989,6 +1193,9 @@ export default function App() {
           theme={theme}
           onToggleTheme={toggleTheme}
           onShowToast={showToast}
+          userEmail={currentUser}
+          sessionTimer={formatTimer(remainingSeconds)}
+          onLogout={() => handleLogout(false)}
         />
 
         {/* Body Container */}
@@ -2114,6 +2321,9 @@ export default function App() {
           theme={theme}
           onToggleTheme={toggleTheme}
           onShowToast={showToast}
+          userEmail={currentUser}
+          sessionTimer={formatTimer(remainingSeconds)}
+          onLogout={() => handleLogout(false)}
         />
 
         {/* Body Container */}
@@ -2268,6 +2478,9 @@ export default function App() {
         theme={theme}
         onToggleTheme={toggleTheme}
         onShowToast={showToast}
+        userEmail={currentUser}
+        sessionTimer={formatTimer(remainingSeconds)}
+        onLogout={() => handleLogout(false)}
         centerAction={
           <button
             type="button"
