@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
+const LAST_USED_EMAIL_KEY = 'clarivate_last_used_email';
 const SAVED_EMAILS_KEY = 'clarivate_saved_user_emails';
 const SAVED_PASSWORD_KEY = 'clarivate_saved_user_password';
 
@@ -19,8 +20,14 @@ const getInitialSavedEmails = () => {
 export default function LoginView({ onLogin, sessionExpiredMessage }) {
   const [savedEmails, setSavedEmails] = useState(getInitialSavedEmails);
   const [email, setEmail] = useState(() => {
-    const list = getInitialSavedEmails();
-    return list[0] || 'padmanabha.roy@clarivate.com';
+    try {
+      const last = localStorage.getItem(LAST_USED_EMAIL_KEY);
+      if (last) return last;
+      const list = getInitialSavedEmails();
+      return list[0] || 'padmanabha.roy@clarivate.com';
+    } catch (e) {
+      return 'padmanabha.roy@clarivate.com';
+    }
   });
   const [password, setPassword] = useState(() => {
     try {
@@ -50,8 +57,9 @@ export default function LoginView({ onLogin, sessionExpiredMessage }) {
     }
     setError('');
 
-    // Save both email and password to localStorage so user can log in next time at ease without retyping
+    // Save both last used email and password to localStorage so user can log in next time at ease without retyping
     try {
+      localStorage.setItem(LAST_USED_EMAIL_KEY, trimmedEmail);
       const updatedList = [trimmedEmail, ...savedEmails.filter(em => em.toLowerCase() !== trimmedEmail.toLowerCase())].slice(0, 10);
       localStorage.setItem(SAVED_EMAILS_KEY, JSON.stringify(updatedList));
       localStorage.setItem(SAVED_PASSWORD_KEY, password);
@@ -108,7 +116,6 @@ export default function LoginView({ onLogin, sessionExpiredMessage }) {
                 setEmail(e.target.value);
                 if (error) setError('');
               }}
-              placeholder="padmanabha.roy@clarivate.com"
               list="wsu-saved-emails"
               autoComplete="email"
               autoFocus
