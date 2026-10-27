@@ -890,122 +890,199 @@ button.wsu-btn-secondary {
 }
 
 /* =========================================================================
-   LOGIN SCREEN STYLING (Strict Clarivate Brand Palette)
+   SIMPLE MINIMALIST LOGIN (MATCHING USER DEMO EXACTLY)
    ========================================================================= */
-.wsu-login-container {
+.wsu-simple-login-wrapper {
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background-color: #F0F0EB;
-  color: #000000;
-  font-family: var(--font-clarivate);
-}
-
-.wsu-login-header {
-  min-height: 60px;
-  padding: 12px 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid #5E33BF;
-  background-color: #F0F0EB;
-}
-
-.wsu-login-main {
-  flex: 1;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 30px 16px;
+  background-color: #F0F0EB;
+  padding: 24px;
+  position: relative;
+  font-family: var(--font-clarivate);
+  box-sizing: border-box;
 }
 
-.wsu-login-card {
+.wsu-simple-theme-toggle {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.25rem;
+}
+
+.wsu-simple-card {
   width: 100%;
   max-width: 440px;
   background-color: #F0F0EB;
-  border: 1px solid #5E33BF;
-  border-radius: 6px;
-  padding: 32px 28px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border: 1.5px solid #5E33BF;
+  border-radius: 8px;
+  padding: 40px 36px 32px 36px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
-.wsu-login-brand {
-  text-align: center;
-  margin-bottom: 24px;
+.wsu-simple-logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 34px;
 }
 
-.wsu-login-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #000000;
-  margin: 0 0 6px 0;
-  letter-spacing: 0.3px;
+.wsu-simple-logo {
+  height: 48px;
+  max-width: 240px;
+  object-fit: contain;
 }
 
-.wsu-login-subtitle {
-  font-size: 0.82rem;
-  color: #5E33BF;
-  margin: 0;
-  font-weight: 600;
-}
-
-.wsu-login-error {
+.wsu-simple-error {
   background-color: #F0F0EB;
   border: 1px solid #5E33BF;
   color: #000000;
-  padding: 10px 14px;
+  padding: 8px 12px;
   border-radius: 4px;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 700;
   margin-bottom: 18px;
   text-align: center;
 }
 
-.wsu-login-label {
-  display: block;
-  font-size: 0.85rem;
+.wsu-simple-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.wsu-simple-field {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 22px;
+}
+
+.wsu-simple-label {
+  font-size: 0.95rem;
   font-weight: 700;
   color: #000000;
   margin-bottom: 6px;
 }
 
-.wsu-login-hint {
-  display: block;
-  font-size: 0.72rem;
-  color: #5E33BF;
-  margin-top: 4px;
+.wsu-simple-input {
+  width: 100%;
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid #000000 !important;
+  border-radius: 0 !important;
+  padding: 6px 0 !important;
+  font-size: 0.98rem !important;
+  color: #000000 !important;
+  font-family: inherit !important;
+  outline: none !important;
+  box-shadow: none !important;
+  transition: border-color 0.2s;
 }
 
-.wsu-login-quick {
-  margin-top: 20px;
-  padding-top: 16px;
+.wsu-simple-input:focus {
+  border-bottom: 1.5px solid #5E33BF !important;
+}
+
+.wsu-simple-submit-btn {
+  margin-top: 14px;
+  width: 100%;
+  padding: 12px 0;
+  background-color: #5E33BF;
+  color: #F0F0EB;
+  border: 1px solid #000000;
+  border-radius: 6px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wsu-simple-submit-btn:hover {
+  background-color: #000000;
+  color: #F0F0EB;
+}
+
+.wsu-simple-divider {
+  width: 100%;
+  border: none;
   border-top: 1px dashed #5E33BF;
-  text-align: center;
+  margin: 28px 0 20px 0;
 }
 
-.wsu-login-footer {
-  margin-top: 20px;
+.wsu-simple-bottom {
   text-align: center;
-  font-size: 0.74rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.wsu-simple-title {
+  font-size: 1.25rem;
+  font-weight: 800;
   color: #000000;
-  opacity: 0.8;
+  margin: 0 0 10px 0;
+  letter-spacing: 0.2px;
 }
 
-/* Dark theme overrides for Login */
-[data-theme="dark"] .wsu-login-container,
-[data-theme="dark"] .wsu-login-header,
-[data-theme="dark"] .wsu-login-card {
+.wsu-simple-subtext {
+  font-size: 0.8rem;
+  color: #000000;
+  margin: 0;
+  opacity: 0.8;
+  line-height: 1.4;
+}
+
+/* Dark mode overrides */
+[data-theme="dark"] .wsu-simple-login-wrapper,
+[data-theme="dark"] .wsu-simple-card {
   background-color: #000000 !important;
   color: #F0F0EB !important;
 }
 
-[data-theme="dark"] .wsu-login-title,
-[data-theme="dark"] .wsu-login-label,
-[data-theme="dark"] .wsu-login-footer {
+[data-theme="dark"] .wsu-simple-card {
+  border-color: #5E33BF !important;
+}
+
+[data-theme="dark"] .wsu-simple-label,
+[data-theme="dark"] .wsu-simple-title,
+[data-theme="dark"] .wsu-simple-subtext {
   color: #F0F0EB !important;
 }
 
-[data-theme="dark"] .wsu-login-error {
+[data-theme="dark"] .wsu-simple-input {
+  border-bottom: 1px solid #F0F0EB !important;
+  color: #F0F0EB !important;
+}
+
+[data-theme="dark"] .wsu-simple-input:focus {
+  border-bottom: 1.5px solid #5E33BF !important;
+}
+
+[data-theme="dark"] .wsu-simple-submit-btn {
+  background-color: #5E33BF !important;
+  color: #F0F0EB !important;
+  border-color: #F0F0EB !important;
+}
+
+[data-theme="dark"] .wsu-simple-submit-btn:hover {
+  background-color: #000000 !important;
+  border-color: #5E33BF !important;
+}
+
+[data-theme="dark"] .wsu-simple-error {
   background-color: #000000 !important;
   border-color: #5E33BF !important;
   color: #F0F0EB !important;

@@ -8,133 +8,90 @@ export default function LoginView({ onLogin, sessionExpiredMessage, theme, onTog
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!email.trim()) {
-      setError('Please enter your Email Address.');
+      setError('Please enter your Email.');
       return;
     }
     if (password !== '12345') {
-      setError('Invalid password. For demo, use: 12345');
+      setError('Invalid password. Demo password is: 12345');
       return;
     }
     setError('');
     onLogin(email.trim());
   };
 
-  const handleQuickDemo = (demoEmail) => {
-    setEmail(demoEmail);
-    setPassword('12345');
-    setError('');
-    onLogin(demoEmail);
-  };
-
   return (
-    <div className="wsu-login-container">
-      {/* Top Header Strip with Theme Toggle */}
-      <header className="wsu-login-header">
-        <div className="wsu-header-logo-container">
-          <img src="/clarivate-logo.svg" alt="Clarivate Logo" className="wsu-header-logo" />
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <span style={{ fontSize: '0.82rem', color: 'inherit', fontWeight: 600 }}>Clarivate Authentication</span>
-          <button
-            type="button"
-            className="wsu-theme-toggle"
-            onClick={onToggleTheme}
-            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            aria-label="Toggle dark/light mode"
-          >
-            {theme === 'dark' ? '☀️' : '🌙'}
-          </button>
-        </div>
-      </header>
+    <div className="wsu-simple-login-wrapper">
+      {/* Subtle theme toggle in corner */}
+      <button
+        type="button"
+        className="wsu-theme-toggle wsu-simple-theme-toggle"
+        onClick={onToggleTheme}
+        title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+        aria-label="Toggle dark/light mode"
+      >
+        {theme === 'dark' ? '☀️' : '🌙'}
+      </button>
 
-      {/* Main Login Card */}
-      <main className="wsu-login-main">
-        <div className="wsu-login-card">
-          <div className="wsu-login-brand">
-            <h1 className="wsu-login-title">Web Support Utility (WSU)</h1>
-            <p className="wsu-login-subtitle">Secure Staff Portal & Registration Services</p>
+      {/* Main Centered Minimal Card Matching User Demo Exactly */}
+      <div className="wsu-simple-card">
+        {/* Clarivate Logo */}
+        <div className="wsu-simple-logo-container">
+          <img src="/clarivate-logo.svg" alt="Clarivate" className="wsu-simple-logo" />
+        </div>
+
+        {error && (
+          <div className="wsu-simple-error">
+            {error}
           </div>
+        )}
 
-          {error && (
-            <div className="wsu-login-error">
-              <span>{error}</span>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="wsu-login-form">
-            <div className="wsu-form-group" style={{ marginBottom: '16px' }}>
-              <label className="wsu-login-label">
-                Email:
-              </label>
-              <input
-                type="email"
-                className="wsu-input"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  if (error) setError('');
-                }}
-                placeholder="e.g. padmanabha.roy@clarivate.com"
-                autoFocus
-                required
-              />
-              <span className="wsu-login-hint">Any email address is accepted</span>
-            </div>
-
-            <div className="wsu-form-group" style={{ marginBottom: '22px' }}>
-              <label className="wsu-login-label">
-                Password:
-              </label>
-              <input
-                type="password"
-                className="wsu-input"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  if (error) setError('');
-                }}
-                placeholder="Enter password (demo: 12345)"
-                required
-              />
-              <span className="wsu-login-hint">Demo Password: <strong>12345</strong></span>
-            </div>
-
-            <button
-              type="submit"
-              className="wsu-btn-primary"
-              style={{
-                width: '100%',
-                padding: '10px 16px',
-                fontSize: '0.9rem',
-                fontWeight: 700,
-                letterSpacing: '0.3px',
-                cursor: 'pointer'
+        <form onSubmit={handleSubmit} className="wsu-simple-form">
+          {/* Email Underline Input */}
+          <div className="wsu-simple-field">
+            <label className="wsu-simple-label">Email:</label>
+            <input
+              type="email"
+              className="wsu-simple-input"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (error) setError('');
               }}
-            >
-              Sign In
-            </button>
-          </form>
-
-          {/* Quick Demo Login Preset */}
-          <div className="wsu-login-quick">
-            <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>Quick Demo Access:</span>
-            <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-              <button
-                type="button"
-                className="wsu-action-btn"
-                onClick={() => handleQuickDemo('padmanabha.roy@clarivate.com')}
-                style={{ padding: '6px 12px', height: 'auto', fontSize: '0.75rem', flex: 1 }}
-              >
-                Log In as padmanabha.roy@clarivate.com
-              </button>
-            </div>
+              autoFocus
+              required
+            />
           </div>
 
-          <div className="wsu-login-footer">
-            <p>Session active for 30 minutes with synchronized cross-page timer.</p>
+          {/* Password Underline Input */}
+          <div className="wsu-simple-field" style={{ marginTop: '24px' }}>
+            <label className="wsu-simple-label">Password:</label>
+            <input
+              type="password"
+              className="wsu-simple-input"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (error) setError('');
+              }}
+              required
+            />
           </div>
+
+          {/* Login Button */}
+          <button type="submit" className="wsu-simple-submit-btn">
+            Login
+          </button>
+        </form>
+
+        {/* Purple Dashed Divider */}
+        <div className="wsu-simple-divider" />
+
+        {/* Bottom Title & Subtitle */}
+        <div className="wsu-simple-bottom">
+          <h2 className="wsu-simple-title">Web Support Utility (WSU)</h2>
+          <p className="wsu-simple-subtext">Session active for 30 minutes with synchronized cross-page timer.</p>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
