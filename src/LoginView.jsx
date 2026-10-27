@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 const SAVED_EMAILS_KEY = 'clarivate_saved_user_emails';
+const SAVED_PASSWORD_KEY = 'clarivate_saved_user_password';
 
 const getInitialSavedEmails = () => {
   try {
@@ -21,7 +22,13 @@ export default function LoginView({ onLogin, sessionExpiredMessage }) {
     const list = getInitialSavedEmails();
     return list[0] || 'padmanabha.roy@clarivate.com';
   });
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState(() => {
+    try {
+      return localStorage.getItem(SAVED_PASSWORD_KEY) || '12345';
+    } catch (e) {
+      return '12345';
+    }
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(sessionExpiredMessage || '');
 
@@ -38,10 +45,11 @@ export default function LoginView({ onLogin, sessionExpiredMessage }) {
     }
     setError('');
 
-    // Save email to saved list for future fast access / dropdown suggestions
+    // Save both email and password to localStorage so user can log in next time at ease without retyping
     try {
       const updatedList = [trimmedEmail, ...savedEmails.filter(em => em.toLowerCase() !== trimmedEmail.toLowerCase())].slice(0, 10);
       localStorage.setItem(SAVED_EMAILS_KEY, JSON.stringify(updatedList));
+      localStorage.setItem(SAVED_PASSWORD_KEY, password);
     } catch (err) {}
 
     onLogin(trimmedEmail);
