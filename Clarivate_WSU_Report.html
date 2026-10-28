@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Clarivate Web Support Utility (WSU) - Modernization & Value Report</title>
+  <title>Clarivate Web Support Utility (WSU) - Updated</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap');
     @import url('https://fonts.cdnfonts.com/css/avenir-lt-pro');
 
     @page {
       size: A4 portrait;
-      margin: 10mm 14mm;
+      margin: 12mm 15mm;
     }
 
     * {
@@ -22,12 +22,11 @@
       font-family: 'Avenir LT Pro', 'Nunito Sans', -apple-system, sans-serif;
       color: #000000;
       background-color: #ffffff;
-      line-height: 1.38;
-      font-size: 9pt;
+      line-height: 1.4;
+      font-size: 9.2pt;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Page container */
     .page {
       width: 100%;
       height: 100%;
@@ -35,88 +34,61 @@
 
     .page-break {
       page-break-before: always;
-      padding-top: 4mm;
+      padding-top: 6mm;
     }
 
     /* Header Banner */
     .header-banner {
-      border-bottom: 2.5px solid #5E33BF;
-      padding-bottom: 8px;
-      margin-bottom: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
+      border-bottom: 2px solid #5E33BF;
+      padding-bottom: 10px;
+      margin-bottom: 14px;
     }
 
-    .header-title-block h1 {
+    .header-banner h1 {
       font-family: 'Clarivate', 'Montserrat', 'Outfit', sans-serif;
       color: #5E33BF;
-      font-size: 18pt;
+      font-size: 20pt;
       font-weight: 800;
       letter-spacing: -0.4px;
-      margin-bottom: 2px;
-    }
-
-    .header-title-block p {
-      font-size: 9.5pt;
-      color: #333333;
-      font-weight: 600;
-    }
-
-    .header-meta {
-      text-align: right;
-      font-size: 7.8pt;
-      color: #555555;
-      line-height: 1.35;
-    }
-
-    .header-meta strong {
-      color: #000000;
-    }
-
-    .badge {
-      display: inline-block;
-      background-color: #5E33BF;
-      color: #F0F0EB;
-      font-size: 7.2pt;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 3px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
       margin-bottom: 4px;
+    }
+
+    .header-banner p {
+      font-size: 9.8pt;
+      color: #111111;
+      font-weight: 700;
     }
 
     /* Executive Callout Box */
     .exec-summary {
       background-color: #F0F0EB;
       border-left: 3.5px solid #5E33BF;
-      padding: 8px 12px;
+      padding: 10px 14px;
       border-radius: 0 4px 4px 0;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
     .exec-summary h2 {
       font-family: 'Clarivate', 'Montserrat', sans-serif;
       font-size: 10.5pt;
       color: #5E33BF;
-      margin-bottom: 3px;
-      font-weight: 700;
+      margin-bottom: 4px;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.4px;
     }
 
     .exec-summary p {
-      font-size: 8.4pt;
+      font-size: 8.6pt;
       color: #111111;
-      line-height: 1.38;
+      line-height: 1.42;
     }
 
     /* Metrics Box */
     .metric-row {
       display: flex;
       gap: 10px;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
     .metric-card {
@@ -124,7 +96,7 @@
       background-color: #F0F0EB;
       border: 1px solid #5E33BF;
       border-radius: 4px;
-      padding: 6px 4px;
+      padding: 7px 5px;
       text-align: center;
     }
 
@@ -147,9 +119,9 @@
 
     .metric-desc {
       font-size: 6.8pt;
-      color: #444444;
+      color: #333333;
       margin-top: 2px;
-      line-height: 1.2;
+      line-height: 1.22;
     }
 
     /* Section Headings */
@@ -159,8 +131,8 @@
       color: #5E33BF;
       border-bottom: 1.5px solid #5E33BF;
       padding-bottom: 3px;
-      margin-top: 10px;
-      margin-bottom: 8px;
+      margin-top: 12px;
+      margin-bottom: 9px;
       text-transform: uppercase;
       letter-spacing: 0.3px;
       font-weight: 800;
@@ -170,25 +142,25 @@
     table.comp-table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 8px;
-      font-size: 7.5pt;
+      margin-bottom: 10px;
+      font-size: 7.8pt;
     }
 
     table.comp-table th {
       background-color: #5E33BF;
       color: #F0F0EB;
       text-align: left;
-      padding: 4px 7px;
+      padding: 5px 8px;
       font-weight: 700;
       border: 1px solid #5E33BF;
       letter-spacing: 0.2px;
     }
 
     table.comp-table td {
-      padding: 4px 7px;
+      padding: 5px 8px;
       border: 1px solid #d4d4cb;
       vertical-align: top;
-      line-height: 1.25;
+      line-height: 1.3;
     }
 
     table.comp-table tr:nth-child(even) {
@@ -218,63 +190,57 @@
     .feature-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 9px;
-      margin-bottom: 14px;
+      gap: 12px;
+      margin-bottom: 18px;
     }
 
     .feature-card {
       background-color: #F0F0EB;
       border: 1px solid #5E33BF;
       border-radius: 4px;
-      padding: 8px 10px;
+      padding: 10px 12px;
+    }
+
+    .feature-card.full-width {
+      grid-column: span 2;
     }
 
     .feature-card h3 {
-      font-size: 8.8pt;
+      font-size: 9.2pt;
       color: #5E33BF;
-      margin-bottom: 3px;
+      margin-bottom: 4px;
       font-weight: 700;
     }
 
     .feature-card p {
-      font-size: 7.8pt;
-      color: #222222;
-      line-height: 1.32;
-    }
-
-    /* Bullet Points */
-    .roi-list {
-      list-style: none;
-      margin-bottom: 12px;
-    }
-
-    .roi-list li {
-      position: relative;
-      padding-left: 14px;
-      margin-bottom: 6px;
       font-size: 8.2pt;
-      color: #111111;
-      line-height: 1.35;
+      color: #222222;
+      line-height: 1.36;
     }
 
-    .roi-list li::before {
-      content: "•";
-      color: #5E33BF;
-      font-weight: 900;
-      position: absolute;
-      left: 0;
-      top: -1px;
-      font-size: 11pt;
+    /* Conclusion Box */
+    .conclusion-box {
+      background-color: #fafaf7;
+      border-left: 3.5px solid #5E33BF;
+      padding: 12px 14px;
+      border-radius: 0 4px 4px 0;
+      margin-bottom: 16px;
+    }
+
+    .conclusion-box p {
+      font-size: 8.8pt;
+      line-height: 1.45;
+      color: #111111;
     }
 
     /* Footer Note */
     .report-footer {
       border-top: 1px solid #5E33BF;
       padding-top: 6px;
-      margin-top: 14px;
+      margin-top: 20px;
       display: flex;
       justify-content: space-between;
-      font-size: 7pt;
+      font-size: 7.2pt;
       color: #666666;
     }
   </style>
@@ -285,24 +251,15 @@
   <div class="page">
     <!-- Header Banner -->
     <div class="header-banner">
-      <div class="header-title-block">
-        <div class="badge">Clarivate Internal Tooling Modernization</div>
-        <h1>Web Support Utility (WSU)</h1>
-        <p>Executive Comparison, Agent Productivity Upgrades & ROI Report</p>
-      </div>
-      <div class="header-meta">
-        <p><strong>Prepared For:</strong> Support Operations & Leadership</p>
-        <p><strong>Platform:</strong> Clarivate WSU Suite (v3.0 Production)</p>
-        <p><strong>Deployment:</strong> clarivate-wsu.vercel.app</p>
-        <p><strong>Date:</strong> October 2026</p>
-      </div>
+      <h1>Web Support Utility (WSU)</h1>
+      <p>Updated Internal Tool | Prepared for: EndNote Customer Support Team</p>
     </div>
 
     <!-- Executive Summary -->
     <div class="exec-summary">
       <h2>Executive Summary</h2>
       <p>
-        The legacy Web Support Utility, based on 20-year-old <code>lookup.pl</code> Perl CGI scripts, presented severe operational bottlenecks: unformatted raw tables, missing clipboard integrations, manual credential typing, zero validation, and separate disconnected windows that routinely spawned dozens of redundant browser tabs. The <strong>upgraded Clarivate WSU Suite</strong> is a modern Single Page Application built on <strong>React 19, Vite, and responsive CSS</strong> that slashes support ticket lookup time by over <strong>50%</strong>, completely eliminates serial number formatting errors, enforces strict corporate branding, and guarantees SOC-2/ISO data privacy compliance with synchronized 30-minute security timeouts.
+        The upgraded Clarivate Web Support Utility (WSU Suite) is an employee-developed, frontend-only application created solely to improve convenience and streamline the day-to-day workflows of customer support agents on the Clarivate EndNote team. The application uses demo data exclusively and does not access, modify, store, or interfere with Clarivate’s internal data or production systems. It is an independent initiative designed to make routine support tasks more convenient for team members, with a focus on usability, efficiency, and a more organized workflow. It is intended solely as an internal productivity aid and is not an official Clarivate product or system.
       </p>
     </div>
 
@@ -321,7 +278,7 @@
       <div class="metric-card">
         <div class="metric-val">30 Min</div>
         <div class="metric-label">Synchronized Security</div>
-        <div class="metric-desc">Cross-tab timer auto-locks stations to protect customer PII</div>
+        <div class="metric-desc">Cross-tab timer auto-locks stations</div>
       </div>
       <div class="metric-card">
         <div class="metric-val">100%</div>
@@ -342,12 +299,6 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td><strong>Brand & Aesthetics</strong></td>
-          <td><span class="legacy-tag">Outdated "Clarivate Analytics" logo</span>, raw Times New Roman typography, default blue hyperlinks, zero visual hierarchy.</td>
-          <td><span class="modern-tag">Official Clarivate Brand System</span> (#5E33BF, #F0F0EB, #000000), custom geometric logo font & <strong>Avenir LT Pro</strong> sidebar navigation.</td>
-          <td><span class="benefit-tag">Professional workplace</span>; clear hierarchy minimizes cognitive fatigue.</td>
-        </tr>
         <tr>
           <td><strong>Clipboard & Copying</strong></td>
           <td><span class="legacy-tag">Manual text selection.</span> Frequent accidental copying of spaces or missing digits in 25-char product keys.</td>
@@ -397,13 +348,13 @@
   <!-- ==================== PAGE 2 ==================== -->
   <div class="page page-break">
     <!-- Header Mini Banner -->
-    <div style="border-bottom: 1.5px solid #5E33BF; padding-bottom: 4px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
-      <span style="font-family: 'Clarivate', 'Montserrat', sans-serif; font-size: 10pt; font-weight: 800; color: #5E33BF; text-transform: uppercase;">Clarivate WSU — Agent Productivity & Business Value</span>
+    <div style="border-bottom: 1.5px solid #5E33BF; padding-bottom: 4px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-family: 'Clarivate', 'Montserrat', sans-serif; font-size: 10pt; font-weight: 800; color: #5E33BF; text-transform: uppercase;">CLARIVATE WSU — AGENT PRODUCTIVITY & BUSINESS VALUE</span>
       <span style="font-size: 7.5pt; color: #666666;">Page 2 of 2</span>
     </div>
 
     <!-- Deep Dive Sections -->
-    <h2 class="section-heading" style="margin-top: 0;">2. Detailed Functional Upgrades for Support Agents</h2>
+    <h2 class="section-heading" style="margin-top: 0;">2. DETAILED FUNCTIONAL UPGRADES FOR SUPPORT AGENTS</h2>
     <div class="feature-grid">
       <div class="feature-card">
         <h3>1. Automated 1-Click Clipboard Utilities</h3>
@@ -433,49 +384,25 @@
         </p>
       </div>
 
-      <div class="feature-card">
-        <h3>5. Visual Hierarchy & Internal Warning Badges</h3>
-        <p>
-          Legacy screens buried critical instructions like <em>"DO NOT SEND THIS INFORMATION TO THE CUSTOMER"</em> in walls of plain red text. The new system cleanly isolates internal administrative metadata into dedicated badge containers, preventing accidental data leaks to end customers.
-        </p>
-      </div>
-
-      <div class="feature-card">
-        <h3>6. Cross-Platform Responsive CSS Grid</h3>
+      <div class="feature-card full-width">
+        <h3>5. Cross-Platform Responsive CSS Grid</h3>
         <p>
           Engineered specifically for enterprise laptop setups (1366×768 / 1080p with Windows 125%/150% scaling) and large multi-monitor workstations. Uses CSS Grid columns that mathematically prevent buttons and user indicators from ever colliding or overlapping.
         </p>
       </div>
     </div>
 
-    <!-- Business Impact & ROI -->
-    <h2 class="section-heading">3. Business Value & Operational ROI (For Leadership)</h2>
-    <div class="exec-summary" style="margin-bottom: 12px; padding: 10px 14px;">
-      <ul class="roi-list">
-        <li>
-          <strong>Reduced Average Handling Time (AHT):</strong> By replacing manual text selection, form re-typing, and multi-second page reloads with 1-click clipboard triggers, auto-fill credentials, and instant client-side rendering, support agents save an average of <strong>45 to 75 seconds per ticket</strong>.
-        </li>
-        <li>
-          <strong>Zero Escalations from Key Formatting Errors:</strong> One-click sanitized copying guarantees that customers receive valid, space-free serial numbers and product keys on the first attempt, preventing secondary follow-up tickets.
-        </li>
-        <li>
-          <strong>Data Security & Compliance:</strong> Automated cross-tab 30-minute session synchronization ensures workstations left unattended during breaks or shift rotations immediately auto-lock, protecting customer PII and satisfying enterprise audit requirements.
-        </li>
-        <li>
-          <strong>Professional Employee Workplace:</strong> Replaces obsolete 20-year-old Perl forms with contemporary Clarivate brand identity, boosting agent morale and demonstrating investment in internal employee tooling.
-        </li>
-      </ul>
-    </div>
-
     <!-- Conclusion & Recommendation -->
-    <h2 class="section-heading">4. Conclusion & Recommendation for Managerial Approval</h2>
-    <p style="font-size: 8.5pt; line-height: 1.45; color: #111111;">
-      The modernized Clarivate Web Support Utility delivers an immediate return on investment by drastically improving customer support agent efficiency, eliminating customer-facing credential errors, and upholding strict enterprise security standards. Full migration to the new WSU platform is strongly recommended for all support tiers.
-    </p>
+    <h2 class="section-heading">3. CONCLUSION & RECOMMENDATION FOR MANAGERIAL APPROVAL</h2>
+    <div class="conclusion-box">
+      <p>
+        The modernized Clarivate Web Support Utility delivers an immediate return on investment by drastically improving customer support agent efficiency, eliminating customer-facing credential errors, and upholding strict enterprise security standards. Full migration to the new WSU platform is strongly recommended for all support tiers.
+      </p>
+    </div>
 
     <!-- Report Footer -->
     <div class="report-footer">
-      <span>Clarivate Internal Presentation Document — Confidential & Proprietary</span>
+      <span>Clarivate Internal Presentation Document — Confidential &amp; Proprietary</span>
       <span>Live Production Deployment: https://clarivate-wsu.vercel.app</span>
       <span>Generated: October 2026</span>
     </div>
