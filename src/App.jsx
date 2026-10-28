@@ -382,6 +382,10 @@ const HeaderBar = ({
   sessionTimer,
   onLogout
 }) => {
+  const emailToDisplay = userEmail || 'padmanabha.roy@clarivate.com';
+  const isLongEmail = emailToDisplay.length > 25;
+  const truncatedEmail = isLongEmail ? `${emailToDisplay.slice(0, 25)}...` : emailToDisplay;
+
   const centerContent = centerAction || (backActionText && onBackClick ? (
     <button
       type="button"
@@ -422,9 +426,13 @@ const HeaderBar = ({
       <div className="wsu-header-right">
         <div className="wsu-header-user-wrapper">
           <div className="wsu-header-user">
-            <span className="wsu-header-user-label">Logged in:</span>
-            <span className="wsu-header-user-email" title={userEmail || 'padmanabha.roy@clarivate.com'}>
-              {userEmail || 'padmanabha.roy@clarivate.com'}
+            Logged in:{' '}
+            <span
+              className="wsu-header-user-email"
+              title={emailToDisplay}
+              data-tooltip={isLongEmail ? emailToDisplay : undefined}
+            >
+              {truncatedEmail}
             </span>
           </div>
           {sessionTimer && (
@@ -505,6 +513,13 @@ export default function App() {
     return 0;
   });
 
+  // Page View state: 'wsu-home' | 'registration-database' | 'serial-detail'
+  // Requirement: After login, the WSU will open up by default
+  const [currentPage, setCurrentPage] = useState(detectInitialPage);
+
+  // Cross-tab window reference for SLN
+  const slnWindowRef = useRef(null);
+
   const formatTimer = (totalSec) => {
     if (totalSec <= 0) return '00:00:00';
     const hrs = Math.floor(totalSec / 3600);
@@ -524,6 +539,16 @@ export default function App() {
     setCurrentUser(email);
     setRemainingSeconds(SESSION_DURATION_SECONDS);
     setSessionExpiredMsg('');
+
+    // Requirement: After login, the WSU will open up by default
+    setCurrentPage('wsu-home');
+    window.name = 'clarivate_wsu_window';
+    document.title = 'Clarivate - Web Support Utility (WSU)';
+    if (window.location.search || window.location.hash) {
+      try {
+        window.history.replaceState({}, 'Clarivate - Web Support Utility (WSU)', window.location.pathname);
+      } catch (e) {}
+    }
     showToast(`Logged in as ${email}. Session active for 30 minutes.`);
 
     try {
@@ -535,8 +560,51 @@ export default function App() {
 
   const handleLogout = (isExpired = false) => {
     localStorage.removeItem(AUTH_SESSION_KEY);
+    const reason = isExpired ? 'expired' : 'user';
+
+    // Broadcast LOGOUT immediately to all open windows/tabs
+    try {
+      const ch = new BroadcastChannel('clarivate_wsu_auth_channel');
+      ch.postMessage({ type: 'LOGOUT', reason });
+      ch.close();
+    } catch (e) {}
+
+    // Check if this window is a secondary window (e.g. SLN Lookup / Reg Database popup)
+    const isSecondary =
+      window.name === 'clarivate_sln_window' ||
+      currentPage === 'registration-database' ||
+      currentPage === 'serial-detail' ||
+      (window.opener && !window.opener.closed);
+
+    if (isSecondary) {
+      // Focus opener (main WSU window) and close this window so only single page remains
+      if (window.opener && !window.opener.closed) {
+        try { window.opener.focus(); } catch (e) {}
+      }
+      try {
+        window.close();
+      } catch (e) {}
+    }
+
+    // If this is the main window, close the secondary window if it is open
+    if (slnWindowRef.current && !slnWindowRef.current.closed) {
+      try {
+        slnWindowRef.current.close();
+      } catch (e) {}
+    }
+
+    // Reset session and return to single page login menu
     setCurrentUser(null);
     setRemainingSeconds(0);
+    setCurrentPage('wsu-home');
+    window.name = 'clarivate_wsu_window';
+    document.title = 'Clarivate - Web Support Utility (WSU)';
+    if (window.location.search || window.location.hash) {
+      try {
+        window.history.replaceState({}, 'Clarivate - Web Support Utility (WSU)', window.location.pathname);
+      } catch (e) {}
+    }
+
     if (isExpired) {
       setSessionExpiredMsg('Session expired. Please log in again.');
       showToast('Session expired. Please log in again.');
@@ -546,9 +614,7 @@ export default function App() {
     }
 
     try {
-      const ch = new BroadcastChannel('clarivate_wsu_auth_channel');
-      ch.postMessage({ type: 'LOGOUT', reason: isExpired ? 'expired' : 'user' });
-      ch.close();
+      window.focus();
     } catch (e) {}
   };
 
@@ -559,41 +625,60 @@ export default function App() {
     const checkTimer = () => {
       const sess = getStoredSession();
       if (!sess) {
-        setCurrentUser(null);
-        setRemainingSeconds(0);
-        setSessionExpiredMsg('Session expired. Please log in again.');
-        showToast('Session expired. Please log in again.');
+        handleLogout(true);
         return;
       }
       const diff = Math.max(0, Math.floor((sess.expiresAt - Date.now()) / 1000));
       setRemainingSeconds(diff);
       if (diff <= 0) {
-        localStorage.removeItem(AUTH_SESSION_KEY);
-        setCurrentUser(null);
-        setRemainingSeconds(0);
-        setSessionExpiredMsg('Session expired. Please log in again.');
-        showToast('Session expired. Please log in again.');
-        try {
-          const ch = new BroadcastChannel('clarivate_wsu_auth_channel');
-          ch.postMessage({ type: 'LOGOUT', reason: 'expired' });
-          ch.close();
-        } catch (e) {}
+        handleLogout(true);
       }
     };
 
     checkTimer();
     const interval = setInterval(checkTimer, 1000);
     return () => clearInterval(interval);
-  }, [currentUser]);
+  }, [currentUser, currentPage]);
 
   // Cross-tab Authentication Synchronization
   useEffect(() => {
     const handleStorageChange = (e) => {
       if (e.key === AUTH_SESSION_KEY) {
         if (!e.newValue) {
+          // Session was removed or expired in another window
+          const isSecondary =
+            window.name === 'clarivate_sln_window' ||
+            currentPage === 'registration-database' ||
+            currentPage === 'serial-detail' ||
+            (window.opener && !window.opener.closed);
+
+          if (isSecondary) {
+            if (window.opener && !window.opener.closed) {
+              try { window.opener.focus(); } catch (e) {}
+            }
+            try {
+              window.close();
+            } catch (e) {}
+          }
+
+          if (slnWindowRef.current && !slnWindowRef.current.closed) {
+            try {
+              slnWindowRef.current.close();
+            } catch (e) {}
+          }
+
           setCurrentUser(null);
           setRemainingSeconds(0);
+          setCurrentPage('wsu-home');
+          window.name = 'clarivate_wsu_window';
+          document.title = 'Clarivate - Web Support Utility (WSU)';
+          if (window.location.search || window.location.hash) {
+            try {
+              window.history.replaceState({}, 'Clarivate - Web Support Utility (WSU)', window.location.pathname);
+            } catch (e) {}
+          }
           setSessionExpiredMsg('Session expired. Please log in again.');
+          try { window.focus(); } catch (e) {}
         } else {
           try {
             const parsed = JSON.parse(e.newValue);
@@ -601,9 +686,16 @@ export default function App() {
               setCurrentUser(parsed.email);
               setRemainingSeconds(Math.max(0, Math.floor((parsed.expiresAt - Date.now()) / 1000)));
               setSessionExpiredMsg('');
+              setCurrentPage('wsu-home');
+              window.name = 'clarivate_wsu_window';
+              document.title = 'Clarivate - Web Support Utility (WSU)';
+              if (window.location.search || window.location.hash) {
+                try {
+                  window.history.replaceState({}, 'Clarivate - Web Support Utility (WSU)', window.location.pathname);
+                } catch (e) {}
+              }
             } else {
-              setCurrentUser(null);
-              setRemainingSeconds(0);
+              handleLogout(true);
             }
           } catch (err) {}
         }
@@ -621,12 +713,56 @@ export default function App() {
           setCurrentUser(sess.email);
           setRemainingSeconds(Math.max(0, Math.floor((sess.expiresAt - Date.now()) / 1000)));
           setSessionExpiredMsg('');
+          setCurrentPage('wsu-home');
+          window.name = 'clarivate_wsu_window';
+          document.title = 'Clarivate - Web Support Utility (WSU)';
+          if (window.location.search || window.location.hash) {
+            try {
+              window.history.replaceState({}, 'Clarivate - Web Support Utility (WSU)', window.location.pathname);
+            } catch (e) {}
+          }
         } else if (event.data.type === 'LOGOUT') {
+          const isSecondary =
+            window.name === 'clarivate_sln_window' ||
+            currentPage === 'registration-database' ||
+            currentPage === 'serial-detail' ||
+            (window.opener && !window.opener.closed);
+
+          if (isSecondary) {
+            if (window.opener && !window.opener.closed) {
+              try { window.opener.focus(); } catch (e) {}
+            }
+            try {
+              window.close();
+            } catch (e) {}
+          }
+
+          if (slnWindowRef.current && !slnWindowRef.current.closed) {
+            try {
+              slnWindowRef.current.close();
+            } catch (e) {}
+          }
+
           setCurrentUser(null);
           setRemainingSeconds(0);
+          setCurrentPage('wsu-home');
+          window.name = 'clarivate_wsu_window';
+          document.title = 'Clarivate - Web Support Utility (WSU)';
+          if (window.location.search || window.location.hash) {
+            try {
+              window.history.replaceState({}, 'Clarivate - Web Support Utility (WSU)', window.location.pathname);
+            } catch (e) {}
+          }
+
           if (event.data.reason === 'expired') {
             setSessionExpiredMsg('Session expired. Please log in again.');
+          } else {
+            setSessionExpiredMsg('');
           }
+
+          try {
+            window.focus();
+          } catch (e) {}
         }
       };
     } catch (e) {}
@@ -635,10 +771,7 @@ export default function App() {
       window.removeEventListener('storage', handleStorageChange);
       if (authChannel) authChannel.close();
     };
-  }, []);
-
-  // Page View state: 'wsu-home' | 'registration-database' | 'serial-detail'
-  const [currentPage, setCurrentPage] = useState(detectInitialPage);
+  }, [currentPage]);
 
   // Theme State ('light' | 'dark') - default is strictly 'light'
   const [theme, setTheme] = useState(() => {
@@ -659,9 +792,6 @@ export default function App() {
     setTheme(nextTheme);
     showToast(`Switched to ${nextTheme === 'dark' ? 'Dark' : 'Light'} Mode`);
   };
-
-  // Cross-tab window reference for SLN
-  const slnWindowRef = useRef(null);
 
   // Sync Window Name and Document Title based on active page
   useEffect(() => {

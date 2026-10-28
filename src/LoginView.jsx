@@ -39,6 +39,12 @@ export default function LoginView({ onLogin, sessionExpiredMessage }) {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(sessionExpiredMessage || '');
 
+  useEffect(() => {
+    if (sessionExpiredMessage) {
+      setError(sessionExpiredMessage);
+    }
+  }, [sessionExpiredMessage]);
+
   // Enforce strictly light mode on login page unconditionally
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', 'light');

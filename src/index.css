@@ -102,14 +102,13 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
-  min-height: 62px;
-  height: auto;
+  min-height: 58px;
   background-color: #F0F0EB;
   color: #000000;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-columns: minmax(auto, 1fr) auto minmax(auto, 1fr);
   align-items: center;
-  padding: 8px 24px;
+  padding: 10px 20px;
   border-bottom: 1px solid #5E33BF;
   gap: 16px;
   box-sizing: border-box;
@@ -134,7 +133,6 @@ body {
   justify-content: center;
   min-width: 0;
   white-space: nowrap;
-  padding: 0 4px;
 }
 
 .wsu-header-right {
@@ -145,11 +143,7 @@ body {
   gap: 12px;
   font-size: 0.79rem;
   min-width: 0;
-}
-
-.wsu-header-right > span {
   white-space: nowrap;
-  opacity: 0.6;
 }
 
 .wsu-header-logo-container {
@@ -192,46 +186,74 @@ body {
   line-height: 1.2;
 }
 
+
 .wsu-header-user-wrapper {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   line-height: 1.25;
-  min-width: 0;
-  max-width: 320px;
 }
 
 .wsu-header-user {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  text-align: right;
-  width: 100%;
-  min-width: 0;
-  line-height: 1.2;
-}
-
-.wsu-header-user-label {
-  font-size: 0.72rem;
+  font-weight: 400;
   color: #000000;
-  opacity: 0.85;
   white-space: nowrap;
-  letter-spacing: 0.2px;
-  line-height: 1.1;
 }
 
 .wsu-header-user-email {
-  font-size: 0.76rem;
-  font-weight: 600;
-  color: #000000;
-  word-break: break-all;
-  overflow-wrap: anywhere;
-  white-space: normal;
-  text-align: right;
-  max-width: 280px;
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  font-weight: 500;
+  transition: opacity 0.15s ease;
+}
+
+.wsu-header-user-email:hover {
+  text-decoration: underline;
+}
+
+/* Custom interactive hover tooltip for full email visibility */
+.wsu-header-user-email[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background-color: #000000;
+  color: #F0F0EB;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.74rem;
+  font-weight: 400;
+  white-space: nowrap;
+  z-index: 1000;
+  border: 1px solid #5E33BF;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
   line-height: 1.25;
-  margin-top: 1px;
+}
+
+.wsu-header-user-email[data-tooltip]:hover::before {
+  content: '';
+  position: absolute;
+  top: calc(100% + 1px);
+  right: 14px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #5E33BF transparent;
+  z-index: 1001;
+  pointer-events: none;
+}
+
+[data-theme="dark"] .wsu-header-user-email[data-tooltip]:hover::after {
+  background-color: #000000 !important;
+  color: #F0F0EB !important;
+  border-color: #5E33BF !important;
+  box-shadow: 0 4px 16px rgba(94, 51, 191, 0.4) !important;
+}
+
+[data-theme="dark"] .wsu-header-user-email[data-tooltip]:hover::before {
+  border-color: transparent transparent #5E33BF transparent !important;
 }
 
 .wsu-header-session-timer {
@@ -245,15 +267,6 @@ body {
 
 [data-theme="dark"] .wsu-header-session-timer {
   color: #5E33BF;
-}
-
-[data-theme="dark"] .wsu-header-user-label {
-  color: #F0F0EB;
-  opacity: 0.85;
-}
-
-[data-theme="dark"] .wsu-header-user-email {
-  color: #F0F0EB;
 }
 
 .wsu-header-link {
@@ -1288,11 +1301,10 @@ button.wsu-btn-secondary {
   }
 
   .wsu-header {
-    padding: 6px 16px;
+    padding: 8px 16px;
     gap: 12px;
-    min-height: 58px;
-    height: auto;
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    min-height: 54px;
+    grid-template-columns: minmax(auto, 1fr) auto minmax(auto, 1fr);
   }
 
   .wsu-header-left {
@@ -1318,17 +1330,8 @@ button.wsu-btn-secondary {
     font-size: 0.75rem;
   }
 
-  .wsu-header-user-wrapper {
-    max-width: 230px;
-  }
-
-  .wsu-header-user-label {
-    font-size: 0.68rem;
-  }
-
-  .wsu-header-user-email {
-    font-size: 0.72rem;
-    max-width: 220px;
+  .wsu-header-user {
+    font-size: 0.75rem;
   }
 
   .wsu-header-session-timer {
@@ -1380,20 +1383,9 @@ button.wsu-btn-secondary {
 /* 2. Standard Laptops & Standard Monitors (1367px to 1680px) */
 @media (min-width: 1367px) and (max-width: 1680px) {
   .wsu-header {
-    padding: 8px 20px;
+    padding: 10px 20px;
     gap: 16px;
-    min-height: 62px;
-    height: auto;
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  }
-
-  .wsu-header-user-wrapper {
-    max-width: 290px;
-  }
-
-  .wsu-header-user-email {
-    max-width: 270px;
-    font-size: 0.76rem;
+    min-height: 58px;
   }
 
   .wsu-sidebar {
@@ -1412,11 +1404,9 @@ button.wsu-btn-secondary {
 /* 3. Large Monitors (24", 27", 32"+ Full HD, QHD 2560x1440, 4K: 1681px and above) */
 @media (min-width: 1681px) {
   .wsu-header {
-    padding: 12px 32px;
-    min-height: 68px;
-    height: auto;
+    padding: 14px 32px;
+    min-height: 66px;
     gap: 24px;
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   }
 
   .wsu-header-logo {
@@ -1443,17 +1433,8 @@ button.wsu-btn-secondary {
     font-size: 0.84rem;
   }
 
-  .wsu-header-user-wrapper {
-    max-width: 360px;
-  }
-
-  .wsu-header-user-label {
-    font-size: 0.76rem;
-  }
-
-  .wsu-header-user-email {
-    font-size: 0.82rem;
-    max-width: 340px;
+  .wsu-header-user {
+    font-size: 0.84rem;
   }
 
   .wsu-header-session-timer {
