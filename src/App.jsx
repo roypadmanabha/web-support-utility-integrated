@@ -422,7 +422,10 @@ const HeaderBar = ({
       <div className="wsu-header-right">
         <div className="wsu-header-user-wrapper">
           <div className="wsu-header-user">
-            Logged in: <span>{userEmail || 'padmanabha.roy@clarivate.com'}</span>
+            <span className="wsu-header-user-label">Logged in:</span>
+            <span className="wsu-header-user-email" title={userEmail || 'padmanabha.roy@clarivate.com'}>
+              {userEmail || 'padmanabha.roy@clarivate.com'}
+            </span>
           </div>
           {sessionTimer && (
             <div className="wsu-header-session-timer">
