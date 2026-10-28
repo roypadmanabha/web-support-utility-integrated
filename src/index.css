@@ -1,4 +1,29 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800&family=League+Spartan:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800&family=League+Spartan:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap');
+@import url('https://fonts.cdnfonts.com/css/avenir-lt-pro');
+
+@font-face {
+  font-family: 'Avenir LT Pro';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Avenir LT Pro 55 Roman'), local('Avenir LT Pro'), local('Avenir Next'), local('Avenir'), url('https://fonts.cdnfonts.com/s/36611/AvenirLTProRoman.woff') format('woff');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Avenir LT Pro';
+  font-style: normal;
+  font-weight: 500;
+  src: local('Avenir LT Pro 65 Medium'), local('Avenir LT Pro Medium'), url('https://fonts.cdnfonts.com/s/36611/AvenirLTProMedium.woff') format('woff');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Avenir LT Pro';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Avenir LT Pro 85 Heavy'), local('Avenir LT Pro Bold'), local('Avenir Next Bold'), url('https://fonts.cdnfonts.com/s/36611/AvenirLTProHeavy.woff') format('woff');
+  font-display: swap;
+}
 
 @font-face {
   font-family: 'Clarivate';
@@ -19,8 +44,8 @@
   /* Exact Clarivate Typeface Matching Stack (Single-story geometric 'a' & 'g', Futura geometry) */
   --font-clarivate: 'Clarivate', 'Clarivate Regular', 'Montserrat', 'Outfit', 'League Spartan', 'Futura', 'Century Gothic', -apple-system, sans-serif;
 
-  /* Avenir LT Pro typography for menu texts */
-  --font-avenir: 'Avenir LT Pro', 'Avenir Pro LT', 'Avenir Pro', 'Avenir Next', 'Avenir', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* Avenir LT Pro typography for menu texts (cross-platform with webfont) */
+  --font-avenir: 'Avenir LT Pro', 'Avenir Pro', 'Avenir Next', 'Avenir', 'Nunito Sans', sans-serif;
 }
 
 * {
@@ -221,16 +246,25 @@ body {
   flex-direction: column;
   gap: 14px;
   flex-shrink: 0;
+  font-family: var(--font-avenir) !important;
+}
+
+.wsu-sidebar *,
+.wsu-sidebar button,
+.wsu-sidebar span,
+.wsu-sidebar div {
+  font-family: var(--font-avenir) !important;
 }
 
 .wsu-sidebar-section {
   display: flex;
   flex-direction: column;
   gap: 1px;
+  font-family: var(--font-avenir) !important;
 }
 
 .wsu-sidebar-heading {
-  font-family: var(--font-avenir);
+  font-family: var(--font-avenir) !important;
   font-size: 0.82rem;
   font-weight: 700;
   color: #5E33BF;
@@ -253,19 +287,19 @@ body {
   border-radius: 2px;
   cursor: pointer;
   text-align: left;
-  font-family: var(--font-avenir);
+  font-family: var(--font-avenir) !important;
   transition: all 0.15s ease;
 }
 
 .wsu-sidebar-item span {
-  font-family: var(--font-avenir);
+  font-family: var(--font-avenir) !important;
 }
 
 .wsu-sidebar-item:hover {
   background-color: #5E33BF;
   color: #F0F0EB;
   border-color: #000000;
-  font-family: var(--font-avenir);
+  font-family: var(--font-avenir) !important;
 }
 
 .wsu-sidebar-item.active {
@@ -273,7 +307,7 @@ body {
   color: #F0F0EB;
   font-weight: 400;
   border-color: #000000;
-  font-family: var(--font-avenir);
+  font-family: var(--font-avenir) !important;
 }
 
 /* Main Content Area - All content inside the right part of the menu across SN Lookup and WSU page */
