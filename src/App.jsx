@@ -415,11 +415,9 @@ const HeaderBar = ({
         </div>
       </div>
 
-      {centerContent && (
-        <div className="wsu-header-center">
-          {centerContent}
-        </div>
-      )}
+      <div className="wsu-header-center">
+        {centerContent}
+      </div>
 
       <div className="wsu-header-right">
         <div className="wsu-header-user-wrapper">
