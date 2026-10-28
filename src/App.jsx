@@ -154,6 +154,29 @@ const SmartInputField = ({
     setShowHistory(false);
   };
 
+  const handleClearAllHistory = () => {
+    if (!historyKey) return;
+    try {
+      localStorage.removeItem(`wsu_history_${historyKey}`);
+    } catch {}
+    setHistory([]);
+    setShowHistory(false);
+    undoManager.showToast(`Cleared recent searches for ${fieldLabel || label || 'field'}`);
+  };
+
+  const handleRemoveHistoryItem = (itemToRemove) => {
+    if (!historyKey) return;
+    const updated = history.filter((h) => h !== itemToRemove);
+    try {
+      localStorage.setItem(`wsu_history_${historyKey}`, JSON.stringify(updated));
+    } catch {}
+    setHistory(updated);
+    if (updated.length === 0) {
+      setShowHistory(false);
+    }
+    undoManager.showToast(`Removed from recent searches`);
+  };
+
   const handleCopyOrPaste = async () => {
     if (isCopyMode) {
       if (onCopy) {
@@ -288,65 +311,46 @@ const SmartInputField = ({
 
           {/* Recent Search History Dropdown */}
           {showHistory && history.length > 0 && (
-            <div style={{
-              position: 'absolute',
-              top: '100%',
-              left: 0,
-              right: 0,
-              zIndex: 300,
-              backgroundColor: '#F0F0EB',
-              border: '1px solid #5E33BF',
-              borderTop: 'none',
-              borderRadius: '0 0 4px 4px',
-              boxShadow: '0 6px 20px rgba(0,0,0,0.18)',
-              overflow: 'hidden'
-            }}>
-              <div style={{
-                padding: '5px 12px',
-                fontSize: '0.63rem',
-                color: '#5E33BF',
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: '0.7px',
-                borderBottom: '0.5px solid #5E33BF',
-                backgroundColor: '#F0F0EB'
-              }}>
-                Recent Searches
+            <div className="wsu-history-dropdown">
+              <div className="wsu-history-header">
+                <span>Recent Searches</span>
+                <button
+                  type="button"
+                  className="wsu-history-clear-all-btn"
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleClearAllHistory();
+                  }}
+                  title="Clear all past history for this field in one click"
+                >
+                  Clear all
+                </button>
               </div>
               {history.map((item, i) => (
-                <button
+                <div
                   key={i}
-                  type="button"
+                  className="wsu-history-item"
                   onMouseDown={() => handleSelectHistory(item)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '9px',
-                    width: '100%',
-                    padding: '7px 12px',
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    borderBottom: i < history.length - 1 ? '0.5px solid rgba(94,51,191,0.18)' : 'none',
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    fontFamily: 'inherit',
-                    fontSize: '0.81rem',
-                    color: '#000000'
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.backgroundColor = '#5E33BF';
-                    e.currentTarget.querySelector('span.hist-label').style.color = '#F0F0EB';
-                    e.currentTarget.querySelector('span.hist-icon').style.color = '#F0F0EB';
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.querySelector('span.hist-label').style.color = '#000000';
-                    e.currentTarget.querySelector('span.hist-icon').style.color = '#5E33BF';
-                  }}
                 >
-                  <span className="hist-icon" style={{ fontSize: '0.78rem', flexShrink: 0, color: '#5E33BF' }}>🕐</span>
-                  <span className="hist-label" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1, color: '#000000' }}>{item}</span>
-                </button>
+                  <div className="wsu-history-item-content">
+                    <span className="wsu-history-icon">🕐</span>
+                    <span className="wsu-history-text">{item}</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="wsu-history-item-del-btn"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleRemoveHistoryItem(item);
+                    }}
+                    title={`Clear "${item}" from history in one click`}
+                    aria-label={`Clear ${item} from history`}
+                  >
+                    ✕
+                  </button>
+                </div>
               ))}
             </div>
           )}

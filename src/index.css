@@ -527,6 +527,136 @@ body {
   color: #F0F0EB;
 }
 
+/* Recent Searches Autocomplete Dropdown */
+.wsu-history-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 300;
+  background-color: #F0F0EB;
+  border: 1px solid #5E33BF;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+}
+
+.wsu-history-header {
+  padding: 5px 12px;
+  font-size: 0.63rem;
+  color: #5E33BF;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  border-bottom: 0.5px solid #5E33BF;
+  background-color: #F0F0EB;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wsu-history-clear-all-btn {
+  background: none;
+  border: none;
+  color: #5E33BF;
+  font-size: 0.62rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 2px 4px;
+  font-family: inherit;
+  text-transform: none;
+  border-radius: 2px;
+  transition: opacity 0.15s ease;
+}
+
+.wsu-history-clear-all-btn:hover {
+  opacity: 0.7;
+}
+
+.wsu-history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 7px 12px;
+  background-color: transparent;
+  border-bottom: 0.5px solid rgba(94, 51, 191, 0.18);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.81rem;
+  color: #000000;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  box-sizing: border-box;
+}
+
+.wsu-history-item:last-child {
+  border-bottom: none;
+}
+
+.wsu-history-item:hover {
+  background-color: #5E33BF;
+  color: #F0F0EB;
+}
+
+.wsu-history-item-content {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  flex: 1;
+  margin-right: 8px;
+}
+
+.wsu-history-icon {
+  font-size: 0.78rem;
+  flex-shrink: 0;
+  color: #5E33BF;
+}
+
+.wsu-history-item:hover .wsu-history-icon {
+  color: #F0F0EB;
+}
+
+.wsu-history-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: inherit;
+}
+
+.wsu-history-item-del-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid #5E33BF;
+  border-radius: 3px;
+  color: #5E33BF;
+  font-size: 0.68rem;
+  font-weight: 700;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-family: inherit;
+  line-height: 1;
+  transition: all 0.15s ease;
+}
+
+.wsu-history-item:hover .wsu-history-item-del-btn {
+  color: #F0F0EB;
+  border-color: #F0F0EB;
+}
+
+.wsu-history-item:hover .wsu-history-item-del-btn:hover {
+  background-color: #000000;
+  color: #F0F0EB;
+  border-color: #000000;
+}
+
 .wsu-btn-primary {
   padding: 8px 18px;
   background-color: #5E33BF;
@@ -849,6 +979,63 @@ body {
 [data-theme="dark"] .wsu-action-btn-clear:hover {
   background-color: #5E33BF !important;
   color: #F0F0EB !important;
+}
+
+/* Dark theme overrides for history dropdown */
+[data-theme="dark"] .wsu-history-dropdown {
+  background-color: #000000 !important;
+  border-color: #5E33BF !important;
+  box-shadow: 0 6px 20px rgba(94, 51, 191, 0.25) !important;
+}
+
+[data-theme="dark"] .wsu-history-header {
+  background-color: #000000 !important;
+  color: #F0F0EB !important;
+  border-bottom-color: #5E33BF !important;
+}
+
+[data-theme="dark"] .wsu-history-clear-all-btn {
+  color: #F0F0EB !important;
+}
+
+[data-theme="dark"] .wsu-history-clear-all-btn:hover {
+  color: #5E33BF !important;
+}
+
+[data-theme="dark"] .wsu-history-item {
+  color: #F0F0EB !important;
+  background-color: #000000 !important;
+  border-bottom-color: rgba(94, 51, 191, 0.3) !important;
+}
+
+[data-theme="dark"] .wsu-history-item:hover {
+  background-color: #5E33BF !important;
+  color: #F0F0EB !important;
+}
+
+[data-theme="dark"] .wsu-history-icon {
+  color: #5E33BF !important;
+}
+
+[data-theme="dark"] .wsu-history-item:hover .wsu-history-icon {
+  color: #F0F0EB !important;
+}
+
+[data-theme="dark"] .wsu-history-item-del-btn {
+  color: #F0F0EB !important;
+  border-color: #5E33BF !important;
+  background: transparent !important;
+}
+
+[data-theme="dark"] .wsu-history-item:hover .wsu-history-item-del-btn {
+  color: #F0F0EB !important;
+  border-color: #F0F0EB !important;
+}
+
+[data-theme="dark"] .wsu-history-item:hover .wsu-history-item-del-btn:hover {
+  background-color: #000000 !important;
+  color: #F0F0EB !important;
+  border-color: #F0F0EB !important;
 }
 
 [data-theme="dark"] .wsu-btn-secondary {

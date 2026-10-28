@@ -292,56 +292,53 @@ export default function SiteLicensesView({ theme = 'light', onSelectSerial, onSh
 
               {/* Last 5 searches autocomplete popup */}
               {showHistory && searchHistory.length > 0 && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '28px',
-                    left: 0,
-                    right: 0,
-                    backgroundColor: '#FFFFFF',
-                    border: '1px solid #5E33BF',
-                    boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
-                    zIndex: 1000,
-                    borderRadius: '2px'
-                  }}
-                >
-                  <div
-                    style={{
-                      padding: '4px 8px',
-                      fontSize: '0.72rem',
-                      fontWeight: 700,
-                      color: '#5E33BF',
-                      borderBottom: '1px solid #F0F0EB',
-                      backgroundColor: '#F0F0EB'
-                    }}
-                  >
-                    Recent Searches
+                <div className="wsu-history-dropdown" style={{ top: '28px' }}>
+                  <div className="wsu-history-header">
+                    <span>Recent Searches</span>
+                    <button
+                      type="button"
+                      className="wsu-history-clear-all-btn"
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setSearchHistory([]);
+                        setShowHistory(false);
+                        if (onShowToast) onShowToast('Cleared recent searches');
+                      }}
+                      title="Clear all past history in one click"
+                    >
+                      Clear all
+                    </button>
                   </div>
                   {searchHistory.map((item, idx) => (
                     <div
                       key={idx}
+                      className="wsu-history-item"
                       onMouseDown={() => {
                         setSerialInput(item);
                         setShowHistory(false);
                       }}
-                      style={{
-                        padding: '5px 8px',
-                        fontSize: '0.85rem',
-                        cursor: 'pointer',
-                        color: '#000000',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = '#F0F0EB';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = '#FFFFFF';
-                      }}
                     >
-                      <span style={{ color: '#5E33BF', fontSize: '0.75rem' }}>🕒</span>
-                      <span>{item}</span>
+                      <div className="wsu-history-item-content">
+                        <span className="wsu-history-icon">🕒</span>
+                        <span className="wsu-history-text">{item}</span>
+                      </div>
+                      <button
+                        type="button"
+                        className="wsu-history-item-del-btn"
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          const updated = searchHistory.filter((h) => h !== item);
+                          setSearchHistory(updated);
+                          if (updated.length === 0) setShowHistory(false);
+                          if (onShowToast) onShowToast('Removed from recent searches');
+                        }}
+                        title={`Clear "${item}" from history in one click`}
+                        aria-label={`Clear ${item} from history`}
+                      >
+                        ✕
+                      </button>
                     </div>
                   ))}
                 </div>
