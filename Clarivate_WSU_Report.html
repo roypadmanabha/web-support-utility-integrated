@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Clarivate Web Support Utility (WSU) - Updated</title>
@@ -245,6 +246,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <!-- ==================== PAGE 1 ==================== -->
@@ -257,21 +259,23 @@
 
     <!-- Executive Summary -->
     <div class="exec-summary">
-      <h2>Executive Summary</h2>
+      <h2>Summary</h2>
       <p>
-        The upgraded Clarivate Web Support Utility (WSU Suite) is an employee-developed, frontend-only application created solely to improve convenience and streamline the day-to-day workflows of customer support agents on the Clarivate EndNote team. The application uses demo data exclusively and does not access, modify, store, or interfere with Clarivate’s internal data or production systems. It is an independent initiative designed to make routine support tasks more convenient for team members, with a focus on usability, efficiency, and a more organized workflow. It is intended solely as an internal productivity aid and is not an official Clarivate product or system.
+        The upgraded Clarivate Web Support Utility (WSU Suite) is an employee-developed, frontend-only application
+        created solely to improve convenience and streamline the day-to-day workflows of customer support agents on the
+        Clarivate EndNote team. The application uses demo data exclusively and does not access, modify, store, or
+        interfere with Clarivate’s internal data or production systems. It is an independent initiative designed to make
+        routine support tasks more convenient for team members, with a focus on usability, efficiency, and a more
+        organized workflow. It is intended solely as an internal productivity aid and is not an official Clarivate
+        product or system.
       </p>
     </div>
 
     <!-- Key Metrics Row -->
     <div class="metric-row">
+
       <div class="metric-card">
-        <div class="metric-val">~62%</div>
-        <div class="metric-label">Handling Time Saved</div>
-        <div class="metric-desc">Faster lookups, verification & instant 1-click clipboard triggers</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-val">0</div>
+        <div class="metric-val">Zero</div>
         <div class="metric-label">Clipboard Errors</div>
         <div class="metric-desc">Automated sanitized copy prevents customer key formatting errors</div>
       </div>
@@ -301,45 +305,66 @@
       <tbody>
         <tr>
           <td><strong>Clipboard & Copying</strong></td>
-          <td><span class="legacy-tag">Manual text selection.</span> Frequent accidental copying of spaces or missing digits in 25-char product keys.</td>
-          <td><span class="modern-tag">1-Click Dedicated Copy & Paste</span> on every input, serial number, product key, and table result with toast confirmation.</td>
-          <td><span class="benefit-tag">Saves 10–15s per ticket</span>; completely prevents customer "Invalid Key" escalations.</td>
+          <td><span class="legacy-tag">Manual text selection.</span> Frequent accidental copying of spaces or missing
+            digits in 25-char product keys.</td>
+          <td><span class="modern-tag">1-Click Dedicated Copy & Paste</span> on every input, serial number, product key,
+            and table result with toast confirmation.</td>
+          <td><span class="benefit-tag">Saves 10–15s per ticket</span>; completely prevents customer "Invalid Key"
+            escalations.</td>
         </tr>
         <tr>
           <td><strong>Data Safety & Undo</strong></td>
-          <td><span class="legacy-tag">Zero error recovery.</span> Accidental clears or overwrite erase customer data permanently.</td>
-          <td><span class="modern-tag">Smart Field Clearing with Undo/Redo (Ctrl+Z)</span> via a persistent client-side Undo Manager.</td>
-          <td><span class="benefit-tag">Instant recovery</span> during live customer calls without having to re-ask.</td>
+          <td><span class="legacy-tag">Zero error recovery.</span> Accidental clears or overwrite erase customer data
+            permanently.</td>
+          <td><span class="modern-tag">Smart Field Clearing with Undo/Redo (Ctrl+Z)</span> via a persistent client-side
+            Undo Manager.</td>
+          <td><span class="benefit-tag">Instant recovery</span> during live customer calls without having to re-ask.
+          </td>
         </tr>
         <tr>
           <td><strong>WSU ↔ SLN Integration</strong></td>
-          <td><span class="legacy-tag">Disconnected Perl scripts.</span> Agents opened dozens of tabs, losing track of active customer context.</td>
-          <td><span class="modern-tag">Synchronized Dual-Window Architecture</span> (<code>WSU</code> ↔ <code>SLN</code>) linked via BroadcastChannel without duplicate tabs.</td>
-          <td><span class="benefit-tag">Zero tab clutter</span>; 1-click toggling between Customer Search and Serial Database.</td>
+          <td><span class="legacy-tag">Disconnected Perl scripts.</span> Agents opened dozens of tabs, losing track of
+            active customer context.</td>
+          <td><span class="modern-tag">Synchronized Dual-Window Architecture</span> (<code>WSU</code> ↔
+            <code>SLN</code>) linked via BroadcastChannel without duplicate tabs.
+          </td>
+          <td><span class="benefit-tag">Zero tab clutter</span>; 1-click toggling between Customer Search and Serial
+            Database.</td>
         </tr>
         <tr>
           <td><strong>Session Security & PII</strong></td>
-          <td><span class="legacy-tag">Indefinite static login</span> with no visual timer or auto-termination. Customer data vulnerable if station unattended.</td>
-          <td><span class="modern-tag">Synchronized 30-Min Security Countdown</span> with live timer (<code>00:29:30</code>) and automated cross-page auto-logout.</td>
-          <td><span class="benefit-tag">Full ISO/SOC-2 compliance</span>; customer PII (emails, UIDs, Steam IDs) safeguarded.</td>
+          <td><span class="legacy-tag">Indefinite static login</span> with no visual timer or auto-termination. Customer
+            data vulnerable if station unattended.</td>
+          <td><span class="modern-tag">Synchronized 30-Min Security Countdown</span> with live timer
+            (<code>00:29:30</code>) and automated cross-page auto-logout.</td>
+          <td><span class="benefit-tag">Full ISO/SOC-2 compliance</span>; customer PII (emails, UIDs, Steam IDs)
+            safeguarded.</td>
         </tr>
         <tr>
           <td><strong>Speed & Rendering</strong></td>
-          <td><span class="legacy-tag">Server-side CGI script</span> taking 0.5s to 3.9s per request with jarring full-page screen reloads.</td>
-          <td><span class="modern-tag">Instant Client-Side SPA (&lt;50ms)</span> powered by Vite 8 + React 19. Instant sorting, filtering, and pagination.</td>
-          <td><span class="benefit-tag">Zero screen flicker</span>; rapid answers during live customer interactions.</td>
+          <td><span class="legacy-tag">Server-side CGI script</span> taking 0.5s to 3.9s per request with jarring
+            full-page screen reloads.</td>
+          <td><span class="modern-tag">Instant Client-Side SPA (&lt;50ms)</span> powered by Vite 8 + React 19. Instant
+            sorting, filtering, and pagination.</td>
+          <td><span class="benefit-tag">Zero screen flicker</span>; rapid answers during live customer interactions.
+          </td>
         </tr>
         <tr>
           <td><strong>Input Validation</strong></td>
-          <td><span class="legacy-tag">No input sanitization.</span> Accidental trailing space in email caused silent "No Record Found" failures.</td>
-          <td><span class="modern-tag">Real-Time Whitespace Detection</span> with inline alert notifications and auto-trimming upon submission.</td>
+          <td><span class="legacy-tag">No input sanitization.</span> Accidental trailing space in email caused silent
+            "No Record Found" failures.</td>
+          <td><span class="modern-tag">Real-Time Whitespace Detection</span> with inline alert notifications and
+            auto-trimming upon submission.</td>
           <td><span class="benefit-tag">Eliminates false negatives</span> where customer accounts were missed.</td>
         </tr>
         <tr>
           <td><strong>Screen Responsiveness</strong></td>
-          <td><span class="legacy-tag">Rigid, fixed-width layout</span> causing overflow, overlapping text, or microscopic display on high-DPI screens.</td>
-          <td><span class="modern-tag">Fluid CSS Grid Architecture</span> optimized for Dell/Mac business laptops (1024px–1366px) up to 27"+ QHD/4K monitors.</td>
-          <td><span class="benefit-tag">Zero horizontal scrollbar</span>; zero button collisions regardless of scaling.</td>
+          <td><span class="legacy-tag">Rigid, fixed-width layout</span> causing overflow, overlapping text, or
+            microscopic display on high-DPI screens.</td>
+          <td><span class="modern-tag">Fluid CSS Grid Architecture</span> optimized for Dell/Mac business laptops
+            (1024px–1366px) up to 27"+ QHD/4K monitors.</td>
+          <td><span class="benefit-tag">Zero horizontal scrollbar</span>; zero button collisions regardless of scaling.
+          </td>
         </tr>
       </tbody>
     </table>
@@ -348,8 +373,11 @@
   <!-- ==================== PAGE 2 ==================== -->
   <div class="page page-break">
     <!-- Header Mini Banner -->
-    <div style="border-bottom: 1.5px solid #5E33BF; padding-bottom: 4px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
-      <span style="font-family: 'Clarivate', 'Montserrat', sans-serif; font-size: 10pt; font-weight: 800; color: #5E33BF; text-transform: uppercase;">CLARIVATE WSU — AGENT PRODUCTIVITY & BUSINESS VALUE</span>
+    <div
+      style="border-bottom: 1.5px solid #5E33BF; padding-bottom: 4px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
+      <span
+        style="font-family: 'Clarivate', 'Montserrat', sans-serif; font-size: 10pt; font-weight: 800; color: #5E33BF; text-transform: uppercase;">
+        Updated WSU - Explained</span>
       <span style="font-size: 7.5pt; color: #666666;">Page 2 of 2</span>
     </div>
 
@@ -359,54 +387,60 @@
       <div class="feature-card">
         <h3>1. Automated 1-Click Clipboard Utilities</h3>
         <p>
-          In customer support, copying a 25-character product key (e.g. <code>RG647-CD9FC-4PAR8-KPSNW-LHDMH</code>) or a 10-digit serial number (<code>3102299999</code>) happens dozens of times an hour. Manual highlighting often clips characters or captures trailing whitespace. Dedicated <strong>"Copy"</strong> and <strong>"Paste"</strong> triggers eliminate formatting corruption and save crucial handling seconds.
+          In customer support, copying a 25-character product key (e.g. <code>RG647-CD9FC-4PAR8-KPSNW-LHDMH</code>) or a
+          10-digit serial number (<code>3102299999</code>) happens dozens of times an hour. Manual highlighting often
+          clips characters or captures trailing whitespace. Dedicated <strong>"Copy"</strong> and
+          <strong>"Paste"</strong> triggers eliminate formatting corruption and save crucial handling seconds.
         </p>
       </div>
 
       <div class="feature-card">
         <h3>2. Search History & Saved Credentials</h3>
         <p>
-          Agents previously had to re-type their credentials repeatedly and lost customer search queries when navigating away. The new platform persists the agent's session securely and provides native recent-search dropdowns on all key inputs, allowing instant re-querying of recent customer cases without retyping.
+          Agents previously had to re-type their credentials repeatedly and lost customer search queries when navigating
+          away. The new platform persists the agent's session securely and provides native recent-search dropdowns on
+          all key inputs, allowing instant re-querying of recent customer cases without retyping.
         </p>
       </div>
 
       <div class="feature-card">
         <h3>3. Real-Time Input Sanitization</h3>
         <p>
-          Customer-submitted emails frequently contain invisible leading or trailing spaces. The modernized form actively warns the agent and sanitizes the input before query execution, preventing erroneous "No Account Found" escalations.
+          Customer-submitted emails frequently contain invisible leading or trailing spaces. The modernized form
+          actively warns the agent and sanitizes the input before query execution, preventing erroneous "No Account
+          Found" escalations.
         </p>
       </div>
 
       <div class="feature-card">
         <h3>4. Multi-Window Focus Management</h3>
         <p>
-          Instead of opening redundant tabs, the WSU suite designates two persistent named windows: <code>clarivate_wsu_window</code> and <code>clarivate_sln_window</code>. Clicking between them focuses the active workspace without page reloads, keeping tickets organized and browser overhead low.
+          Instead of opening redundant tabs, the WSU suite designates two persistent named windows:
+          <code>clarivate_wsu_window</code> and <code>clarivate_sln_window</code>. Clicking between them focuses the
+          active workspace without page reloads, keeping tickets organized and browser overhead low.
         </p>
       </div>
 
       <div class="feature-card full-width">
         <h3>5. Cross-Platform Responsive CSS Grid</h3>
         <p>
-          Engineered specifically for enterprise laptop setups (1366×768 / 1080p with Windows 125%/150% scaling) and large multi-monitor workstations. Uses CSS Grid columns that mathematically prevent buttons and user indicators from ever colliding or overlapping.
+          Engineered specifically for enterprise laptop setups (1366×768 / 1080p with Windows 125%/150% scaling) and
+          large multi-monitor workstations. Uses CSS Grid columns that mathematically prevent buttons and user
+          indicators from ever colliding or overlapping.
         </p>
       </div>
     </div>
 
-    <!-- Conclusion & Recommendation -->
-    <h2 class="section-heading">3. CONCLUSION & RECOMMENDATION FOR MANAGERIAL APPROVAL</h2>
-    <div class="conclusion-box">
-      <p>
-        The modernized Clarivate Web Support Utility delivers an immediate return on investment by drastically improving customer support agent efficiency, eliminating customer-facing credential errors, and upholding strict enterprise security standards. Full migration to the new WSU platform is strongly recommended for all support tiers.
-      </p>
-    </div>
+
 
     <!-- Report Footer -->
     <div class="report-footer">
-      <span>Clarivate Internal Presentation Document — Confidential &amp; Proprietary</span>
+      <span>Clarivate Internal Presentation Document</span>
       <span>Live Production Deployment: https://clarivate-wsu.vercel.app</span>
-      <span>Generated: October 2026</span>
+      <span>Generated: Oct 2026</span>
     </div>
   </div>
 
 </body>
+
 </html>
