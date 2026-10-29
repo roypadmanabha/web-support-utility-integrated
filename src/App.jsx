@@ -399,7 +399,9 @@ const HeaderBar = ({
 }) => {
   const emailToDisplay = userEmail || 'padmanabha.roy@clarivate.com';
   const isLongEmail = emailToDisplay.length > 25;
-  const truncatedEmail = isLongEmail ? `${emailToDisplay.slice(0, 25)}...` : emailToDisplay;
+  const rawSliced = emailToDisplay.slice(0, 25);
+  const baseSliced = rawSliced.endsWith('.') ? rawSliced.slice(0, -1) : rawSliced;
+  const truncatedEmail = isLongEmail ? `${baseSliced}...` : emailToDisplay;
 
   const centerContent = centerAction || (backActionText && onBackClick ? (
     <button
@@ -441,7 +443,6 @@ const HeaderBar = ({
       <div className="wsu-header-right">
         <div className="wsu-header-user-wrapper">
           <div className="wsu-header-user">
-            Logged in:{' '}
             <span
               className="wsu-header-user-email"
               title={emailToDisplay}
