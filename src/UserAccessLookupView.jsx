@@ -103,9 +103,9 @@ export default function UserAccessLookupView({ theme = 'light', onShowToast }) {
     (typeof document !== 'undefined' &&
       document.documentElement.getAttribute('data-theme') === 'dark');
 
-  const [emailInput, setEmailInput] = useState('padmanabharoy@gmail.com');
+  const [emailInput, setEmailInput] = useState('');
   const [uidInput, setUidInput] = useState('');
-  const [activeSessionUser, setActiveSessionUser] = useState('padmanabharoy@gmail.com');
+  const [activeSessionUser, setActiveSessionUser] = useState(null);
   const [showEntries, setShowEntries] = useState(25);
   const [filterQuery, setFilterQuery] = useState('');
   const [copiedKey, setCopiedKey] = useState(null);
@@ -193,7 +193,6 @@ export default function UserAccessLookupView({ theme = 'light', onShowToast }) {
       return;
     }
     setActiveSessionUser(val);
-    if (!uidInput) setUidInput('amxgngrsDoAAJONnSDw');
     if (onShowToast) onShowToast(`Showing EN Services auth sessions for ${val}`);
   };
 
@@ -204,7 +203,7 @@ export default function UserAccessLookupView({ theme = 'light', onShowToast }) {
       if (onShowToast) onShowToast('Please enter a UID to search.');
       return;
     }
-    setActiveSessionUser(`UID: ${val}`);
+    setActiveSessionUser(val);
     if (onShowToast) onShowToast(`Showing EN Services auth sessions for UID ${val}`);
   };
 
@@ -281,6 +280,11 @@ export default function UserAccessLookupView({ theme = 'light', onShowToast }) {
             value={emailInput}
             onChange={(e) => setEmailInput(e.target.value)}
             onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleSearchByEmail(e);
+                return;
+              }
               const isCtrlOrMeta = e.ctrlKey || e.metaKey;
               const k = e.key ? e.key.toLowerCase() : '';
               if (isCtrlOrMeta && (k === 'z' || k === 'u')) {
@@ -324,7 +328,12 @@ export default function UserAccessLookupView({ theme = 'light', onShowToast }) {
           </button>
           <button
             type="button"
-            onClick={() => clearField('email', emailInput, 'Email')}
+            onClick={() => {
+              clearField('email', emailInput, 'Email');
+              if (!uidInput.trim()) {
+                setActiveSessionUser(null);
+              }
+            }}
             title="Clear input (Ctrl+Z or U to return back)"
             style={{
               height: '28px',
@@ -395,6 +404,11 @@ export default function UserAccessLookupView({ theme = 'light', onShowToast }) {
             value={uidInput}
             onChange={(e) => setUidInput(e.target.value)}
             onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleSearchByUid(e);
+                return;
+              }
               const isCtrlOrMeta = e.ctrlKey || e.metaKey;
               const k = e.key ? e.key.toLowerCase() : '';
               if (isCtrlOrMeta && (k === 'z' || k === 'u')) {
@@ -402,7 +416,6 @@ export default function UserAccessLookupView({ theme = 'light', onShowToast }) {
                 undoField('uid', 'UID');
               }
             }}
-            placeholder="e.g. amxgngrsDoAAJONnSDw"
             style={{
               width: '320px',
               height: '28px',
@@ -439,7 +452,12 @@ export default function UserAccessLookupView({ theme = 'light', onShowToast }) {
           </button>
           <button
             type="button"
-            onClick={() => clearField('uid', uidInput, 'UID')}
+            onClick={() => {
+              clearField('uid', uidInput, 'UID');
+              if (!emailInput.trim()) {
+                setActiveSessionUser(null);
+              }
+            }}
             title="Clear input (Ctrl+Z or U to return back)"
             style={{
               height: '28px',
@@ -484,263 +502,267 @@ export default function UserAccessLookupView({ theme = 'light', onShowToast }) {
         </div>
       </div>
 
-      {/* 100 Most Recent Sessions for <User> Section Header */}
-      <h2
-        style={{
-          fontSize: '1.25rem',
-          fontWeight: 700,
-          margin: '0 0 16px 0',
-          color: isDark ? '#FFFFFF' : '#000000'
-        }}
-      >
-        100 Most Recent Sessions for {activeSessionUser}
-      </h2>
-
-      {/* Table controls row: Show X entries & Search */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '10px',
-          flexWrap: 'wrap',
-          gap: '10px'
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.84rem' }}>
-          <span>Show</span>
-          <select
-            value={showEntries}
-            onChange={(e) => setShowEntries(e.target.value)}
+      {/* Sessions table rendered ONLY when user performs search */}
+      {activeSessionUser && (
+        <>
+          {/* 100 Most Recent Sessions for <User> Section Header */}
+          <h2
             style={{
-              height: '26px',
-              padding: '0 6px',
-              border: '1px solid #5E33BF',
-              borderRadius: '2px',
-              backgroundColor: isDark ? '#000000' : '#FFFFFF',
-              color: isDark ? '#FFFFFF' : '#000000',
-              fontFamily: 'inherit',
-              fontWeight: 600
+              fontSize: '1.25rem',
+              fontWeight: 700,
+              margin: '0 0 16px 0',
+              color: isDark ? '#FFFFFF' : '#000000'
             }}
           >
-            <option value={10}>10</option>
-            <option value={25}>25</option>
-            <option value={50}>50</option>
-            <option value={100}>100</option>
-          </select>
-          <span>entries</span>
-        </div>
+            100 Most Recent Sessions for {activeSessionUser}
+          </h2>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span style={{ fontSize: '0.84rem', fontWeight: 600 }}>Search:</span>
-          <input
-            ref={registerRef('filter')}
-            data-field="filter"
-            type="text"
-            value={filterQuery}
-            onChange={(e) => setFilterQuery(e.target.value)}
-            onKeyDown={(e) => {
-              const isCtrlOrMeta = e.ctrlKey || e.metaKey;
-              const k = e.key ? e.key.toLowerCase() : '';
-              if (isCtrlOrMeta && (k === 'z' || k === 'u')) {
-                e.preventDefault();
-                undoField('filter', 'Search Filter');
-              }
-            }}
+          {/* Table controls row: Show X entries & Search */}
+          <div
             style={{
-              width: '180px',
-              height: '26px',
-              padding: '2px 8px',
-              fontSize: '0.82rem',
-              border: '1px solid #5E33BF',
-              borderRadius: '2px',
-              backgroundColor: isDark ? '#000000' : '#FFFFFF',
-              color: isDark ? '#FFFFFF' : '#000000',
-              fontFamily: 'inherit',
-              outline: 'none'
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '10px',
+              flexWrap: 'wrap',
+              gap: '10px'
             }}
-          />
-          {filterQuery && (
-            <button
-              type="button"
-              onClick={() => clearField('filter', filterQuery, 'Search Filter')}
-              title="Clear search filter (Ctrl+Z or U to return back)"
-              style={{
-                height: '26px',
-                padding: '0 8px',
-                backgroundColor: '#5E33BF',
-                color: '#FFFFFF',
-                border: 'none',
-                borderRadius: '2px',
-                fontSize: '0.72rem',
-                cursor: 'pointer',
-                fontFamily: 'inherit'
-              }}
-            >
-              Clear
-            </button>
-          )}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.84rem' }}>
+              <span>Show</span>
+              <select
+                value={showEntries}
+                onChange={(e) => setShowEntries(e.target.value)}
+                style={{
+                  height: '26px',
+                  padding: '0 6px',
+                  border: '1px solid #5E33BF',
+                  borderRadius: '2px',
+                  backgroundColor: isDark ? '#000000' : '#FFFFFF',
+                  color: isDark ? '#FFFFFF' : '#000000',
+                  fontFamily: 'inherit',
+                  fontWeight: 600
+                }}
+              >
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+              <span>entries</span>
+            </div>
 
-        </div>
-      </div>
-
-      {/* Table matching Screenshot 1 */}
-      <div
-        style={{
-          border: '1px solid #5E33BF',
-          borderRadius: '4px',
-          overflowX: 'auto',
-          backgroundColor: isDark ? '#000000' : '#FFFFFF'
-        }}
-      >
-        <table
-          style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-            fontSize: '0.82rem',
-            textAlign: 'left'
-          }}
-        >
-          <thead>
-            <tr
-              style={{
-                backgroundColor: isDark ? '#000000' : '#F0F0EB',
-                borderBottom: '1px solid #5E33BF',
-                color: isDark ? '#FFFFFF' : '#000000',
-                fontWeight: 700
-              }}
-            >
-              <th style={{ padding: '8px 12px' }}>Auth Token</th>
-              <th style={{ padding: '8px 12px' }}>UID</th>
-              <th style={{ padding: '8px 12px' }}>Client Name</th>
-              <th style={{ padding: '8px 12px' }}>Date Created</th>
-            </tr>
-          </thead>
-          <tbody>
-            {displayedSessions.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={4}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '0.84rem', fontWeight: 600 }}>Search:</span>
+              <input
+                ref={registerRef('filter')}
+                data-field="filter"
+                type="text"
+                value={filterQuery}
+                onChange={(e) => setFilterQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  const isCtrlOrMeta = e.ctrlKey || e.metaKey;
+                  const k = e.key ? e.key.toLowerCase() : '';
+                  if (isCtrlOrMeta && (k === 'z' || k === 'u')) {
+                    e.preventDefault();
+                    undoField('filter', 'Search Filter');
+                  }
+                }}
+                style={{
+                  width: '180px',
+                  height: '26px',
+                  padding: '2px 8px',
+                  fontSize: '0.82rem',
+                  border: '1px solid #5E33BF',
+                  borderRadius: '2px',
+                  backgroundColor: isDark ? '#000000' : '#FFFFFF',
+                  color: isDark ? '#FFFFFF' : '#000000',
+                  fontFamily: 'inherit',
+                  outline: 'none'
+                }}
+              />
+              {filterQuery && (
+                <button
+                  type="button"
+                  onClick={() => clearField('filter', filterQuery, 'Search Filter')}
+                  title="Clear search filter (Ctrl+Z or U to return back)"
                   style={{
-                    padding: '24px',
-                    textAlign: 'center',
-                    color: isDark ? '#A0A0A0' : '#666666',
-                    fontStyle: 'italic'
+                    height: '26px',
+                    padding: '0 8px',
+                    backgroundColor: '#5E33BF',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    borderRadius: '2px',
+                    fontSize: '0.72rem',
+                    cursor: 'pointer',
+                    fontFamily: 'inherit'
                   }}
                 >
-                  No session records matching filter.
-                </td>
-              </tr>
-            ) : (
-              displayedSessions.map((row, idx) => {
-                const isEven = idx % 2 === 0;
-                const rowBg = isDark
-                  ? isEven
-                    ? '#000000'
-                    : '#565656'
-                  : isEven
-                  ? '#FFFFFF'
-                  : 'lightgrey';
-                const rowColor = isDark ? '#FFFFFF' : '#000000';
+                  Clear
+                </button>
+              )}
+            </div>
+          </div>
 
-                return (
-                  <tr
-                    key={idx}
-                    style={{
-                      backgroundColor: rowBg,
-                      color: rowColor,
-                      borderBottom: isDark ? '1px solid #333333' : '1px solid #E0E0E0'
-                    }}
-                  >
-                    <td style={{ padding: '6px 12px', whiteSpace: 'nowrap' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>
-                          {row.authToken}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => handleCopy(row.authToken, `row-${idx}-token`, 'Token')}
-                          style={{
-                            height: '20px',
-                            padding: '0 6px',
-                            backgroundColor: '#5E33BF',
-                            color: '#FFFFFF',
-                            border: 'none',
-                            borderRadius: '2px',
-                            fontSize: '0.68rem',
-                            cursor: 'pointer',
-                            fontFamily: 'inherit'
-                          }}
-                          onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.5')}
-                          onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
-                        >
-                          {copiedKey === `row-${idx}-token` ? '✓' : 'Copy'}
-                        </button>
-                      </div>
-                    </td>
-                    <td style={{ padding: '6px 12px', whiteSpace: 'nowrap' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <span
-                          style={{
-                            color: '#5E33BF',
-                            textDecoration: 'underline',
-                            cursor: 'pointer',
-                            fontWeight: 600
-                          }}
-                          onClick={() => {
-                            setUidInput(row.uid);
-                            if (onShowToast) onShowToast(`Selected UID ${row.uid}`);
-                          }}
-                        >
-                          {row.uid}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => handleCopy(row.uid, `row-${idx}-uid`, 'UID')}
-                          style={{
-                            height: '20px',
-                            padding: '0 6px',
-                            backgroundColor: '#5E33BF',
-                            color: '#FFFFFF',
-                            border: 'none',
-                            borderRadius: '2px',
-                            fontSize: '0.68rem',
-                            cursor: 'pointer',
-                            fontFamily: 'inherit'
-                          }}
-                          onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.5')}
-                          onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
-                        >
-                          {copiedKey === `row-${idx}-uid` ? '✓' : 'Copy'}
-                        </button>
-                      </div>
-                    </td>
-                    <td style={{ padding: '6px 12px' }}>{row.clientName}</td>
-                    <td style={{ padding: '6px 12px', whiteSpace: 'nowrap' }}>
-                      {row.dateCreated}
+          {/* Table matching Screenshot 1 */}
+          <div
+            style={{
+              border: '1px solid #5E33BF',
+              borderRadius: '4px',
+              overflowX: 'auto',
+              backgroundColor: isDark ? '#000000' : '#FFFFFF'
+            }}
+          >
+            <table
+              style={{
+                width: '100%',
+                borderCollapse: 'collapse',
+                fontSize: '0.82rem',
+                textAlign: 'left'
+              }}
+            >
+              <thead>
+                <tr
+                  style={{
+                    backgroundColor: isDark ? '#000000' : '#F0F0EB',
+                    borderBottom: '1px solid #5E33BF',
+                    color: isDark ? '#FFFFFF' : '#000000',
+                    fontWeight: 700
+                  }}
+                >
+                  <th style={{ padding: '8px 12px' }}>Auth Token</th>
+                  <th style={{ padding: '8px 12px' }}>UID</th>
+                  <th style={{ padding: '8px 12px' }}>Client Name</th>
+                  <th style={{ padding: '8px 12px' }}>Date Created</th>
+                </tr>
+              </thead>
+              <tbody>
+                {displayedSessions.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={4}
+                      style={{
+                        padding: '24px',
+                        textAlign: 'center',
+                        color: isDark ? '#A0A0A0' : '#666666',
+                        fontStyle: 'italic'
+                      }}
+                    >
+                      No session records matching filter.
                     </td>
                   </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
-      </div>
+                ) : (
+                  displayedSessions.map((row, idx) => {
+                    const isEven = idx % 2 === 0;
+                    const rowBg = isDark
+                      ? isEven
+                        ? '#000000'
+                        : '#565656'
+                      : isEven
+                      ? '#FFFFFF'
+                      : 'lightgrey';
+                    const rowColor = isDark ? '#FFFFFF' : '#000000';
 
-      <div
-        style={{
-          marginTop: '10px',
-          fontSize: '0.8rem',
-          color: isDark ? '#A0A0A0' : '#666666',
-          display: 'flex',
-          justifyContent: 'space-between'
-        }}
-      >
-        <span>
-          Showing 1 to {Math.min(displayedSessions.length, Number(showEntries))} of{' '}
-          {SAMPLE_SESSIONS.length} entries
-        </span>
-      </div>
+                    return (
+                      <tr
+                        key={idx}
+                        style={{
+                          backgroundColor: rowBg,
+                          color: rowColor,
+                          borderBottom: isDark ? '1px solid #333333' : '1px solid #E0E0E0'
+                        }}
+                      >
+                        <td style={{ padding: '6px 12px', whiteSpace: 'nowrap' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>
+                              {row.authToken}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleCopy(row.authToken, `row-${idx}-token`, 'Token')}
+                              style={{
+                                height: '20px',
+                                padding: '0 6px',
+                                backgroundColor: '#5E33BF',
+                                color: '#FFFFFF',
+                                border: 'none',
+                                borderRadius: '2px',
+                                fontSize: '0.68rem',
+                                cursor: 'pointer',
+                                fontFamily: 'inherit'
+                              }}
+                              onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.5')}
+                              onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+                            >
+                              {copiedKey === `row-${idx}-token` ? '✓' : 'Copy'}
+                            </button>
+                          </div>
+                        </td>
+                        <td style={{ padding: '6px 12px', whiteSpace: 'nowrap' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span
+                              style={{
+                                color: '#5E33BF',
+                                textDecoration: 'underline',
+                                cursor: 'pointer',
+                                fontWeight: 600
+                              }}
+                              onClick={() => {
+                                setUidInput(row.uid);
+                                if (onShowToast) onShowToast(`Selected UID ${row.uid}`);
+                              }}
+                            >
+                              {row.uid}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleCopy(row.uid, `row-${idx}-uid`, 'UID')}
+                              style={{
+                                height: '20px',
+                                padding: '0 6px',
+                                backgroundColor: '#5E33BF',
+                                color: '#FFFFFF',
+                                border: 'none',
+                                borderRadius: '2px',
+                                fontSize: '0.68rem',
+                                cursor: 'pointer',
+                                fontFamily: 'inherit'
+                              }}
+                              onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.5')}
+                              onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+                            >
+                              {copiedKey === `row-${idx}-uid` ? '✓' : 'Copy'}
+                            </button>
+                          </div>
+                        </td>
+                        <td style={{ padding: '6px 12px' }}>{row.clientName}</td>
+                        <td style={{ padding: '6px 12px', whiteSpace: 'nowrap' }}>
+                          {row.dateCreated}
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          <div
+            style={{
+              marginTop: '10px',
+              fontSize: '0.8rem',
+              color: isDark ? '#A0A0A0' : '#666666',
+              display: 'flex',
+              justifyContent: 'space-between'
+            }}
+          >
+            <span>
+              Showing 1 to {Math.min(displayedSessions.length, Number(showEntries))} of{' '}
+              {SAMPLE_SESSIONS.length} entries
+            </span>
+          </div>
+        </>
+      )}
     </div>
   );
 }
