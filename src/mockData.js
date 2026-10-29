@@ -11,8 +11,8 @@ export const CUSTOMER_DATABASE = [
     custId: "null",
     virtCustId: "null",
     citeDb: "CiteDB_0208",
-    state: "EN22",
-    endnoteVersion: "EndNote 22 (EN22)",
+    state: "EN2025",
+    endnoteVersion: "EndNote 2025 (EN2025)",
     registrationStatus: "Registered / Active",
     libVer: "5.0.0",
     fileStorage: "5120 MB",
@@ -24,7 +24,7 @@ export const CUSTOMER_DATABASE = [
     phoneNumber: "+1 800-336-4474",
     regTime: "2026-10-04 11:20:15",
     productKey: "RG647-CD9FC-4PAR8-KPSNW-LHDMH",
-    productSummary: "This is a Multi User Download of EndNote 22 for Both Mac & Windows.",
+    productSummary: "This is a Multi User Download of EndNote 2025 for Both Mac & Windows.",
     regDeadline: "May 31, 2028",
     latestExpDate: "June 1, 2031",
     webSeats: 5000,
@@ -43,8 +43,8 @@ export const CUSTOMER_DATABASE = [
     custId: "CUST-3912",
     virtCustId: "VCUST-102",
     citeDb: "CiteDB_0314",
-    state: "EN22",
-    endnoteVersion: "EndNote 22 (EN22)",
+    state: "EN2025",
+    endnoteVersion: "EndNote 2025 (EN2025)",
     registrationStatus: "Registered / Active",
     libVer: "5.0.0",
     fileStorage: "4096 MB",
@@ -56,7 +56,7 @@ export const CUSTOMER_DATABASE = [
     phoneNumber: "0723661677",
     regTime: "2025-11-24 07:42:55",
     productKey: "FM991-KX882-9PLQ2-WSU22-QWER1",
-    productSummary: "This is a Multi User Download of EndNote 22 for Both Mac & Windows.",
+    productSummary: "This is a Multi User Download of EndNote 2025 for Both Mac & Windows.",
     regDeadline: "May 31, 2028",
     latestExpDate: "June 1, 2031",
     webSeats: 2500,
@@ -71,7 +71,7 @@ export const CUSTOMER_DATABASE = [
     uid: "b8kLp9w9xZQm2V01rK",
     researcherId: "20948102",
     internalId: "20948102",
-    serialNumber: "3102288888",
+    serialNumber: "3102188888",
     custId: "CUST-8812",
     virtCustId: "VCUST-002",
     citeDb: "CiteDB_0114",
@@ -139,7 +139,7 @@ export const SERIAL_NUMBERS_DATABASE = [
   {
     serialNumber: "3102299999",
     assignedTo: "Padmanabha Roy (padmanabha.roy@clarivate.com)",
-    version: "EndNote 22 (EN22)",
+    version: "EndNote 2025 (EN2025)",
     productType: "Single User Desktop & Web License",
     seatsTotal: 5000,
     seatsUsed: 1,
@@ -150,7 +150,7 @@ export const SERIAL_NUMBERS_DATABASE = [
   {
     serialNumber: "3092276545",
     assignedTo: "Fabian Marsden (fabian.marsden@gmail.com)",
-    version: "EndNote 22 (EN22)",
+    version: "EndNote 2025 (EN2025)",
     productType: "Multi User Academic License",
     seatsTotal: 2500,
     seatsUsed: 1,
@@ -159,7 +159,7 @@ export const SERIAL_NUMBERS_DATABASE = [
     maintenanceExpiry: "2028-05-31"
   },
   {
-    serialNumber: "3102288888",
+    serialNumber: "3102188888",
     assignedTo: "Elena Rostova (elena.rostova@clarivate.com)",
     version: "EndNote 21 (EN21)",
     productType: "Institutional Multi-seat",
@@ -168,6 +168,50 @@ export const SERIAL_NUMBERS_DATABASE = [
     activationDate: "2023-06-20",
     status: "Active / Registered",
     maintenanceExpiry: "2027-09-30"
+  },
+  {
+    serialNumber: "3102035633",
+    assignedTo: "Marcus Brody (marcus.brody@oxford.edu)",
+    version: "EndNote 20 (EN20)",
+    productType: "Academic Site License",
+    seatsTotal: 750,
+    seatsUsed: 120,
+    activationDate: "2022-09-10",
+    status: "Active / Registered",
+    maintenanceExpiry: "2026-12-31"
+  },
+  {
+    serialNumber: "3091950389",
+    assignedTo: "Sarah Jenkins (s.jenkins@stanford.edu)",
+    version: "EndNote X9 (ENX9)",
+    productType: "Single User Desktop License",
+    seatsTotal: 1,
+    seatsUsed: 1,
+    activationDate: "2020-04-12",
+    status: "Active / Registered",
+    maintenanceExpiry: "2025-12-31"
+  },
+  {
+    serialNumber: "3201830365",
+    assignedTo: "Dennis Jones (dennis.jones@us.dlapiper.com)",
+    version: "EndNote X8 (ENX8)",
+    productType: "Multi-User Corporate License",
+    seatsTotal: 50,
+    seatsUsed: 42,
+    activationDate: "2018-08-19",
+    status: "Active / Registered",
+    maintenanceExpiry: "2024-12-31"
+  },
+  {
+    serialNumber: "3101755555",
+    assignedTo: "Arthur Pendelton (pendelton@cambridge.org)",
+    version: "EndNote X7 (ENX7)",
+    productType: "Single User License",
+    seatsTotal: 1,
+    seatsUsed: 1,
+    activationDate: "2016-02-14",
+    status: "Active / Registered",
+    maintenanceExpiry: "2023-12-31"
   }
 ];
 
@@ -204,3 +248,10 @@ export const UNIVERSITY_LIST = [
   'Indian Institute of Technology Bombay',
   'University of São Paulo'
 ];
+
+export {
+  getEndNoteVersionFromSN,
+  isValidSerialNumber,
+  generate25DigitProductKey,
+  generateSerialForVersion
+} from './serialNumberUtil';

@@ -13,6 +13,7 @@ import EndNoteDesktopBuilderView from './EndNoteDesktopBuilderView';
 import { undoManager } from './undoManager';
 import LoginView from './LoginView';
 import InvalidEmailModal, { isValidEmail } from './InvalidEmailModal';
+import { getEndNoteVersionFromSN, generate25DigitProductKey, generateSerialForVersion } from './serialNumberUtil';
 
 // Space validation helper for email inputs
 const checkSpaceInEmail = (emailStr) => {
@@ -1047,8 +1048,9 @@ export default function App() {
     const last = rawLast.charAt(0).toUpperCase() + rawLast.slice(1);
 
     const rand8 = Math.floor(10000000 + Math.random() * 90000000);
-    const randSN = customFields.serialNumber || `3102${Math.floor(100000 + Math.random() * 900000)}`;
-    const randKey = `RG647-${Math.random().toString(36).substring(2, 7).toUpperCase()}-${Math.random().toString(36).substring(2, 7).toUpperCase()}-LHDMH`;
+    const randSN = customFields.serialNumber || generateSerialForVersion('22');
+    const endnoteVer = getEndNoteVersionFromSN(randSN);
+    const randKey = customFields.productKey || generate25DigitProductKey();
 
     return {
       first,
@@ -1062,8 +1064,8 @@ export default function App() {
       custId: `CUST-${Math.floor(1000 + Math.random() * 9000)}`,
       virtCustId: `VCUST-${Math.floor(100 + Math.random() * 900)}`,
       citeDb: `CiteDB_${Math.floor(100 + Math.random() * 900)}`,
-      state: "EN22",
-      endnoteVersion: "EndNote 22 (EN22)",
+      state: endnoteVer.includes('2025') ? 'EN2025' : endnoteVer.replace('EndNote ', 'EN'),
+      endnoteVersion: `${endnoteVer} (${endnoteVer.includes('2025') ? 'EN2025' : endnoteVer.replace('EndNote ', 'EN')})`,
       registrationStatus: "Registered / Active",
       libVer: "5.0.0",
       fileStorage: "5120 MB",
@@ -1075,7 +1077,7 @@ export default function App() {
       phoneNumber: "+1 800-336-4474",
       regTime: "2026-10-04 12:00:00",
       productKey: randKey,
-      productSummary: "This is a Multi User Download of EndNote 22 for Both Mac & Windows.",
+      productSummary: `This is a Multi User Download of ${endnoteVer} for Both Mac & Windows.`,
       regDeadline: "May 31, 2028",
       latestExpDate: "June 1, 2031",
       webSeats: 5000,
@@ -1261,24 +1263,25 @@ export default function App() {
     }, 1000);
   };
 
-  // Handle Dummy Serial Number Generation
+  // Handle Dummy Serial Number Generation conforming to 10-digit SN and 25-digit product key rules
   const handleGenerateDummySN = (e) => {
     if (e) e.preventDefault();
-    const randomSN = `3102-${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}-00${dummyVersion}`;
-    const randomKey = `DUMMY-${dummyProduct.toUpperCase().slice(0, 2)}${dummyVersion}-${dummyPlatform.toUpperCase()}-${Math.floor(10000 + Math.random() * 90000)}`;
+    const randomSN = generateSerialForVersion(dummyVersion);
+    const randomKey = generate25DigitProductKey();
+    const versionName = getEndNoteVersionFromSN(randomSN);
 
     const result = {
       serialNumber: randomSN,
       productKey: randomKey,
-      product: dummyProduct,
-      version: dummyVersion,
+      product: `${versionName} (${dummyProduct})`,
+      version: versionName,
       platform: dummyPlatform,
       type: dummyType,
       generatedAt: new Date().toLocaleString()
     };
 
     setGeneratedDummyResult(result);
-    showToast(`Generated Dummy Serial Number for ${dummyProduct} ${dummyVersion}`);
+    showToast(`Generated Dummy 10-digit Serial #${randomSN} for ${versionName}`);
   };
 
   // Filtered Registration Database results with dynamic generator
@@ -1481,13 +1484,26 @@ export default function App() {
                           justifyContent: 'space-between',
                           alignItems: 'center',
                           marginTop: '4px',
-                          fontSize: '0.72rem',
+                          fontSize: '0.74rem',
                           color: snLookupInput.length === 10 ? '#5E33BF' : '#000000',
-                          opacity: snLookupInput.length === 10 ? 1 : 0.7,
-                          fontWeight: snLookupInput.length === 10 ? 700 : 400
+                          opacity: snLookupInput.length === 10 ? 1 : 0.8,
+                          fontWeight: snLookupInput.length === 10 ? 700 : 500
                         }}>
-                          <span>Only 10-digit numeric values allowed</span>
+                          <span>
+                            {snLookupInput.length >= 5
+                              ? `Detected Version: ${getEndNoteVersionFromSN(snLookupInput)}`
+                              : 'Only 10-digit numeric values allowed'}
+                          </span>
                           <span>{snLookupInput.length} / 10 digits</span>
+                        </div>
+                        <div style={{
+                          marginTop: '6px',
+                          fontSize: '0.68rem',
+                          color: '#000000',
+                          opacity: 0.75,
+                          lineHeight: 1.3
+                        }}>
+                          SN Version Codes: 17=X7, 18=X8, 19=X9, 20=EN20, 21=EN21, 22=EN2025. Product Keys: 25-digit alphanumeric.
                         </div>
                       </div>
                       <button
@@ -2206,11 +2222,12 @@ export default function App() {
                         onChange={(e) => setDummyVersion(e.target.value)}
                         className="wsu-select"
                       >
-                        <option value="22">22</option>
-                        <option value="21">21</option>
-                        <option value="20">20</option>
-                        <option value="X9">X9</option>
-                        <option value="X8">X8</option>
+                        <option value="22">EndNote 2025 (Code: 22)</option>
+                        <option value="21">EndNote 21 (Code: 21)</option>
+                        <option value="20">EndNote 20 (Code: 20)</option>
+                        <option value="19">EndNote X9 (Code: 19)</option>
+                        <option value="18">EndNote X8 (Code: 18)</option>
+                        <option value="17">EndNote X7 (Code: 17)</option>
                       </select>
                     </div>
 
@@ -2306,8 +2323,8 @@ export default function App() {
                   onSelectSerial={(sn) => {
                     const found = CUSTOMER_DATABASE.find((c) => c.serialNumber === sn) || {
                       serialNumber: sn,
-                      productKey: 'PK-' + sn.substring(0, 6),
-                      productSummary: 'EndNote Multi-User / Site License Product',
+                      productKey: generate25DigitProductKey(),
+                      productSummary: `${getEndNoteVersionFromSN(sn)} Multi-User / Site License Product`,
                       regDeadline: '2028-12-31',
                       latestExpDate: '2029-01-01',
                       webSeats: 'Unlimited',
@@ -3599,8 +3616,8 @@ export default function App() {
                 onSelectSerial={(sn) => {
                   const found = CUSTOMER_DATABASE.find((c) => c.serialNumber === sn) || {
                     serialNumber: sn,
-                    productKey: 'PK-' + sn.substring(0, 6),
-                    productSummary: 'EndNote Multi-User / Site License Product',
+                    productKey: generate25DigitProductKey(),
+                    productSummary: `${getEndNoteVersionFromSN(sn)} Multi-User / Site License Product`,
                     regDeadline: '2028-12-31',
                     latestExpDate: '2029-01-01',
                     webSeats: 'Unlimited',

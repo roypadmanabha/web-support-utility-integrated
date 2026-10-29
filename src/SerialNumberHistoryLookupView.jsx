@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CUSTOMER_DATABASE, SERIAL_NUMBERS_DATABASE } from './mockData';
 import InvalidEmailModal, { isValidEmail } from './InvalidEmailModal';
+import { getEndNoteVersionFromSN, generate25DigitProductKey } from './serialNumberUtil';
 
 // Strict Clarivate brand colors:
 // #5E33BF (Clarivate Purple), #F0F0EB (Off-white), #000000 (Black)
@@ -19,8 +20,15 @@ export default function SerialNumberHistoryLookupView({ theme = 'light', onSelec
 
   const [searchResults, setSearchResults] = useState(null);
 
-  // Search histories
-  const [serialHistory] = useState(['3201830365', '3091862246', '3091950389', '3102035633', '3101931656']);
+  // Search histories (conforming to 10-digit serials: 17=X7, 18=X8, 19=X9, 20=EN20, 21=EN21, 22=EN2025)
+  const [serialHistory] = useState([
+    '3102298765', // EndNote 2025 (22)
+    '3102131656', // EndNote 21 (21)
+    '3102035633', // EndNote 20 (20)
+    '3091950389', // EndNote X9 (19)
+    '3201830365', // EndNote X8 (18)
+    '3101712345'  // EndNote X7 (17)
+  ]);
   const [emailHistory] = useState([
     'padmanabharoy@gmail.com',
     'john.t.muller@questdiagnostics.com',
@@ -45,12 +53,13 @@ export default function SerialNumberHistoryLookupView({ theme = 'light', onSelec
     if (matches.length > 0) {
       setSearchResults(matches);
     } else {
-      // Fallback realistic entry for demonstration
+      // Fallback realistic entry conforming to 10-digit SN and 25-digit product key
+      const detectedVersion = getEndNoteVersionFromSN(sn);
       setSearchResults([
         {
           serialNumber: sn,
-          productKey: 'PK-' + sn.substring(0, 6),
-          productSummary: 'EndNote 21 Multi-User / Site License',
+          productKey: generate25DigitProductKey(),
+          productSummary: `${detectedVersion} Multi-User / Site License`,
           customerName: 'Customer Associated with ' + sn,
           email: emailInput || 'customer@organization.com',
           regDeadline: '2028-12-31',
@@ -83,8 +92,18 @@ export default function SerialNumberHistoryLookupView({ theme = 'light', onSelec
     } else {
       setSearchResults([
         {
-          serialNumber: '3201830365',
-          productKey: 'PK-320183',
+          serialNumber: '3102298765', // 22 -> EndNote 2025
+          productKey: generate25DigitProductKey(),
+          productSummary: 'EndNote 2025 Multi-User License',
+          customerName: 'Padmanabha Roy',
+          email: email,
+          regDeadline: '2029-12-31',
+          latestExpDate: '2030-01-01',
+          status: 'Active'
+        },
+        {
+          serialNumber: '3102131656', // 21 -> EndNote 21
+          productKey: generate25DigitProductKey(),
           productSummary: 'EndNote 21 Multi-User License',
           customerName: 'Padmanabha Roy',
           email: email,
@@ -93,13 +112,43 @@ export default function SerialNumberHistoryLookupView({ theme = 'light', onSelec
           status: 'Active'
         },
         {
-          serialNumber: '3091862246',
-          productKey: 'PK-309186',
+          serialNumber: '3092062246', // 20 -> EndNote 20
+          productKey: generate25DigitProductKey(),
           productSummary: 'EndNote 20 Single User',
           customerName: 'Padmanabha Roy',
           email: email,
           regDeadline: '2026-10-31',
           latestExpDate: '2027-01-01',
+          status: 'Active'
+        },
+        {
+          serialNumber: '3091950389', // 19 -> EndNote X9
+          productKey: generate25DigitProductKey(),
+          productSummary: 'EndNote X9 Multi-User',
+          customerName: 'Padmanabha Roy',
+          email: email,
+          regDeadline: '2025-10-31',
+          latestExpDate: '2026-01-01',
+          status: 'Active'
+        },
+        {
+          serialNumber: '3201830365', // 18 -> EndNote X8
+          productKey: generate25DigitProductKey(),
+          productSummary: 'EndNote X8 Multi-User License',
+          customerName: 'Padmanabha Roy',
+          email: email,
+          regDeadline: '2024-10-31',
+          latestExpDate: '2025-01-01',
+          status: 'Active'
+        },
+        {
+          serialNumber: '3101712345', // 17 -> EndNote X7
+          productKey: generate25DigitProductKey(),
+          productSummary: 'EndNote X7 Single User',
+          customerName: 'Padmanabha Roy',
+          email: email,
+          regDeadline: '2023-10-31',
+          latestExpDate: '2024-01-01',
           status: 'Active'
         }
       ]);
@@ -124,8 +173,8 @@ export default function SerialNumberHistoryLookupView({ theme = 'light', onSelec
     } else {
       setSearchResults([
         {
-          serialNumber: '3091950389',
-          productKey: 'PK-309195',
+          serialNumber: '3091950389', // 19 -> EndNote X9
+          productKey: generate25DigitProductKey(),
           productSummary: 'EndNote X9 Multi-User',
           customerName: 'Linked UID Customer',
           email: emailInput || 'user@clarivate.com',
