@@ -1479,32 +1479,6 @@ export default function App() {
                           fieldLabel="10-Digit Serial Number"
                           errorMessage={snLookupError}
                         />
-                        <div style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          marginTop: '4px',
-                          fontSize: '0.74rem',
-                          color: snLookupInput.length === 10 ? '#5E33BF' : '#000000',
-                          opacity: snLookupInput.length === 10 ? 1 : 0.8,
-                          fontWeight: snLookupInput.length === 10 ? 700 : 500
-                        }}>
-                          <span>
-                            {snLookupInput.length >= 5
-                              ? `Detected Version: ${getEndNoteVersionFromSN(snLookupInput)}`
-                              : 'Only 10-digit numeric values allowed'}
-                          </span>
-                          <span>{snLookupInput.length} / 10 digits</span>
-                        </div>
-                        <div style={{
-                          marginTop: '6px',
-                          fontSize: '0.68rem',
-                          color: '#000000',
-                          opacity: 0.75,
-                          lineHeight: 1.3
-                        }}>
-                          SN Version Codes: 17=X7, 18=X8, 19=X9, 20=EN20, 21=EN21, 22=EN2025. Product Keys: 25-digit alphanumeric.
-                        </div>
                       </div>
                       <button
                         type="submit"
