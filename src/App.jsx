@@ -1465,7 +1465,6 @@ export default function App() {
                           }}
                           maxLength={10}
                           inputMode="numeric"
-                          placeholder="e.g. 3102234567"
                           fieldLabel="10-Digit Serial Number"
                           errorMessage={snLookupError}
                         />
