@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import InvalidEmailModal, { isValidEmail } from './InvalidEmailModal';
 
 const LAST_USED_EMAIL_KEY = 'clarivate_last_used_email';
 const SAVED_EMAILS_KEY = 'clarivate_saved_user_emails';
@@ -19,6 +20,7 @@ const getInitialSavedEmails = () => {
 
 export default function LoginView({ onLogin, sessionExpiredMessage }) {
   const [savedEmails, setSavedEmails] = useState(getInitialSavedEmails);
+  const [showInvalidEmailModal, setShowInvalidEmailModal] = useState(false);
   const [email, setEmail] = useState(() => {
     try {
       const last = localStorage.getItem(LAST_USED_EMAIL_KEY);
@@ -55,6 +57,10 @@ export default function LoginView({ onLogin, sessionExpiredMessage }) {
     const trimmedEmail = email.trim();
     if (!trimmedEmail) {
       setError('Please enter your Email.');
+      return;
+    }
+    if (!isValidEmail(trimmedEmail)) {
+      setShowInvalidEmailModal(true);
       return;
     }
     if (password !== '12345') {
@@ -189,6 +195,12 @@ export default function LoginView({ onLogin, sessionExpiredMessage }) {
           <p className="wsu-simple-subtext">Session remains active for 30 minutes with a cross-page timer.</p>
         </div>
       </div>
+
+      {/* Invalid email popup modal with OK button */}
+      <InvalidEmailModal
+        isOpen={showInvalidEmailModal}
+        onClose={() => setShowInvalidEmailModal(false)}
+      />
     </div>
   );
 }

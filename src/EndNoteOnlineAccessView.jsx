@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useUndoableInputs } from './useUndoableInputs';
+import InvalidEmailModal, { isValidEmail } from './InvalidEmailModal';
 
 // Strict Clarivate brand colors only:
 // #5E33BF (Clarivate Purple), #F0F0EB (Off-white), #000000 (Black)
@@ -16,6 +17,7 @@ export default function EndNoteOnlineAccessView({ theme = 'light', onShowToast }
   const [sidInput, setSidInput] = useState('');
   const [copiedKey, setCopiedKey] = useState(null);
   const [sessionStatus, setSessionStatus] = useState(null);
+  const [showInvalidEmailModal, setShowInvalidEmailModal] = useState(false);
 
   const [emailWasCopied, setEmailWasCopied] = useState(false);
   const [uidWasCopied, setUidWasCopied] = useState(false);
@@ -111,6 +113,10 @@ export default function EndNoteOnlineAccessView({ theme = 'light', onShowToast }
     const email = emailInput.trim();
     if (!email) {
       setSessionStatus({ type: 'error', message: 'Please enter an Email.' });
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setShowInvalidEmailModal(true);
       return;
     }
     setUidInput('amxgngrsDoAAJONnSDw');
@@ -688,6 +694,13 @@ export default function EndNoteOnlineAccessView({ theme = 'light', onShowToast }
           </div>
         )}
       </div>
+
+      {/* Invalid email popup modal with OK button */}
+      <InvalidEmailModal
+        isOpen={showInvalidEmailModal}
+        onClose={() => setShowInvalidEmailModal(false)}
+        theme={theme}
+      />
     </div>
   );
 }

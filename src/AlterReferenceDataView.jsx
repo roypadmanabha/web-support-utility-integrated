@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import InvalidEmailModal, { isValidEmail } from './InvalidEmailModal';
 
 // Strict Clarivate brand colors:
 // #5E33BF (Clarivate Purple), #F0F0EB (Off-white), #000000 (Black)
@@ -11,6 +12,7 @@ export default function AlterReferenceDataView({ theme = 'light', onShowToast })
 
   const [customerEmail, setCustomerEmail] = useState('padmanabharoy@gmail.com');
   const [actionStatus, setActionStatus] = useState(null);
+  const [showInvalidEmailModal, setShowInvalidEmailModal] = useState(false);
 
   // Search history for email
   const [emailHistory] = useState([
@@ -64,6 +66,10 @@ export default function AlterReferenceDataView({ theme = 'light', onShowToast })
     const email = customerEmail.trim();
     if (!email) {
       if (onShowToast) onShowToast("Please specify customer's email address");
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setShowInvalidEmailModal(true);
       return;
     }
 
@@ -312,6 +318,13 @@ export default function AlterReferenceDataView({ theme = 'light', onShowToast })
           lookup.pl version 2.3.0. Page generated in 0.0022 seconds
         </div>
       </div>
+
+      {/* Invalid email popup modal with OK button */}
+      <InvalidEmailModal
+        isOpen={showInvalidEmailModal}
+        onClose={() => setShowInvalidEmailModal(false)}
+        theme={theme}
+      />
     </div>
   );
 }

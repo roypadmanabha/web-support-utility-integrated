@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useUndoableInputs } from './useUndoableInputs';
+import InvalidEmailModal, { isValidEmail } from './InvalidEmailModal';
 
 // Strict Clarivate brand colors only:
 // #5E33BF (Clarivate Purple), #F0F0EB (Off-white), #000000 (Black)
@@ -109,6 +110,7 @@ export default function UserAccessLookupView({ theme = 'light', onShowToast }) {
   const [showEntries, setShowEntries] = useState(25);
   const [filterQuery, setFilterQuery] = useState('');
   const [copiedKey, setCopiedKey] = useState(null);
+  const [showInvalidEmailModal, setShowInvalidEmailModal] = useState(false);
 
   const [emailWasCopied, setEmailWasCopied] = useState(false);
   const [uidWasCopied, setUidWasCopied] = useState(false);
@@ -190,6 +192,10 @@ export default function UserAccessLookupView({ theme = 'light', onShowToast }) {
     const val = emailInput.trim();
     if (!val) {
       if (onShowToast) onShowToast('Please enter an email to search.');
+      return;
+    }
+    if (!isValidEmail(val)) {
+      setShowInvalidEmailModal(true);
       return;
     }
     setActiveSessionUser(val);
@@ -763,6 +769,13 @@ export default function UserAccessLookupView({ theme = 'light', onShowToast }) {
           </div>
         </>
       )}
+
+      {/* Invalid email popup modal with OK button */}
+      <InvalidEmailModal
+        isOpen={showInvalidEmailModal}
+        onClose={() => setShowInvalidEmailModal(false)}
+        theme={theme}
+      />
     </div>
   );
 }

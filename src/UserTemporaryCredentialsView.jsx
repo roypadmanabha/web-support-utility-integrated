@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useUndoableInputs } from './useUndoableInputs';
+import InvalidEmailModal, { isValidEmail } from './InvalidEmailModal';
 
 // Strict Clarivate brand colors only:
 // #5E33BF (Clarivate Purple), #F0F0EB (Off-white), #000000 (Black)
@@ -15,6 +16,7 @@ export default function UserTemporaryCredentialsView({ theme = 'light', onShowTo
   const [tempPassword, setTempPassword] = useState('Tmp#8921xQ!');
   const [copiedKey, setCopiedKey] = useState(null);
   const [status, setStatus] = useState(null);
+  const [showInvalidEmailModal, setShowInvalidEmailModal] = useState(false);
 
   const [emailWasCopied, setEmailWasCopied] = useState(false);
 
@@ -80,6 +82,10 @@ export default function UserTemporaryCredentialsView({ theme = 'light', onShowTo
     if (!email) {
       setStatus({ type: 'error', message: 'Please provide an email address.' });
       if (onShowToast) onShowToast('Please provide an email address');
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setShowInvalidEmailModal(true);
       return;
     }
 
@@ -333,6 +339,13 @@ export default function UserTemporaryCredentialsView({ theme = 'light', onShowTo
           </div>
         )}
       </div>
+
+      {/* Invalid email popup modal with OK button */}
+      <InvalidEmailModal
+        isOpen={showInvalidEmailModal}
+        onClose={() => setShowInvalidEmailModal(false)}
+        theme={theme}
+      />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CUSTOMER_DATABASE, SERIAL_NUMBERS_DATABASE } from './mockData';
+import InvalidEmailModal, { isValidEmail } from './InvalidEmailModal';
 
 // Strict Clarivate brand colors:
 // #5E33BF (Clarivate Purple), #F0F0EB (Off-white), #000000 (Black)
@@ -14,6 +15,7 @@ export default function SerialNumberHistoryLookupView({ theme = 'light', onSelec
   const [emailInput, setEmailInput] = useState('padmanabharoy@gmail.com');
   const [uidInput, setUidInput] = useState('');
   const [activeInput, setActiveInput] = useState(null);
+  const [showInvalidEmailModal, setShowInvalidEmailModal] = useState(false);
 
   const [searchResults, setSearchResults] = useState(null);
 
@@ -65,6 +67,10 @@ export default function SerialNumberHistoryLookupView({ theme = 'light', onSelec
     const email = emailInput.trim();
     if (!email) {
       if (onShowToast) onShowToast('Please enter an Email to search');
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setShowInvalidEmailModal(true);
       return;
     }
 
@@ -687,6 +693,13 @@ export default function SerialNumberHistoryLookupView({ theme = 'light', onSelec
           lookup.pl version 2.3.0. Page generated in 0.0018 seconds
         </div>
       </div>
+
+      {/* Invalid email popup modal with OK button */}
+      <InvalidEmailModal
+        isOpen={showInvalidEmailModal}
+        onClose={() => setShowInvalidEmailModal(false)}
+        theme={theme}
+      />
     </div>
   );
 }

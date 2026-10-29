@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import InvalidEmailModal, { isValidEmail } from './InvalidEmailModal';
 
 // Strict Clarivate brand palette:
 // #5E33BF (Clarivate Purple), #F0F0EB (Off-white), #000000 (Black)
@@ -17,6 +18,7 @@ export default function CustomerPasswordView({ theme = 'light', onShowToast }) {
   const [urlCopied, setUrlCopied] = useState(false);
   const [currentPasswordRevealed, setCurrentPasswordRevealed] = useState(null);
   const [passwordStatus, setPasswordStatus] = useState(null);
+  const [showInvalidEmailModal, setShowInvalidEmailModal] = useState(false);
 
   // Search history for email (last 5 searches)
   const [emailHistory, setEmailHistory] = useState([
@@ -35,8 +37,13 @@ export default function CustomerPasswordView({ theme = 'light', onShowToast }) {
 
   const handleSetPassword = (e) => {
     if (e) e.preventDefault();
-    if (!customerEmail.trim()) {
+    const email = customerEmail.trim();
+    if (!email) {
       setPasswordStatus({ type: 'error', message: 'Please enter a valid customer email.' });
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setShowInvalidEmailModal(true);
       return;
     }
     if (!hasMinLength || !hasNumeric || !hasSpecial) {
@@ -49,14 +56,19 @@ export default function CustomerPasswordView({ theme = 'light', onShowToast }) {
 
     setPasswordStatus({
       type: 'success',
-      message: `Password for ${customerEmail.trim()} updated successfully.`
+      message: `Password for ${email} updated successfully.`
     });
-    if (onShowToast) onShowToast(`Password updated for ${customerEmail.trim()}`);
+    if (onShowToast) onShowToast(`Password updated for ${email}`);
   };
 
   const handleGetCurrentPassword = () => {
-    if (!customerEmail.trim()) {
+    const email = customerEmail.trim();
+    if (!email) {
       setPasswordStatus({ type: 'error', message: 'Please enter a customer email address.' });
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setShowInvalidEmailModal(true);
       return;
     }
 
@@ -64,14 +76,22 @@ export default function CustomerPasswordView({ theme = 'light', onShowToast }) {
     setCurrentPasswordRevealed('ClarivatePass2026!');
     setPasswordStatus({
       type: 'success',
-      message: `Supervisor permission verified. Current password retrieved for ${customerEmail.trim()}.`
+      message: `Supervisor permission verified. Current password retrieved for ${email}.`
     });
-    if (onShowToast) onShowToast(`Current password retrieved for ${customerEmail.trim()}`);
+    if (onShowToast) onShowToast(`Current password retrieved for ${email}`);
   };
 
   const handleGenerateResetUrl = (e) => {
     if (e) e.preventDefault();
-    const email = customerEmail.trim() || 'padmanabharoy@gmail.com';
+    const email = customerEmail.trim();
+    if (!email) {
+      setPasswordStatus({ type: 'error', message: 'Please enter a customer email address.' });
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setShowInvalidEmailModal(true);
+      return;
+    }
 
     // Auth token format matching legacy WSU: i-0a78f761665b6b4b7:ijuucfUtR6yTLoKmvhuUjg
     const hexPart = Math.random().toString(16).substring(2, 12) + Math.random().toString(16).substring(2, 10);
@@ -674,6 +694,13 @@ export default function CustomerPasswordView({ theme = 'light', onShowToast }) {
           lookup.pl version 2.3.0. Page generated in 0.0021 seconds
         </div>
       </div>
+
+      {/* Invalid email popup modal with OK button */}
+      <InvalidEmailModal
+        isOpen={showInvalidEmailModal}
+        onClose={() => setShowInvalidEmailModal(false)}
+        theme={theme}
+      />
     </div>
   );
 }

@@ -12,6 +12,7 @@ import EndNoteOnlineAccessView from './EndNoteOnlineAccessView';
 import EndNoteDesktopBuilderView from './EndNoteDesktopBuilderView';
 import { undoManager } from './undoManager';
 import LoginView from './LoginView';
+import InvalidEmailModal, { isValidEmail } from './InvalidEmailModal';
 
 // Space validation helper for email inputs
 const checkSpaceInEmail = (emailStr) => {
@@ -532,6 +533,7 @@ export default function App() {
   // Page View state: 'wsu-home' | 'registration-database' | 'serial-detail'
   // Requirement: After login, the WSU will open up by default
   const [currentPage, setCurrentPage] = useState(detectInitialPage);
+  const [showInvalidEmailModal, setShowInvalidEmailModal] = useState(false);
 
   // Cross-tab window reference for SLN
   const slnWindowRef = useRef(null);
@@ -1086,6 +1088,12 @@ export default function App() {
   // Execute Search Customers logic
   const handleCustomerSearch = (e) => {
     if (e) e.preventDefault();
+
+    // Validate email format
+    if (searchEmail.trim() !== '' && !isValidEmail(searchEmail.trim())) {
+      setShowInvalidEmailModal(true);
+      return;
+    }
 
     // Validate email space errors
     const emailSpaceErr = checkSpaceInEmail(searchEmail);
@@ -1707,6 +1715,10 @@ export default function App() {
                   <form
                     onSubmit={(e) => {
                       e.preventDefault();
+                      if (regEmailAddress.trim() !== '' && !isValidEmail(regEmailAddress.trim())) {
+                        setShowInvalidEmailModal(true);
+                        return;
+                      }
                       const regEmailErr = checkSpaceInEmail(regEmailAddress);
                       if (regEmailErr) {
                         showToast(regEmailErr);
@@ -1895,6 +1907,10 @@ export default function App() {
                         className="wsu-btn-secondary"
                         onClick={(e) => {
                           e.preventDefault();
+                          if (regEmailAddress.trim() !== '' && !isValidEmail(regEmailAddress.trim())) {
+                            setShowInvalidEmailModal(true);
+                            return;
+                          }
                           const emailErr = checkSpaceInEmail(regEmailAddress);
                           if (emailErr) {
                             showToast(emailErr);
@@ -3237,6 +3253,10 @@ export default function App() {
                     className="wsu-btn-primary"
                     style={{ fontSize: '0.79rem', padding: '6px 14px' }}
                     onClick={() => {
+                      if (expirationEmail.trim() !== '' && !isValidEmail(expirationEmail.trim())) {
+                        setShowInvalidEmailModal(true);
+                        return;
+                      }
                       const found = CUSTOMER_DATABASE.find(c => c.email.toLowerCase() === expirationEmail.trim().toLowerCase());
                       if (found) {
                         setExpirationCustomer(found);
@@ -3370,7 +3390,12 @@ export default function App() {
                     autoComplete="off"
                     onKeyDown={e => {
                       if (e.key === 'Enter') {
-                        const key = associationsEmail.trim().toLowerCase();
+                        const val = associationsEmail.trim();
+                        if (val !== '' && !isValidEmail(val)) {
+                          setShowInvalidEmailModal(true);
+                          return;
+                        }
+                        const key = val.toLowerCase();
                         const rows = CUSTOMER_ASSOCIATIONS[key] || [];
                         setAssociationsRows(rows);
                         setAssocChecked({});
@@ -3384,7 +3409,12 @@ export default function App() {
                   className="wsu-btn-primary"
                   style={{ fontSize: '0.79rem', padding: '6px 14px' }}
                   onClick={() => {
-                    const key = associationsEmail.trim().toLowerCase();
+                    const val = associationsEmail.trim();
+                    if (val !== '' && !isValidEmail(val)) {
+                      setShowInvalidEmailModal(true);
+                      return;
+                    }
+                    const key = val.toLowerCase();
                     const rows = CUSTOMER_ASSOCIATIONS[key] || [];
                     setAssociationsRows(rows);
                     setAssocChecked({});
@@ -3744,6 +3774,13 @@ export default function App() {
           <span>{toastMessage}</span>
         </div>
       )}
+
+      {/* Invalid email popup modal with OK button */}
+      <InvalidEmailModal
+        isOpen={showInvalidEmailModal}
+        onClose={() => setShowInvalidEmailModal(false)}
+        theme={theme}
+      />
     </div>
   );
 }
