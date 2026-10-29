@@ -679,6 +679,37 @@ body {
   color: #F0F0EB;
 }
 
+/* Buffering Spinner Animations for Serial Number Lookup */
+.wsu-btn-spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid #F0F0EB;
+  border-top-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  animation: wsu-spin 0.75s linear infinite;
+  vertical-align: middle;
+}
+
+.wsu-buffering-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #F0F0EB;
+  border-top-color: #5E33BF;
+  border-radius: 50%;
+  animation: wsu-spin 0.75s linear infinite;
+}
+
+@keyframes wsu-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.wsu-buffering-card {
+  border: 1px dashed #5E33BF;
+  background-color: #F0F0EB;
+}
+
 .wsu-btn-secondary {
   padding: 8px 16px;
   background-color: #F0F0EB;
@@ -1063,6 +1094,16 @@ body {
   background-color: #000000 !important;
   border-color: #F0F0EB !important;
   color: #F0F0EB !important;
+}
+
+[data-theme="dark"] .wsu-buffering-card {
+  background-color: #000000 !important;
+  border-color: #5E33BF !important;
+}
+
+[data-theme="dark"] .wsu-buffering-spinner {
+  border-color: #000000 !important;
+  border-top-color: #5E33BF !important;
 }
 
 [data-theme="dark"] .wsu-table-container,

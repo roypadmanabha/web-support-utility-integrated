@@ -112,7 +112,11 @@ const SmartInputField = ({
   afterButton = null,
   historyKey = null,
   inlineLabel = false,
-  labelWidth = '130px'
+  labelWidth = '130px',
+  maxLength = null,
+  inputMode = undefined,
+  placeholder = "",
+  onKeyDown = null
 }) => {
   const valStr = value !== undefined && value !== null ? String(value) : '';
   const hasValue = valStr.trim().length > 0;
@@ -266,8 +270,15 @@ const SmartInputField = ({
               type={type}
               className="wsu-input"
               value={valStr}
+              maxLength={maxLength || undefined}
+              inputMode={inputMode}
+              placeholder={placeholder}
               onChange={(e) => onChange(e.target.value)}
               onKeyDown={(e) => {
+                if (onKeyDown) {
+                  onKeyDown(e);
+                  if (e.defaultPrevented) return;
+                }
                 const isCtrlOrMeta = e.ctrlKey || e.metaKey;
                 const k = e.key ? e.key.toLowerCase() : '';
                 const isShift = e.shiftKey;
@@ -939,6 +950,9 @@ export default function App() {
   // Serial Number Lookup Tab State
   const [snLookupInput, setSnLookupInput] = useState('');
   const [snLookupResult, setSnLookupResult] = useState(null);
+  const [isSnBuffering, setIsSnBuffering] = useState(false);
+  const [snLookupError, setSnLookupError] = useState('');
+  const snBufferTimeoutRef = useRef(null);
 
   // Dummy Serial Number Generator Form State
   const [dummyProduct, setDummyProduct] = useState('EndNote');
@@ -1200,17 +1214,42 @@ export default function App() {
     showToast(`Viewing expiration dates for ${cust.email}`);
   };
 
-  // Handle SN Lookup Form Submission
+  // Handle SN Lookup Form Submission: Enforce EXACTLY 10 numeric digits and 1 second buffering before details appear
   const handleSNLookupSubmit = (e) => {
     if (e) e.preventDefault();
-    const query = snLookupInput.trim();
-    if (!query) {
-      showToast('Please enter a 10-digit Serial Number');
+    if (isSnBuffering) return;
+
+    const cleanSN = (snLookupInput || '').replace(/\D/g, '').trim();
+    if (!cleanSN) {
+      setSnLookupError('Please enter a 10-digit numeric Serial Number.');
+      setSnLookupResult(null);
+      showToast('Please enter a 10-digit numeric Serial Number');
       return;
     }
-    const found = CUSTOMER_DATABASE.find(c => c.serialNumber === query) || generateRandomCustomer('user@clarivate.com', { serialNumber: query });
-    setSnLookupResult(found);
-    showToast(`Retrieved details for Serial #${query}`);
+
+    if (cleanSN.length !== 10) {
+      setSnLookupError(`Serial Number must be exactly 10 numeric digits. Currently: ${cleanSN.length} digit${cleanSN.length === 1 ? '' : 's'}.`);
+      setSnLookupResult(null);
+      showToast(`Must be exactly 10 digits (currently ${cleanSN.length})`);
+      return;
+    }
+
+    // Input is valid 10 digits -> trigger 1 second buffering
+    setSnLookupError('');
+    setSnLookupResult(null);
+    setIsSnBuffering(true);
+
+    if (snBufferTimeoutRef.current) {
+      clearTimeout(snBufferTimeoutRef.current);
+    }
+
+    snBufferTimeoutRef.current = setTimeout(() => {
+      const found = CUSTOMER_DATABASE.find(c => c.serialNumber === cleanSN) ||
+        generateRandomCustomer('user@clarivate.com', { serialNumber: cleanSN });
+      setSnLookupResult(found);
+      setIsSnBuffering(false);
+      showToast(`Retrieved details for Serial #${cleanSN}`);
+    }, 1000);
   };
 
   // Handle Dummy Serial Number Generation
@@ -1398,46 +1437,90 @@ export default function App() {
                     >
                       Input 10-Digit Serial Number:
                     </label>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', flexWrap: 'wrap' }}>
                       <div style={{ width: '400px', maxWidth: '100%', flexShrink: 0 }}>
                         <SmartInputField
                           value={snLookupInput}
                           onChange={(val) => {
-                            setSnLookupInput(val);
-                            const cleanVal = val.trim();
-                            if (cleanVal.length >= 8) {
-                              const found = CUSTOMER_DATABASE.find(c => c.serialNumber === cleanVal) || generateRandomCustomer('user@clarivate.com', { serialNumber: cleanVal });
-                              setSnLookupResult(found);
-                            } else if (cleanVal.length === 0) {
-                              setSnLookupResult(null);
+                            // Enforce ONLY numeric digits (0-9) up to 10 digits
+                            const numericOnly = val.replace(/\D/g, '').slice(0, 10);
+                            setSnLookupInput(numericOnly);
+                            setSnLookupError('');
+                            // Do not show results while editing; details only appear after clicking Lookup
+                            setSnLookupResult(null);
+                          }}
+                          onKeyDown={(e) => {
+                            // Block any non-numeric characters (allow control keys like Backspace, Delete, arrows, Tab, Cmd+A, Cmd+C, Cmd+V)
+                            const controlKeys = ['Backspace', 'Delete', 'Tab', 'Enter', 'Escape', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'];
+                            if (controlKeys.includes(e.key)) return;
+                            if (e.ctrlKey || e.metaKey) return;
+                            if (!/^\d$/.test(e.key)) {
+                              e.preventDefault();
+                              return;
+                            }
+                            if (snLookupInput.length >= 10 && e.target.selectionStart === e.target.selectionEnd) {
+                              e.preventDefault();
                             }
                           }}
-                          fieldLabel="Serial Number Input"
+                          maxLength={10}
+                          inputMode="numeric"
+                          placeholder="e.g. 3102234567"
+                          fieldLabel="10-Digit Serial Number"
+                          errorMessage={snLookupError}
                         />
+                        <div style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          marginTop: '4px',
+                          fontSize: '0.72rem',
+                          color: snLookupInput.length === 10 ? '#5E33BF' : '#000000',
+                          opacity: snLookupInput.length === 10 ? 1 : 0.7,
+                          fontWeight: snLookupInput.length === 10 ? 700 : 400
+                        }}>
+                          <span>Only 10-digit numeric values allowed</span>
+                          <span>{snLookupInput.length} / 10 digits</span>
+                        </div>
                       </div>
                       <button
                         type="submit"
                         className="wsu-btn-primary"
-                        onClick={handleSNLookupSubmit}
+                        disabled={isSnBuffering}
                         style={{
                           padding: '5px 16px',
                           height: '30px',
                           fontSize: '0.82rem',
                           fontWeight: 600,
-                          cursor: 'pointer',
+                          cursor: isSnBuffering ? 'wait' : 'pointer',
                           whiteSpace: 'nowrap',
-                          flexShrink: 0
+                          flexShrink: 0,
+                          opacity: isSnBuffering ? 0.75 : 1,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px'
                         }}
                       >
-                        Lookup
+                        {isSnBuffering ? (
+                          <>
+                            <span className="wsu-btn-spinner" aria-hidden="true" />
+                            <span>Buffering...</span>
+                          </>
+                        ) : (
+                          'Lookup'
+                        )}
                       </button>
                       <button
                         type="button"
                         className="wsu-btn-secondary"
                         onClick={() => {
+                          if (snBufferTimeoutRef.current) {
+                            clearTimeout(snBufferTimeoutRef.current);
+                          }
                           setSnLookupInput('');
                           setSnLookupResult(null);
-                          showToast('Cleared input field. Ready for pasting.');
+                          setSnLookupError('');
+                          setIsSnBuffering(false);
+                          showToast('Cleared input field. Ready for 10-digit Serial Number.');
                         }}
                         style={{
                           padding: '5px 14px',
@@ -1455,8 +1538,34 @@ export default function App() {
                   </form>
                 </div>
 
+                {/* 1 Second Buffering State Indicator */}
+                {isSnBuffering && (
+                  <div
+                    className="wsu-result-box wsu-buffering-card"
+                    style={{
+                      padding: '30px 24px',
+                      borderRadius: '6px',
+                      marginBottom: '20px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '12px',
+                      textAlign: 'center'
+                    }}
+                  >
+                    <div className="wsu-buffering-spinner" />
+                    <div style={{ fontSize: '0.94rem', fontWeight: 700, color: '#5E33BF' }}>
+                      Buffering Serial Number Details...
+                    </div>
+                    <div style={{ fontSize: '0.80rem', color: '#000000', opacity: 0.8 }}>
+                      Looking up 10-digit serial record <strong>{snLookupInput}</strong> from Registration Services...
+                    </div>
+                  </div>
+                )}
+
                 {/* Serial Number Lookup Result details matching Screenshot 1 */}
-                {snLookupResult && (
+                {!isSnBuffering && snLookupResult && (
                   <div className="wsu-result-box" style={{ padding: '24px', borderRadius: '6px', marginBottom: '20px' }}>
                     <div style={{ fontSize: '0.89rem', color: '#000000', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <span><strong>Serial Number:</strong> <span style={{ fontWeight: 400, color: '#000000' }}>{snLookupResult.serialNumber}</span></span>
