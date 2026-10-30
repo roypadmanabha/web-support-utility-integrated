@@ -535,6 +535,7 @@ export default function App() {
   // Requirement: After login, the WSU will open up by default
   const [currentPage, setCurrentPage] = useState(detectInitialPage);
   const [showInvalidEmailModal, setShowInvalidEmailModal] = useState(false);
+  const [showInvalidSNPKModal, setShowInvalidSNPKModal] = useState(false);
 
   // Cross-tab window reference for SLN
   const slnWindowRef = useRef(null);
@@ -1230,11 +1231,13 @@ export default function App() {
     if (e) e.preventDefault();
     if (isSnBuffering) return;
 
-    const rawInput = (snLookupInput || '').trim();
+    const formatError = "A Product Key should be 25 char alphanumeric or a Serial Number would be 10 digit numeric. The input you gave matches neither.";
+
     if (!rawInput) {
-      setSnLookupError('Please enter a 10-digit Serial Number or 25-character Product Key.');
+      setSnLookupError(formatError);
+      setShowInvalidSNPKModal(true);
       setSnLookupResult(null);
-      showToast('Please enter a Serial Number or Product Key');
+      showToast(formatError);
       return;
     }
 
@@ -1290,15 +1293,11 @@ export default function App() {
       return;
     }
 
-    // Validation errors if neither valid 10-digit SN nor valid 25-digit PK
-    if (isPureNumeric) {
-      setSnLookupError(`Serial Number must be exactly 10 numeric digits. Currently: ${alphanumeric.length} digit${alphanumeric.length === 1 ? '' : 's'}.`);
-      showToast(`Serial Number must be 10 digits (currently ${alphanumeric.length})`);
-    } else {
-      setSnLookupError(`Product Key must be exactly 25 alphanumeric characters. Currently: ${alphanumeric.length} character${alphanumeric.length === 1 ? '' : 's'}.`);
-      showToast(`Product Key must be 25 alphanumeric characters (currently ${alphanumeric.length})`);
-    }
+    // If input matches neither a 25-character PK nor a 10-digit SN
+    setSnLookupError(formatError);
+    setShowInvalidSNPKModal(true);
     setSnLookupResult(null);
+    showToast(formatError);
   };
 
   // Handle Dummy Serial Number Generation conforming to 10-digit SN and 25-digit product key rules
@@ -1539,6 +1538,7 @@ export default function App() {
                           setSnLookupInput('');
                           setSnLookupResult(null);
                           setSnLookupError('');
+                          setShowInvalidSNPKModal(false);
                           setIsSnBuffering(false);
                           showToast('Cleared input field. Ready for Serial Number or Product Key.');
                         }}
@@ -3792,6 +3792,15 @@ export default function App() {
       <InvalidEmailModal
         isOpen={showInvalidEmailModal}
         onClose={() => setShowInvalidEmailModal(false)}
+        theme={theme}
+      />
+
+      {/* Invalid Serial Number / Product Key popup modal with OK button */}
+      <InvalidEmailModal
+        isOpen={showInvalidSNPKModal}
+        onClose={() => setShowInvalidSNPKModal(false)}
+        message="Invalid Input"
+        description="A Product Key should be 25 char alphanumeric or a Serial Number would be 10 digit numeric. The input you gave matches neither."
         theme={theme}
       />
     </div>
