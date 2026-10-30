@@ -46,6 +46,15 @@ export const isValidSerialNumber = (sn) => {
 };
 
 /**
+ * Validates whether a product key is strictly a 25-digit alphanumeric key.
+ */
+export const isValidProductKey = (key) => {
+  if (!key || typeof key !== 'string') return false;
+  const clean = key.replace(/[^A-Za-z0-9]/g, '');
+  return clean.length === 25;
+};
+
+/**
  * Generates a strictly 25-digit alphanumeric product key (5 blocks of 5 characters).
  */
 export const generate25DigitProductKey = () => {

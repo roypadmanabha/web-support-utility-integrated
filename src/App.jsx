@@ -13,7 +13,7 @@ import EndNoteDesktopBuilderView from './EndNoteDesktopBuilderView';
 import { undoManager } from './undoManager';
 import LoginView from './LoginView';
 import InvalidEmailModal, { isValidEmail } from './InvalidEmailModal';
-import { getEndNoteVersionFromSN, generate25DigitProductKey, generateSerialForVersion } from './serialNumberUtil';
+import { getEndNoteVersionFromSN, isValidSerialNumber, isValidProductKey, generate25DigitProductKey, generateSerialForVersion } from './serialNumberUtil';
 
 // Space validation helper for email inputs
 const checkSpaceInEmail = (emailStr) => {
@@ -1225,42 +1225,80 @@ export default function App() {
     showToast(`Viewing expiration dates for ${cust.email}`);
   };
 
-  // Handle SN Lookup Form Submission: Enforce EXACTLY 10 numeric digits and 1 second buffering before details appear
+  // Handle Serial Number or Product Key Lookup Form Submission
   const handleSNLookupSubmit = (e) => {
     if (e) e.preventDefault();
     if (isSnBuffering) return;
 
-    const cleanSN = (snLookupInput || '').replace(/\D/g, '').trim();
-    if (!cleanSN) {
-      setSnLookupError('Please enter a 10-digit numeric Serial Number.');
+    const rawInput = (snLookupInput || '').trim();
+    if (!rawInput) {
+      setSnLookupError('Please enter a 10-digit Serial Number or 25-character Product Key.');
       setSnLookupResult(null);
-      showToast('Please enter a 10-digit numeric Serial Number');
+      showToast('Please enter a Serial Number or Product Key');
       return;
     }
 
-    if (cleanSN.length !== 10) {
-      setSnLookupError(`Serial Number must be exactly 10 numeric digits. Currently: ${cleanSN.length} digit${cleanSN.length === 1 ? '' : 's'}.`);
+    const alphanumeric = rawInput.replace(/[^A-Za-z0-9]/g, '');
+    const isPureNumeric = /^\d+$/.test(rawInput.replace(/-/g, ''));
+
+    // Case 1: 10-Digit Numeric Serial Number
+    if (isPureNumeric && alphanumeric.length === 10) {
+      const cleanSN = alphanumeric;
+      setSnLookupError('');
       setSnLookupResult(null);
-      showToast(`Must be exactly 10 digits (currently ${cleanSN.length})`);
+      setIsSnBuffering(true);
+
+      if (snBufferTimeoutRef.current) {
+        clearTimeout(snBufferTimeoutRef.current);
+      }
+
+      snBufferTimeoutRef.current = setTimeout(() => {
+        const found = CUSTOMER_DATABASE.find(c => c.serialNumber === cleanSN) ||
+          generateRandomCustomer('user@clarivate.com', { serialNumber: cleanSN });
+        setSnLookupResult(found);
+        setIsSnBuffering(false);
+        showToast(`Retrieved details for Serial #${cleanSN}`);
+      }, 1000);
       return;
     }
 
-    // Input is valid 10 digits -> trigger 1 second buffering
-    setSnLookupError('');
+    // Case 2: 25-Digit Alphanumeric Product Key
+    if (alphanumeric.length === 25) {
+      const chunks = alphanumeric.toUpperCase().match(/.{1,5}/g);
+      const formattedKey = chunks ? chunks.join('-') : alphanumeric.toUpperCase();
+
+      setSnLookupError('');
+      setSnLookupResult(null);
+      setIsSnBuffering(true);
+
+      if (snBufferTimeoutRef.current) {
+        clearTimeout(snBufferTimeoutRef.current);
+      }
+
+      snBufferTimeoutRef.current = setTimeout(() => {
+        const found = CUSTOMER_DATABASE.find(c => {
+          if (!c.productKey) return false;
+          return c.productKey.replace(/[^A-Za-z0-9]/g, '').toUpperCase() === alphanumeric.toUpperCase();
+        }) || generateRandomCustomer('user@clarivate.com', {
+          productKey: formattedKey,
+          serialNumber: generateSerialForVersion('22')
+        });
+        setSnLookupResult(found);
+        setIsSnBuffering(false);
+        showToast(`Retrieved details for Product Key ${formattedKey}`);
+      }, 1000);
+      return;
+    }
+
+    // Validation errors if neither valid 10-digit SN nor valid 25-digit PK
+    if (isPureNumeric) {
+      setSnLookupError(`Serial Number must be exactly 10 numeric digits. Currently: ${alphanumeric.length} digit${alphanumeric.length === 1 ? '' : 's'}.`);
+      showToast(`Serial Number must be 10 digits (currently ${alphanumeric.length})`);
+    } else {
+      setSnLookupError(`Product Key must be exactly 25 alphanumeric characters. Currently: ${alphanumeric.length} character${alphanumeric.length === 1 ? '' : 's'}.`);
+      showToast(`Product Key must be 25 alphanumeric characters (currently ${alphanumeric.length})`);
+    }
     setSnLookupResult(null);
-    setIsSnBuffering(true);
-
-    if (snBufferTimeoutRef.current) {
-      clearTimeout(snBufferTimeoutRef.current);
-    }
-
-    snBufferTimeoutRef.current = setTimeout(() => {
-      const found = CUSTOMER_DATABASE.find(c => c.serialNumber === cleanSN) ||
-        generateRandomCustomer('user@clarivate.com', { serialNumber: cleanSN });
-      setSnLookupResult(found);
-      setIsSnBuffering(false);
-      showToast(`Retrieved details for Serial #${cleanSN}`);
-    }, 1000);
   };
 
   // Handle Dummy Serial Number Generation conforming to 10-digit SN and 25-digit product key rules
@@ -1447,36 +1485,36 @@ export default function App() {
                         marginBottom: '8px'
                       }}
                     >
-                      Input 10-Digit Serial Number:
+                      Input Serial Number or Product Key:
                     </label>
                     <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', flexWrap: 'wrap' }}>
                       <div style={{ width: '400px', maxWidth: '100%', flexShrink: 0 }}>
                         <SmartInputField
                           value={snLookupInput}
                           onChange={(val) => {
-                            // Enforce ONLY numeric digits (0-9) up to 10 digits
-                            const numericOnly = val.replace(/\D/g, '').slice(0, 10);
-                            setSnLookupInput(numericOnly);
+                            // Support 10-digit numeric serial numbers and 25-digit alphanumeric product keys (with optional hyphens)
+                            const sanitized = val.replace(/[^A-Za-z0-9\-]/g, '').toUpperCase().slice(0, 29);
+                            setSnLookupInput(sanitized);
                             setSnLookupError('');
                             // Do not show results while editing; details only appear after clicking Lookup
                             setSnLookupResult(null);
                           }}
                           onKeyDown={(e) => {
-                            // Block any non-numeric characters (allow control keys like Backspace, Delete, arrows, Tab, Cmd+A, Cmd+C, Cmd+V)
+                            // Block any character that is not alphanumeric or hyphen
                             const controlKeys = ['Backspace', 'Delete', 'Tab', 'Enter', 'Escape', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'];
                             if (controlKeys.includes(e.key)) return;
                             if (e.ctrlKey || e.metaKey) return;
-                            if (!/^\d$/.test(e.key)) {
+                            if (!/^[a-zA-Z0-9\-]$/.test(e.key)) {
                               e.preventDefault();
                               return;
                             }
-                            if (snLookupInput.length >= 10 && e.target.selectionStart === e.target.selectionEnd) {
+                            if (snLookupInput.length >= 29 && e.target.selectionStart === e.target.selectionEnd) {
                               e.preventDefault();
                             }
                           }}
-                          maxLength={10}
-                          inputMode="numeric"
-                          fieldLabel="10-Digit Serial Number"
+                          maxLength={29}
+                          inputMode="text"
+                          fieldLabel="Serial Number or Product Key"
                           errorMessage={snLookupError}
                         />
                       </div>
@@ -1518,7 +1556,7 @@ export default function App() {
                           setSnLookupResult(null);
                           setSnLookupError('');
                           setIsSnBuffering(false);
-                          showToast('Cleared input field. Ready for 10-digit Serial Number.');
+                          showToast('Cleared input field. Ready for Serial Number or Product Key.');
                         }}
                         style={{
                           padding: '5px 14px',

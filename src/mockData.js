@@ -252,6 +252,7 @@ export const UNIVERSITY_LIST = [
 export {
   getEndNoteVersionFromSN,
   isValidSerialNumber,
+  isValidProductKey,
   generate25DigitProductKey,
   generateSerialForVersion
 } from './serialNumberUtil';
