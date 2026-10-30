@@ -1239,7 +1239,7 @@ export default function App() {
     }
 
     const alphanumeric = rawInput.replace(/[^A-Za-z0-9]/g, '');
-    const isPureNumeric = /^\d+$/.test(rawInput.replace(/-/g, ''));
+    const isPureNumeric = alphanumeric.length > 0 && /^\d+$/.test(alphanumeric);
 
     // Case 1: 10-Digit Numeric Serial Number
     if (isPureNumeric && alphanumeric.length === 10) {
@@ -1492,28 +1492,12 @@ export default function App() {
                         <SmartInputField
                           value={snLookupInput}
                           onChange={(val) => {
-                            // Support 10-digit numeric serial numbers and 25-digit alphanumeric product keys (with optional hyphens)
-                            const sanitized = val.replace(/[^A-Za-z0-9\-]/g, '').toUpperCase().slice(0, 29);
-                            setSnLookupInput(sanitized);
+                            // No restrictions on typing or pasting anything into the field
+                            setSnLookupInput(val);
                             setSnLookupError('');
                             // Do not show results while editing; details only appear after clicking Lookup
                             setSnLookupResult(null);
                           }}
-                          onKeyDown={(e) => {
-                            // Block any character that is not alphanumeric or hyphen
-                            const controlKeys = ['Backspace', 'Delete', 'Tab', 'Enter', 'Escape', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'];
-                            if (controlKeys.includes(e.key)) return;
-                            if (e.ctrlKey || e.metaKey) return;
-                            if (!/^[a-zA-Z0-9\-]$/.test(e.key)) {
-                              e.preventDefault();
-                              return;
-                            }
-                            if (snLookupInput.length >= 29 && e.target.selectionStart === e.target.selectionEnd) {
-                              e.preventDefault();
-                            }
-                          }}
-                          maxLength={29}
-                          inputMode="text"
                           fieldLabel="Serial Number or Product Key"
                           errorMessage={snLookupError}
                         />
